@@ -10,10 +10,10 @@ import paratrip.paratrip.core.exception.ErrorResult;
 @Component
 public class VerifyUserIdMemberValidator {
 	public void validate(VerifyUserIdMemberRequest request) {
-		validateEmail(request.userId());
+		validateUserId(request.userId());
 	}
 
-	private void validateEmail(String userId) {
+	private void validateUserId(String userId) {
 		if (userId == null || userId.isEmpty()) {
 			throw new BadRequestException(ErrorResult.DTO_BAD_REQUEST_EXCEPTION);
 		}
