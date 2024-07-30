@@ -54,4 +54,16 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record LoginMemberRequest(
+		String email,
+		String password
+	) {
+		public LoginMemberRequestDto toLoginMemberRequestDto() {
+			return new LoginMemberRequestDto(
+				this.email,
+				this.password
+			);
+		}
+	}
 }

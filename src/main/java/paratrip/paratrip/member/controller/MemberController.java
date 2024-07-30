@@ -1,6 +1,8 @@
 package paratrip.paratrip.member.controller;
 
+import static paratrip.paratrip.member.dto.response.MemberResponseDto.*;
 import static paratrip.paratrip.member.vo.request.MemberRequestVo.*;
+import static paratrip.paratrip.member.vo.response.MemberResponseVo.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 import paratrip.paratrip.member.service.MemberService;
 import paratrip.paratrip.member.validates.JoinMemberValidator;
+import paratrip.paratrip.member.validates.LoginMemberValidator;
 import paratrip.paratrip.member.validates.VerifyEmailMemberValidator;
 import paratrip.paratrip.member.validates.VerifyPasswordMemberValidator;
 import paratrip.paratrip.member.validates.VerifyUserIdMemberValidator;
@@ -32,6 +35,7 @@ public class MemberController {
 	private final VerifyPasswordMemberValidator verifyPasswordMemberValidator;
 	private final VerifyUserIdMemberValidator verifyUserIdMemberValidator;
 	private final JoinMemberValidator joinMemberValidator;
+	private final LoginMemberValidator loginMemberValidator;
 
 	private final MemberService memberService;
 
@@ -142,7 +146,7 @@ public class MemberController {
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 
-	@PostMapping(name = "회원 가입 (이전 Verify URL 전부 통과 이후 회원 가입 URL 요청 (EMAIL, USERID 중복 처리 똑같이 진행.))")
+	@PostMapping(value = "join", name = "회원 가입 (이전 Verify URL 전부 통과 이후 회원 가입 URL 요청 (EMAIL, USERID 중복 처리 똑같이 진행.))")
 	@Operation(summary = "회원 가입 요청 API", description = "회원 가입 요청 API (Gender의 경우 MALE, FEMAIL로 구분됩니다.)")
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -184,5 +188,57 @@ public class MemberController {
 		memberService.joinMember(request.toJoinMemberRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+	}
+
+	@PostMapping(value = "login", name = "로그인")
+	@Operation(summary = "로그인 API", description = "로그인")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "ENF001",
+			description = "404 EMAIL_NOT_FOUND_EXCEPTION / 존재하지 않는 이메일 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "PB002",
+			description = "400 PASSWORD_BAD_REQUEST_EXCEPTION / 비밀번호 일치 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse<LoginMemberResponse>> loginMember(
+		@Valid
+		@RequestBody LoginMemberRequest request
+	) {
+		// 유효성 검사
+		loginMemberValidator.validate(request);
+
+		// VO -> DTO
+		LoginMemberResponseDto loginMemberResponseDto = memberService.loginMember(request.toLoginMemberRequestDto());
+
+		// DTO -> VO
+		LoginMemberResponse response = new LoginMemberResponse(
+			loginMemberResponseDto.memberSeq(),
+			loginMemberResponseDto.accessToken(),
+			loginMemberResponseDto.refreshToken()
+		);
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
 }

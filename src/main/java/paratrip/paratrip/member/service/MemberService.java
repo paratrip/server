@@ -1,12 +1,15 @@
 package paratrip.paratrip.member.service;
 
 import static paratrip.paratrip.member.dto.request.MemberRequestDto.*;
+import static paratrip.paratrip.member.dto.response.MemberResponseDto.*;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import paratrip.paratrip.member.domain.MemberDomain;
+import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.mapper.MemberMapper;
 import paratrip.paratrip.member.repository.MemberRepository;
 
@@ -16,7 +19,10 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	private final MemberMapper memberMapper;
+
 	private final BCryptPasswordEncoder encoder;
+
+	private final MemberDomain memberDomain;
 
 	@Transactional(readOnly = true)
 	public void verifyMemberEmail(VerifyEmailMemberRequestDto verifyEmailMemberRequestDto) {
@@ -48,5 +54,24 @@ public class MemberService {
 			joinMemberRequestDto,
 			encoder.encode(joinMemberRequestDto.password()))
 		);
+	}
+
+	@Transactional(readOnly = true)
+	public LoginMemberResponseDto loginMember(LoginMemberRequestDto loginMemberRequestDto) {
+		/*
+		 1. Email 존재 확인
+		 2. 비밀번호 검증
+		*/
+		MemberEntity memberEntity = memberRepository.findByEmail(loginMemberRequestDto.email());
+		memberDomain.checkPassword(loginMemberRequestDto.password(), memberEntity.getEncodedPassword());
+
+		// JWT Token 생성
+		String accessToken = memberDomain.generateAccessToken(loginMemberRequestDto.email());
+		String refreshToken = memberDomain.generateRefreshToken(loginMemberRequestDto.email());
+
+		// RefreshToken 저장
+		memberDomain.saveRefreshToken(refreshToken, loginMemberRequestDto.email());
+
+		return new LoginMemberResponseDto(memberEntity.getMemberSeq(), accessToken, refreshToken);
 	}
 }
