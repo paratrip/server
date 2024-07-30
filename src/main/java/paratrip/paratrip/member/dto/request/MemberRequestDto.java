@@ -1,5 +1,7 @@
 package paratrip.paratrip.member.dto.request;
 
+import paratrip.paratrip.member.util.Gender;
+
 public class MemberRequestDto {
 	public record VerifyEmailMemberRequestDto(
 		String email
@@ -15,6 +17,17 @@ public class MemberRequestDto {
 
 	public record VerifyUserIdMemberRequestDto(
 		String userId
+	) {
+
+	}
+
+	public record JoinMemberRequestDto(
+		String email,
+		String password,
+		String phoneNumber,
+		String userId,
+		String birth,
+		Gender gender
 	) {
 
 	}
