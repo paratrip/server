@@ -21,6 +21,7 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 import paratrip.paratrip.member.service.MemberService;
 import paratrip.paratrip.member.validates.VerifyEmailMemberValidator;
 import paratrip.paratrip.member.validates.VerifyPasswordMemberValidator;
+import paratrip.paratrip.member.validates.VerifyUserIdMemberValidator;
 
 @RestController
 @RequestMapping("/member")
@@ -28,11 +29,12 @@ import paratrip.paratrip.member.validates.VerifyPasswordMemberValidator;
 public class MemberController {
 	private final VerifyEmailMemberValidator verifyEmailMemberValidator;
 	private final VerifyPasswordMemberValidator verifyPasswordMemberValidator;
+	private final VerifyUserIdMemberValidator verifyUserIdMemberValidator;
 
 	private final MemberService memberService;
 
-	@PostMapping(value = "verify-email", name = "이메일 인증 (중복 확인 + 이메일 형식 검사)")
-	@Operation(summary = "이메일 인증 (중복 확인 + 이메일 형식 검사) API", description = "이메일 인증 (중복 확인 + 이메일 형식 검사) API")
+	@PostMapping(value = "verify-email", name = "이메일 유효성 검사 (중복 확인 + 이메일 형식 검사)")
+	@Operation(summary = "이메일 유효성 검사 (중복 확인 + 이메일 형식 검사) API", description = "이메일 유효성 검사 (중복 확인 + 이메일 형식 검사) API")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -57,7 +59,7 @@ public class MemberController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse> addHideFeed(
+	public ResponseEntity<BaseResponse> verifyEmail(
 		@Valid
 		@RequestBody VerifyEmailMemberRequest request
 	) {
@@ -90,12 +92,50 @@ public class MemberController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse> addHideFeed(
+	public ResponseEntity<BaseResponse> verifyPassword(
 		@Valid
 		@RequestBody VerifyPasswordMemberRequest request
 	) {
 		// 유효성 검사
 		verifyPasswordMemberValidator.validate(request);
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+	}
+
+	@PostMapping(value = "verify-userId", name = "아이디 중복 유효성 검사")
+	@Operation(summary = "아이디 중복 유효성 검사 API", description = "아이디 중복 유효성 검사 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "UIDC002",
+			description = "USER_ID_DUPLICATION_CONFLICT_EXCEPTION / userId 중복 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse> verifyUserId(
+		@Valid
+		@RequestBody VerifyUserIdMemberRequest request
+	) {
+		// 유효성 검사
+		verifyUserIdMemberValidator.validate(request);
+
+		memberService.verifyMemberUserId(request.toVerifyUserIdMemberRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
