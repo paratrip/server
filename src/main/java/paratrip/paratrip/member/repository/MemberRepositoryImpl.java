@@ -5,11 +5,17 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.exception.ConflictException;
 import paratrip.paratrip.core.exception.ErrorResult;
+import paratrip.paratrip.member.entity.MemberEntity;
 
 @Component
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepository {
 	private final MemberJpaRepository memberJpaRepository;
+
+	@Override
+	public MemberEntity saveMemberEntity(MemberEntity memberEntity) {
+		return memberJpaRepository.save(memberEntity);
+	}
 
 	@Override
 	public void isDuplicatedEmail(String email) {
