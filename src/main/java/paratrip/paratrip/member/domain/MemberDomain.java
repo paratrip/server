@@ -64,6 +64,10 @@ public class MemberDomain {
 			);
 	}
 
+	public void deleteRefreshToken(String email) {
+		redisTemplate.delete(email);
+	}
+
 	public void checkPassword(String password, String encodedPassword) {
 		if(!encoder.matches(password, encodedPassword)) {
 			throw new BadRequestException(ErrorResult.PASSWORD_BAD_REQUEST_EXCEPTION);
