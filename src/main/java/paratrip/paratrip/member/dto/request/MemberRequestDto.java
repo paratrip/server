@@ -6,4 +6,10 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record VerifyPasswordMemberRequestDto(
+		String password
+	) {
+
+	}
 }

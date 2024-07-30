@@ -12,4 +12,14 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record VerifyPasswordMemberRequest(
+		String password
+	) {
+		public VerifyPasswordMemberRequestDto toVerifyPasswordMemberRequestDto() {
+			return new VerifyPasswordMemberRequestDto(
+				this.password
+			);
+		}
+	}
 }
