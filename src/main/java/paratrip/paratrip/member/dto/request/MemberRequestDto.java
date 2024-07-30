@@ -31,4 +31,11 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record LoginMemberRequestDto(
+		String email,
+		String password
+	) {
+
+	}
 }
