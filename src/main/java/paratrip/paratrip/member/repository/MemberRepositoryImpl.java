@@ -18,4 +18,12 @@ public class MemberRepositoryImpl implements MemberRepository {
 				throw new ConflictException(ErrorResult.EMAIL_DUPLICATION_CONFLICT_EXCEPTION);
 			});
 	}
+
+	@Override
+	public void isDuplicatedUserId(String userId) {
+		memberJpaRepository.findByUserId(userId)
+			.ifPresent(entity -> {
+				throw new ConflictException(ErrorResult.USER_ID_DUPLICATION_CONFLICT_EXCEPTION);
+			});
+	}
 }

@@ -10,4 +10,6 @@ import paratrip.paratrip.member.entity.MemberEntity;
 @Repository
 public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long> {
 	Optional<MemberEntity> findByEmail(String email);
+
+	Optional<MemberEntity> findByUserId(String userId);
 }
