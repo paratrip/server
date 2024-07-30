@@ -265,7 +265,7 @@ public class MemberController {
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 		@ApiResponse(
 			responseCode = "MSB003",
-			description = "404 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
+			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
