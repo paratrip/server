@@ -20,4 +20,12 @@ public class MemberService {
 		*/
 		memberRepository.isDuplicatedEmail(verifyEmailMemberRequestDto.email());
 	}
+
+	@Transactional(readOnly = true)
+	public void verifyMemberUserId(VerifyUserIdMemberRequestDto verifyUserIdMemberRequest) {
+		/*
+		 1. UserId 유효성 검사
+		*/
+		memberRepository.isDuplicatedUserId(verifyUserIdMemberRequest.userId());
+	}
 }
