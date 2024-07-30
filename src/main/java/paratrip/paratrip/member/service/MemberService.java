@@ -74,4 +74,15 @@ public class MemberService {
 
 		return new LoginMemberResponseDto(memberEntity.getMemberSeq(), accessToken, refreshToken);
 	}
+
+	@Transactional
+	public void logoutMember(LogoutMemberRequestDto logoutMemberRequestDto) {
+		/*
+		 1. Member 존재 확인
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(logoutMemberRequestDto.memberSeq());
+
+		// RefreshToken 삭제
+		memberDomain.deleteRefreshToken(memberEntity.getEmail());
+	}
 }
