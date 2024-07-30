@@ -38,4 +38,10 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record LogoutMemberRequestDto(
+		Long memberSeq
+	) {
+
+	}
 }

@@ -23,6 +23,7 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 import paratrip.paratrip.member.service.MemberService;
 import paratrip.paratrip.member.validates.JoinMemberValidator;
 import paratrip.paratrip.member.validates.LoginMemberValidator;
+import paratrip.paratrip.member.validates.LogoutMemberValidator;
 import paratrip.paratrip.member.validates.VerifyEmailMemberValidator;
 import paratrip.paratrip.member.validates.VerifyPasswordMemberValidator;
 import paratrip.paratrip.member.validates.VerifyUserIdMemberValidator;
@@ -36,6 +37,7 @@ public class MemberController {
 	private final VerifyUserIdMemberValidator verifyUserIdMemberValidator;
 	private final JoinMemberValidator joinMemberValidator;
 	private final LoginMemberValidator loginMemberValidator;
+	private final LogoutMemberValidator logoutMemberValidator;
 
 	private final MemberService memberService;
 
@@ -240,5 +242,43 @@ public class MemberController {
 		);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+	}
+
+	@PostMapping(value = "logout", name = "로그아웃")
+	@Operation(summary = "로그아웃 API", description = "로그아웃")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "MSB003",
+			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse> logoutMember(
+		@Valid
+		@RequestBody LogoutMemberRequest request
+	) {
+		// 유효성 검사
+		logoutMemberValidator.validate(request);
+
+		memberService.logoutMember(request.toLogoutMemberRequestDto());
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 }

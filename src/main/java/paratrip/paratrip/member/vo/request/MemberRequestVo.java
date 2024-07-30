@@ -66,4 +66,14 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record LogoutMemberRequest(
+		Long memberSeq
+	) {
+		public LogoutMemberRequestDto toLogoutMemberRequestDto() {
+			return new LogoutMemberRequestDto(
+				this.memberSeq
+			);
+		}
+	}
 }

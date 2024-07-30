@@ -7,4 +7,5 @@ public interface MemberRepository {
 	void isDuplicatedEmail(String email);
 	void isDuplicatedUserId(String userId);
 	MemberEntity findByEmail(String email);
+	MemberEntity findByMemberSeq(Long memberSeq);
 }
