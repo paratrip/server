@@ -26,6 +26,7 @@ import paratrip.paratrip.member.validates.LoginMemberValidator;
 import paratrip.paratrip.member.validates.LogoutMemberValidator;
 import paratrip.paratrip.member.validates.VerifyEmailMemberValidator;
 import paratrip.paratrip.member.validates.VerifyPasswordMemberValidator;
+import paratrip.paratrip.member.validates.VerifyPhoneNumberMemberValidator;
 import paratrip.paratrip.member.validates.VerifyUserIdMemberValidator;
 
 @RestController
@@ -35,6 +36,7 @@ public class MemberController {
 	private final VerifyEmailMemberValidator verifyEmailMemberValidator;
 	private final VerifyPasswordMemberValidator verifyPasswordMemberValidator;
 	private final VerifyUserIdMemberValidator verifyUserIdMemberValidator;
+	private final VerifyPhoneNumberMemberValidator verifyPhoneNumberMemberValidator;
 	private final JoinMemberValidator joinMemberValidator;
 	private final LoginMemberValidator loginMemberValidator;
 	private final LogoutMemberValidator logoutMemberValidator;
@@ -144,6 +146,36 @@ public class MemberController {
 		verifyUserIdMemberValidator.validate(request);
 
 		memberService.verifyMemberUserId(request.toVerifyUserIdMemberRequestDto());
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+	}
+
+	@PostMapping(value = "verify-phone", name = "핸드폰 번호 유효성 검사(010-XXXX-XXXX 형식)")
+	@Operation(summary = "핸드폰 번호 유효성 검사 API", description = "핸드폰 번호 유효성 검사 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class)))
+	})
+	public ResponseEntity<BaseResponse> verifyPhoneNumber(
+		@Valid
+		@RequestBody VerifyPhoneNumberMemberRequest request
+	) {
+		// 유효성 검사
+		verifyPhoneNumberMemberValidator.validate(request);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
