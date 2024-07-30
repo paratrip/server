@@ -9,12 +9,6 @@ public class MemberRequestDto {
 
 	}
 
-	public record VerifyPasswordMemberRequestDto(
-		String password
-	) {
-
-	}
-
 	public record VerifyUserIdMemberRequestDto(
 		String userId
 	) {
