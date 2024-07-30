@@ -12,4 +12,10 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record VerifyUserIdMemberRequestDto(
+		String userId
+	) {
+
+	}
 }

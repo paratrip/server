@@ -22,4 +22,14 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record VerifyUserIdMemberRequest(
+		String userId
+	) {
+		public VerifyUserIdMemberRequestDto toVerifyUserIdMemberRequestDto() {
+			return new VerifyUserIdMemberRequestDto(
+				this.userId
+			);
+		}
+	}
 }
