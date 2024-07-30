@@ -22,6 +22,12 @@ public enum ErrorResult {
 		"PB002"
 	),
 
+	MEMBER_SEQ_BAD_REQUEST_EXCEPTION(
+		HttpStatus.BAD_REQUEST.value(),
+		"MEMBER_SEQ_BAD_REQUEST_EXCEPTION",
+		"MSB003"
+	),
+
 	// NOT FOUND
 	EMAIL_NOT_FOUND_EXCEPTION(
 		HttpStatus.NOT_FOUND.value(),
