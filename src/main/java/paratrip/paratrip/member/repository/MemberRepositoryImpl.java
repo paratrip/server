@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.exception.ConflictException;
 import paratrip.paratrip.core.exception.ErrorResult;
+import paratrip.paratrip.core.exception.NotFoundRequestException;
 import paratrip.paratrip.member.entity.MemberEntity;
 
 @Component
@@ -31,5 +32,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 			.ifPresent(entity -> {
 				throw new ConflictException(ErrorResult.USER_ID_DUPLICATION_CONFLICT_EXCEPTION);
 			});
+	}
+
+	@Override
+	public MemberEntity findByEmail(String email) {
+		return memberJpaRepository.findByEmail(email)
+			.orElseThrow(() -> new NotFoundRequestException(ErrorResult.EMAIL_NOT_FOUND_EXCEPTION));
 	}
 }
