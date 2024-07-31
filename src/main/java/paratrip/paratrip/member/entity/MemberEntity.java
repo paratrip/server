@@ -49,4 +49,9 @@ public class MemberEntity {
 	@Column(name = "gender", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
+
+	public MemberEntity updatePassword(String encodedPassword) {
+		this.encodedPassword = encodedPassword;
+		return this;
+	}
 }
