@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.sms.service.SmsService;
@@ -17,6 +18,7 @@ import paratrip.paratrip.sms.service.SmsService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sms-certification")
+@Tag(name = "핸드폰 인증 API", description = "담당자(박종훈)")
 public class SmsController {
 	private final SmsService userService;
 
