@@ -150,7 +150,7 @@ public class MemberController {
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 
-	@PostMapping(value = "verify-phone", name = "핸드폰 번호 유효성 검사(010-XXXX-XXXX 형식)")
+	@PostMapping(value = "verify-phone", name = "핸드폰 번호 유효성 + 중복 검사(010-XXXX-XXXX 형식)")
 	@Operation(summary = "핸드폰 번호 유효성 검사 API", description = "핸드폰 번호 유효성 검사 API")
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -168,6 +168,12 @@ public class MemberController {
 			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
 			content = @Content(
 				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "PNDC003",
+			description = "409 PHONE_NUMBER_DUPLICATION_CONFLICT_EXCEPTION / 전화번호 중복 요류",
+			content = @Content(
+				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class)))
 	})
 	public ResponseEntity<BaseResponse> verifyPhoneNumber(
@@ -176,6 +182,8 @@ public class MemberController {
 	) {
 		// 유효성 검사
 		verifyPhoneNumberMemberValidator.validate(request);
+
+		memberService.verifyMemberPhoneNumber(request.toVerifyPhoneNumberMemberRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}

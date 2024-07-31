@@ -36,6 +36,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 	}
 
 	@Override
+	public void isDuplicatedPhoneNumber(String phoneNumber) {
+		memberJpaRepository.findByPhoneNumber(phoneNumber)
+			.ifPresent(entity -> {
+				throw new ConflictException(ErrorResult.PHONE_NUMBER_DUPLICATION_CONFLICT_EXCEPTION);
+			});
+	}
+
+	@Override
 	public MemberEntity findByEmail(String email) {
 		return memberJpaRepository.findByEmail(email)
 			.orElseThrow(() -> new NotFoundRequestException(ErrorResult.EMAIL_NOT_FOUND_EXCEPTION));

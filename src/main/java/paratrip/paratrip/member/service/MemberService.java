@@ -12,6 +12,7 @@ import paratrip.paratrip.member.domain.MemberDomain;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.mapper.MemberMapper;
 import paratrip.paratrip.member.repository.MemberRepository;
+import paratrip.paratrip.member.vo.request.MemberRequestVo;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,14 @@ public class MemberService {
 		 1. UserId 중복 검사
 		*/
 		memberRepository.isDuplicatedUserId(verifyUserIdMemberRequest.userId());
+	}
+
+	@Transactional(readOnly = true)
+	public void verifyMemberPhoneNumber(VerifyPhoneNumberMemberRequestDto verifyPhoneNumberMemberRequestDto) {
+		/*
+		 1. PhoneNumber 중복 검사
+		*/
+		memberRepository.isDuplicatedPhoneNumber(verifyPhoneNumberMemberRequestDto.phoneNumber());
 	}
 
 	@Transactional
