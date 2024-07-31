@@ -14,4 +14,12 @@ public class MemberResponseVo {
 	) {
 
 	}
+
+	public record ReIssueTokenResponse(
+		String email,
+		String accessToken,
+		String refreshToken
+	) {
+
+	}
 }

@@ -60,6 +60,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.makeErrorResponseEntity(exception.getErrorResult());
 	}
 
+	@ExceptionHandler({UnAuthorizedException.class})
+	public ResponseEntity<ErrorResponse> handleUnAuthorizedException(
+		final UnAuthorizedException exception,
+		HttpServletResponse response
+	) {
+		log.warn("UnAuthorized Exception occur: ", exception);
+
+		response.setStatus(exception.getErrorResult().getHttpStatus());
+		return this.makeErrorResponseEntity(exception.getErrorResult());
+	}
+
 	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ErrorResult errorResult) {
 		return ResponseEntity.status(errorResult.getHttpStatus())
 			.body(

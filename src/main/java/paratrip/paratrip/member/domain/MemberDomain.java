@@ -13,22 +13,19 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.exception.BadRequestException;
 import paratrip.paratrip.core.exception.ErrorResult;
+import paratrip.paratrip.core.exception.UnAuthorizedException;
 
 @Component
 @RequiredArgsConstructor
 public class MemberDomain {
 	private final RedisTemplate<String, String> redisTemplate;
-
+	private final BCryptPasswordEncoder encoder;
 	@Value("${jwt.secret}")
 	private String jwtSecret;
-
 	@Value("${jwt.accessTokenExpiration}")
 	private long accessTokenExpiration;
-
 	@Value("${jwt.refreshTokenExpiration}")
 	private long refreshTokenExpiration;
-
-	private final BCryptPasswordEncoder encoder;
 
 	public String generateAccessToken(String email) {
 		Date now = new Date();
@@ -69,8 +66,15 @@ public class MemberDomain {
 	}
 
 	public void checkPassword(String password, String encodedPassword) {
-		if(!encoder.matches(password, encodedPassword)) {
+		if (!encoder.matches(password, encodedPassword)) {
 			throw new BadRequestException(ErrorResult.PASSWORD_BAD_REQUEST_EXCEPTION);
+		}
+	}
+
+	public void checkRefreshToken(String email, String refreshToken) {
+		String storedRefreshToken = redisTemplate.opsForValue().get(email);
+		if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+			throw new UnAuthorizedException(ErrorResult.REFRESH_TOKEN_UNAUTHORIZED_EXCEPTION);
 		}
 	}
 }

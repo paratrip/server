@@ -57,4 +57,11 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record ReIssueTokenRequestDto(
+		String email,
+		String refreshToken
+	) {
+
+	}
 }

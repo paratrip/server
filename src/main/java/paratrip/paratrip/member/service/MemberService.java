@@ -118,4 +118,26 @@ public class MemberService {
 		// 새로운 MemberEntity 저장
 		memberRepository.saveMemberEntity(newMemberEntity);
 	}
+
+	@Transactional
+	public ReIssueTokenResponseDto reissueToken(ReIssueTokenRequestDto reIssueTokenRequestDto) {
+		/*
+		 1. Email 존재 확인
+		 2. RefreshToken 유효성 여부 확인
+		*/
+		memberRepository.findByEmail(reIssueTokenRequestDto.email());
+		memberDomain.checkRefreshToken(reIssueTokenRequestDto.email(), reIssueTokenRequestDto.refreshToken());
+
+		// Redis 삭제
+		memberDomain.deleteRefreshToken(reIssueTokenRequestDto.email());
+
+		// JWT Token 생성
+		String accessToken = memberDomain.generateAccessToken(reIssueTokenRequestDto.email());
+		String refreshToken = memberDomain.generateRefreshToken(reIssueTokenRequestDto.email());
+
+		// Redis 갱신
+		memberDomain.saveRefreshToken(refreshToken, reIssueTokenRequestDto.email());
+
+		return new ReIssueTokenResponseDto(reIssueTokenRequestDto.email(), accessToken, refreshToken);
+	}
 }

@@ -26,6 +26,7 @@ import paratrip.paratrip.member.validates.FindMemberEmailValidator;
 import paratrip.paratrip.member.validates.JoinMemberValidator;
 import paratrip.paratrip.member.validates.LoginMemberValidator;
 import paratrip.paratrip.member.validates.LogoutMemberValidator;
+import paratrip.paratrip.member.validates.ReIssueTokenValidator;
 import paratrip.paratrip.member.validates.ResetMemberPasswordValidator;
 import paratrip.paratrip.member.validates.VerifyEmailMemberValidator;
 import paratrip.paratrip.member.validates.VerifyPasswordMemberValidator;
@@ -46,6 +47,7 @@ public class MemberController {
 	private final LogoutMemberValidator logoutMemberValidator;
 	private final FindMemberEmailValidator findMemberEmailValidator;
 	private final ResetMemberPasswordValidator resetMemberPasswordValidator;
+	private final ReIssueTokenValidator reIssueTokenValidator;
 
 	private final MemberService memberService;
 
@@ -406,5 +408,57 @@ public class MemberController {
 		memberService.resetMemberPassword(request.toResetMemberPasswordRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+	}
+
+	@PostMapping(value = "/reissue-token", name = "토큰 재발급")
+	@Operation(summary = "토큰 재발급 API", description = "RefreshToken 만료 시 재로그인 필요합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "ENF001",
+			description = "404 EMAIL_NOT_FOUND_EXCEPTION / EMAIL 존재 하지 않는 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "RTU001",
+			description = "401 REFRESH_TOKEN_UNAUTHORIZED_EXCEPTION / RefreshToken 인증 요류 (기간 만료 + 일치 여부)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse<ReIssueTokenResponse>> reissueToken(
+		@Valid
+		@RequestBody ReIssueTokenRequest request
+	) {
+		// 유효성 검사
+		reIssueTokenValidator.validate(request);
+
+		ReIssueTokenResponseDto reIssueTokenResponseDto
+			= memberService.reissueToken(request.toReIssueTokenRequestDto());
+
+		// DTO -> VO
+		ReIssueTokenResponse response = new ReIssueTokenResponse(
+			reIssueTokenResponseDto.email(),
+			reIssueTokenResponseDto.accessToken(),
+			reIssueTokenResponseDto.refreshToken()
+		);
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
 }
