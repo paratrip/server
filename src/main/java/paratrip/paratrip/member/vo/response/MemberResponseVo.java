@@ -8,4 +8,10 @@ public class MemberResponseVo {
 	) {
 
 	}
+
+	public record FindMemberEmailResponse(
+		String email
+	) {
+
+	}
 }

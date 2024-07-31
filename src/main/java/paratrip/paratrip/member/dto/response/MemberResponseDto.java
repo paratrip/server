@@ -8,4 +8,10 @@ public class MemberResponseDto {
 	) {
 
 	}
+
+	public record FindMemberEmailResponseDto(
+		String email
+	) {
+
+	}
 }

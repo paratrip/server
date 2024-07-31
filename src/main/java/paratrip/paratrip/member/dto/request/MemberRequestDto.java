@@ -44,4 +44,10 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record FindMemberEmailRequestDto(
+		String phoneNumber
+	) {
+
+	}
 }
