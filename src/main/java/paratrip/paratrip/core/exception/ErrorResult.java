@@ -66,6 +66,13 @@ public enum ErrorResult {
 		"PNDC003"
 	),
 
+	// UnAuthorized
+	REFRESH_TOKEN_UNAUTHORIZED_EXCEPTION(
+		HttpStatus.UNAUTHORIZED.value(),
+		"REFRESH_TOKEN_UNAUTHORIZED_EXCEPTION",
+		"RTU001"
+	),
+
 	// SERVER
 	UNKNOWN_EXCEPTION(
 		HttpStatus.INTERNAL_SERVER_ERROR.value(),
