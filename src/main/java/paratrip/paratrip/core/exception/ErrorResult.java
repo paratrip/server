@@ -41,6 +41,12 @@ public enum ErrorResult {
 		"ENF001"
 	),
 
+	PHONE_NUMBER_NOT_FOUND_EXCEPTION(
+		HttpStatus.NOT_FOUND.value(),
+		"PHONE_NUMBER_NOT_FOUND_EXCEPTION",
+		"PNNF002"
+	),
+
 	// CONFLICT
 	EMAIL_DUPLICATION_CONFLICT_EXCEPTION(
 		HttpStatus.CONFLICT.value(),
