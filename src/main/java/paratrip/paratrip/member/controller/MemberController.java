@@ -26,6 +26,7 @@ import paratrip.paratrip.member.validates.FindMemberEmailValidator;
 import paratrip.paratrip.member.validates.JoinMemberValidator;
 import paratrip.paratrip.member.validates.LoginMemberValidator;
 import paratrip.paratrip.member.validates.LogoutMemberValidator;
+import paratrip.paratrip.member.validates.ResetMemberPasswordValidator;
 import paratrip.paratrip.member.validates.VerifyEmailMemberValidator;
 import paratrip.paratrip.member.validates.VerifyPasswordMemberValidator;
 import paratrip.paratrip.member.validates.VerifyPhoneNumberMemberValidator;
@@ -44,6 +45,7 @@ public class MemberController {
 	private final LoginMemberValidator loginMemberValidator;
 	private final LogoutMemberValidator logoutMemberValidator;
 	private final FindMemberEmailValidator findMemberEmailValidator;
+	private final ResetMemberPasswordValidator resetMemberPasswordValidator;
 
 	private final MemberService memberService;
 
@@ -352,7 +354,7 @@ public class MemberController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse> findMemberEmail(
+	public ResponseEntity<BaseResponse<FindMemberEmailResponse>> findMemberEmail(
 		@Valid
 		@RequestBody FindMemberEmailRequest request
 	) {
@@ -366,5 +368,43 @@ public class MemberController {
 		FindMemberEmailResponse response = new FindMemberEmailResponse(findMemberEmailResponseDto.email());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+	}
+
+	@PostMapping(value = "/reset-password", name = "비밀번호 재설정")
+	@Operation(summary = "비밀번호 재설정 API", description = "비밀번호 재설정 (API 활용 전 SMS API를 통해 핸드폰 인증 완료 후 비밀번호 재설정 필요)")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "PNNF002",
+			description = "404 PHONE_NUMBER_NOT_FOUND_EXCEPTION / 전화번호 존재 하지 않는 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse> resetMemberPassword(
+		@Valid
+		@RequestBody ResetMemberPasswordRequest request
+	) {
+		// 유효성 검사
+		resetMemberPasswordValidator.validate(request);
+
+		memberService.resetMemberPassword(request.toResetMemberPasswordRequestDto());
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 }

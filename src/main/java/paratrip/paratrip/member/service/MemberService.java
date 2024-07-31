@@ -103,4 +103,19 @@ public class MemberService {
 
 		return new FindMemberEmailResponseDto(memberEntity.getEmail());
 	}
+
+	@Transactional
+	public void resetMemberPassword(ResetMemberPasswordRequestDto resetMemberPasswordRequestDto) {
+		/*
+		 1. PhoneNumber 존재 확인
+		*/
+		MemberEntity memberEntity = memberRepository.findByPhoneNumber(resetMemberPasswordRequestDto.phoneNumber());
+
+		// Password 업데이트
+		MemberEntity newMemberEntity
+			= memberEntity.updatePassword(encoder.encode(resetMemberPasswordRequestDto.password()));
+
+		// 새로운 MemberEntity 저장
+		memberRepository.saveMemberEntity(newMemberEntity);
+	}
 }

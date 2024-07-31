@@ -92,4 +92,16 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record ResetMemberPasswordRequest(
+		String phoneNumber,
+		String password
+	) {
+		public ResetMemberPasswordRequestDto toResetMemberPasswordRequestDto() {
+			return new ResetMemberPasswordRequestDto(
+				this.phoneNumber,
+				this.password
+			);
+		}
+	}
 }
