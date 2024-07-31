@@ -54,4 +54,10 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberJpaRepository.findByMemberSeq(memberSeq)
 			.orElseThrow(() -> new BadRequestException(ErrorResult.MEMBER_SEQ_BAD_REQUEST_EXCEPTION));
 	}
+
+	@Override
+	public MemberEntity findByPhoneNumber(String phoneNumber) {
+		return memberJpaRepository.findByPhoneNumber(phoneNumber)
+			.orElseThrow(() -> new NotFoundRequestException(ErrorResult.PHONE_NUMBER_NOT_FOUND_EXCEPTION));
+	}
 }
