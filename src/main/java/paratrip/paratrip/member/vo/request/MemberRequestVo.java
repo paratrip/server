@@ -104,4 +104,16 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record ReIssueTokenRequest(
+		String email,
+		String refreshToken
+	) {
+		public ReIssueTokenRequestDto toReIssueTokenRequestDto() {
+			return new ReIssueTokenRequestDto(
+				this.email,
+				this.refreshToken
+			);
+		}
+	}
 }
