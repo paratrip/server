@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.base.BaseResponse;
@@ -33,6 +34,7 @@ import paratrip.paratrip.member.validates.VerifyUserIdMemberValidator;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@Tag(name = "회원 API", description = "담당자(박종훈)")
 public class MemberController {
 	private final VerifyEmailMemberValidator verifyEmailMemberValidator;
 	private final VerifyPasswordMemberValidator verifyPasswordMemberValidator;
