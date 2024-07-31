@@ -12,7 +12,6 @@ import paratrip.paratrip.member.domain.MemberDomain;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.mapper.MemberMapper;
 import paratrip.paratrip.member.repository.MemberRepository;
-import paratrip.paratrip.member.vo.request.MemberRequestVo;
 
 @Service
 @RequiredArgsConstructor
@@ -93,5 +92,15 @@ public class MemberService {
 
 		// RefreshToken 삭제
 		memberDomain.deleteRefreshToken(memberEntity.getEmail());
+	}
+
+	@Transactional(readOnly = true)
+	public FindMemberEmailResponseDto findMemberEmail(FindMemberEmailRequestDto findMemberEmailRequestDto) {
+		/*
+		 1. PhoneNumber 존재 확인
+		*/
+		MemberEntity memberEntity = memberRepository.findByPhoneNumber(findMemberEmailRequestDto.phoneNumber());
+
+		return new FindMemberEmailResponseDto(memberEntity.getEmail());
 	}
 }
