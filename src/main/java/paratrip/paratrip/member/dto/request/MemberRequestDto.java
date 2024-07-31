@@ -15,6 +15,12 @@ public class MemberRequestDto {
 
 	}
 
+	public record VerifyPhoneNumberMemberRequestDto(
+		String phoneNumber
+	) {
+
+	}
+
 	public record JoinMemberRequestDto(
 		String email,
 		String password,

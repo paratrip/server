@@ -34,7 +34,11 @@ public class MemberRequestVo {
 	public record VerifyPhoneNumberMemberRequest(
 		String phoneNumber
 	) {
-
+		public VerifyPhoneNumberMemberRequestDto toVerifyPhoneNumberMemberRequestDto() {
+			return new VerifyPhoneNumberMemberRequestDto(
+				this.phoneNumber
+			);
+		}
 	}
 
 	public record JoinMemberRequest(
