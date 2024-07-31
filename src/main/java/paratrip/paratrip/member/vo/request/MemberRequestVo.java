@@ -82,4 +82,14 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record FindMemberEmailRequest(
+		String phoneNumber
+	) {
+		public FindMemberEmailRequestDto toFindMemberEmailRequestDto() {
+			return new FindMemberEmailRequestDto(
+				this.phoneNumber
+			);
+		}
+	}
 }
