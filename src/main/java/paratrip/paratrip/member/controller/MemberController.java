@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 import paratrip.paratrip.member.service.MemberService;
+import paratrip.paratrip.member.validates.FindMemberEmailValidator;
 import paratrip.paratrip.member.validates.JoinMemberValidator;
 import paratrip.paratrip.member.validates.LoginMemberValidator;
 import paratrip.paratrip.member.validates.LogoutMemberValidator;
@@ -40,6 +41,7 @@ public class MemberController {
 	private final JoinMemberValidator joinMemberValidator;
 	private final LoginMemberValidator loginMemberValidator;
 	private final LogoutMemberValidator logoutMemberValidator;
+	private final FindMemberEmailValidator findMemberEmailValidator;
 
 	private final MemberService memberService;
 
@@ -233,7 +235,7 @@ public class MemberController {
 	}
 
 	@PostMapping(value = "login", name = "로그인")
-	@Operation(summary = "로그인 API", description = "로그인")
+	@Operation(summary = "로그인 API", description = "로그인 (핸드폰 형식은 010-XXXX-XXXX로 들어와야합니다.)")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -320,5 +322,47 @@ public class MemberController {
 		memberService.logoutMember(request.toLogoutMemberRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+	}
+
+	@PostMapping(value = "/find-email", name = "이메일 찾기")
+	@Operation(summary = "이메일 찾기 API", description = "이메일 찾기 (API 활용 전 SMS API를 통해 핸드폰 인증 완료 후 이메일 반환 필요)")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "PNNF002",
+			description = "404 PHONE_NUMBER_NOT_FOUND_EXCEPTION / 전화번호 존재 하지 않는 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse> findMemberEmail(
+		@Valid
+		@RequestBody FindMemberEmailRequest request
+	) {
+		// 유효성 검사
+		findMemberEmailValidator.validate(request);
+
+		FindMemberEmailResponseDto findMemberEmailResponseDto
+			= memberService.findMemberEmail(request.toFindMemberEmailRequestDto());
+
+		// DTO -> VO
+		FindMemberEmailResponse response = new FindMemberEmailResponse(findMemberEmailResponseDto.email());
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
 }
