@@ -50,4 +50,11 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record ResetMemberPasswordRequestDto(
+		String phoneNumber,
+		String password
+	) {
+
+	}
 }
