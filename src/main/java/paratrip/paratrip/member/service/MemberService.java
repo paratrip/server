@@ -126,7 +126,7 @@ public class MemberService {
 		 2. RefreshToken 유효성 여부 확인
 		*/
 		memberRepository.findByEmail(reIssueTokenRequestDto.email());
-		memberDomain.checkRefreshToken(reIssueTokenRequestDto.email(), reIssueTokenRequestDto.refreshToken());
+		memberDomain.checkRefreshToken(reIssueTokenRequestDto.refreshToken());
 
 		// Redis 삭제
 		memberDomain.deleteRefreshToken(reIssueTokenRequestDto.email());
