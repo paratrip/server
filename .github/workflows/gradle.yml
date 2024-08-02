@@ -77,5 +77,4 @@ jobs:
           sudo docker pull ${{secrets.DOCKER_USERNAME}}/paratrip
       - name: Docker run
         run: |
-          sudo docker network create docker-network || true
-          sudo docker run -d --name paratrip --rm --network docker-network -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/paratrip
+          sudo docker run -d --name paratrip --rm -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/paratrip
