@@ -21,13 +21,13 @@ jobs:
       # YML 파일 생성
       - name: Set YML
         run: |
-          mkdir -p application/src/main/resources
+          mkdir -p src/main/resources
           echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
           find application/src
 
       - name: Set YML PRODUCTION
         run: |
-          mkdir -p application/src/main/resources
+          mkdir -p src/main/resources
           echo "${{ secrets.APPLICATION_PRODUCTION_YML }}" | base64 --decode > src/main/resources/application-production.yml
           find application/src
 
