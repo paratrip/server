@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,20 +29,25 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
 	private final String jwtSecret;
-
 	private final List<RequestMatcher> permitAllRequestMatchers;
+	private final RedisTemplate<String, String> blackListTemplate;
+	private final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
-	public JwtTokenFilter(String jwtSecret, List<String> permitAllEndpoints) {
+	public JwtTokenFilter(String jwtSecret, List<String> permitAllEndpoints,
+		RedisTemplate<String, String> blackListTemplate) {
 		this.jwtSecret = jwtSecret;
 		this.permitAllRequestMatchers = permitAllEndpoints.stream()
 			.map(AntPathRequestMatcher::new)
 			.collect(Collectors.toList());
+		this.blackListTemplate = blackListTemplate;
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request,
+	protected void doFilterInternal(
+		HttpServletRequest request,
 		HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException {
+		FilterChain filterChain
+	) throws ServletException, IOException {
 		// Filter가 적용되고 있는 uri 추출
 		String method = request.getMethod();
 
@@ -63,6 +71,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			String token = authHeader.substring(7); // Remove "Bearer " from the header value
 
 			try {
+				// Black List에서 토큰 확인
+				if (blackListTemplate.hasKey(token)) {
+					logger.info("Blacklisted token detected: {}", token);
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					return;
+				}
+
 				Jws<Claims> claimsJws = Jwts.parser()
 					.setSigningKey(jwtSecret)
 					.parseClaimsJws(token);
@@ -75,8 +90,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 					.authorities(new ArrayList<>())
 					.build();
 
-				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-					userDetails.getAuthorities());
+				Authentication authentication = new UsernamePasswordAuthenticationToken(
+					userDetails,
+					null,
+					userDetails.getAuthorities()
+				);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 
 				response.setHeader("Authorization", "Bearer " + token); // Add "Bearer " to the header value

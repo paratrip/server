@@ -241,7 +241,7 @@ public class MemberController {
 	}
 
 	@PostMapping(value = "login", name = "로그인")
-	@Operation(summary = "로그인 API", description = "로그인 (핸드폰 형식은 010-XXXX-XXXX로 들어와야합니다.)")
+	@Operation(summary = "로그인 API", description = "로그인")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -293,7 +293,7 @@ public class MemberController {
 	}
 
 	@PostMapping(value = "logout", name = "로그아웃")
-	@Operation(summary = "로그아웃 API", description = "로그아웃")
+	@Operation(summary = "로그아웃 API", description = "로그아웃 시 사용자 Token 두 개 (Access/Refresh) 모두 Black List로 들어가 사용할 수 없습니다.")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -436,8 +436,8 @@ public class MemberController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 		@ApiResponse(
-			responseCode = "RTU001",
-			description = "401 REFRESH_TOKEN_UNAUTHORIZED_EXCEPTION / RefreshToken 인증 요류 (기간 만료 + 일치 여부)",
+			responseCode = "TU001",
+			description = "401 TOKEN_UNAUTHORIZED_EXCEPTION / Token 인증 요류 (기간 만료 + 일치 여부)",
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),

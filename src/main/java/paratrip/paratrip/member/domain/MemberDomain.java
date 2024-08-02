@@ -22,11 +22,16 @@ import paratrip.paratrip.core.exception.UnAuthorizedException;
 @RequiredArgsConstructor
 public class MemberDomain {
 	private final RedisTemplate<String, String> redisTemplate;
+	private final RedisTemplate<String, String> blackListTemplate;
+
 	private final BCryptPasswordEncoder encoder;
+
 	@Value("${jwt.secret}")
 	private String jwtSecret;
+
 	@Value("${jwt.accessTokenExpiration}")
 	private long accessTokenExpiration;
+
 	@Value("${jwt.refreshTokenExpiration}")
 	private long refreshTokenExpiration;
 
@@ -88,10 +93,47 @@ public class MemberDomain {
 			String storedRefreshToken = redisTemplate.opsForValue().get(email);
 			if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
 				redisTemplate.delete(email);
-				throw new UnAuthorizedException(ErrorResult.REFRESH_TOKEN_UNAUTHORIZED_EXCEPTION);
+				throw new UnAuthorizedException(ErrorResult.TOKEN_UNAUTHORIZED_EXCEPTION);
 			}
 		} catch (JwtException e) {
-			throw new UnAuthorizedException(ErrorResult.REFRESH_TOKEN_UNAUTHORIZED_EXCEPTION);
+			throw new UnAuthorizedException(ErrorResult.TOKEN_UNAUTHORIZED_EXCEPTION);
+		}
+	}
+
+	public long getTokenRemainTime(String token) {
+		Jws<Claims> claimsJws = Jwts.parser()
+			.setSigningKey(jwtSecret)
+			.parseClaimsJws(token);
+
+		Claims claims = claimsJws.getBody();
+		Date expiration = claims.getExpiration();
+		long now = System.currentTimeMillis();
+
+		return expiration.getTime() - now;
+	}
+
+	public void saveBlackListToken(String token, String email, long remainTime) {
+		blackListTemplate.opsForValue()
+			.set(
+				token,
+				email,
+				remainTime,
+				TimeUnit.MILLISECONDS
+			);
+	}
+
+	public void validateToken(String token) {
+		try {
+			Jws<Claims> claimsJws = Jwts.parser()
+				.setSigningKey(jwtSecret)
+				.parseClaimsJws(token);
+
+			Date expiration = claimsJws.getBody().getExpiration();
+			if (expiration.before(new Date())) {
+				throw new UnAuthorizedException(ErrorResult.TOKEN_UNAUTHORIZED_EXCEPTION);
+			}
+		} catch (JwtException e) {
+			throw new UnAuthorizedException(ErrorResult.TOKEN_UNAUTHORIZED_EXCEPTION);
 		}
 	}
 }

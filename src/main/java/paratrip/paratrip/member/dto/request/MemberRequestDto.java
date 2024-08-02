@@ -40,7 +40,9 @@ public class MemberRequestDto {
 	}
 
 	public record LogoutMemberRequestDto(
-		Long memberSeq
+		Long memberSeq,
+		String accessToken,
+		String refreshToken
 	) {
 
 	}

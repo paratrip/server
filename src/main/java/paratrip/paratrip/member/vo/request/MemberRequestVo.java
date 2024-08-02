@@ -74,11 +74,15 @@ public class MemberRequestVo {
 	}
 
 	public record LogoutMemberRequest(
-		Long memberSeq
+		Long memberSeq,
+		String accessToken,
+		String refreshToken
 	) {
 		public LogoutMemberRequestDto toLogoutMemberRequestDto() {
 			return new LogoutMemberRequestDto(
-				this.memberSeq
+				this.memberSeq,
+				this.accessToken,
+				this.refreshToken
 			);
 		}
 	}
