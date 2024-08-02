@@ -87,8 +87,27 @@ public class MemberService {
 	public void logoutMember(LogoutMemberRequestDto logoutMemberRequestDto) {
 		/*
 		 1. Member 존재 확인
+		 2. Token 유효성 확인
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(logoutMemberRequestDto.memberSeq());
+		memberDomain.validateToken(logoutMemberRequestDto.accessToken());
+		memberDomain.validateToken(logoutMemberRequestDto.refreshToken());
+
+		// Token Remain Time 계산
+		long accessTokenRemainTime = memberDomain.getTokenRemainTime(logoutMemberRequestDto.accessToken());
+		long refreshTokenRemainTime = memberDomain.getTokenRemainTime(logoutMemberRequestDto.refreshToken());
+
+		// Black List Redis 저장
+		memberDomain.saveBlackListToken(
+			logoutMemberRequestDto.accessToken(),
+			memberEntity.getEmail(),
+			accessTokenRemainTime
+		);
+		memberDomain.saveBlackListToken(
+			logoutMemberRequestDto.refreshToken(),
+			memberEntity.getEmail(),
+			refreshTokenRemainTime
+		);
 
 		// RefreshToken 삭제
 		memberDomain.deleteRefreshToken(memberEntity.getEmail());
