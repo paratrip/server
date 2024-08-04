@@ -14,4 +14,16 @@ public class BoardScrapRequestVo {
 			);
 		}
 	}
+
+	public record DeleteBoardScrapRequest(
+		Long memberSeq,
+		Long boardScrapSeq
+	) {
+		public DeleteBoardScrapRequestDto toDeleteBoardScrapRequestDto() {
+			return new DeleteBoardScrapRequestDto(
+				this.memberSeq,
+				this.boardScrapSeq
+			);
+		}
+	}
 }

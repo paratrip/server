@@ -7,4 +7,11 @@ public class BoardScarpRequestDto {
 	) {
 
 	}
+
+	public record DeleteBoardScrapRequestDto(
+		Long memberSeq,
+		Long boardScrapSeq
+	) {
+
+	}
 }
