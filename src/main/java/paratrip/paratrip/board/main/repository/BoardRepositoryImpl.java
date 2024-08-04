@@ -25,8 +25,8 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 	@Override
-	public BoardEntity findByMemberEntity(MemberEntity memberEntity) {
-		return boardJpaRepository.findByMemberEntity(memberEntity)
+	public BoardEntity findByCreatorMemberEntityAndBoardSeq(MemberEntity memberEntity, Long boardSeq) {
+		return boardJpaRepository.findByCreatorMemberEntityAndBoardSeq(memberEntity, boardSeq)
 			.orElseThrow(() -> new BadRequestException(ErrorResult.BOARD_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION));
 	}
 }
