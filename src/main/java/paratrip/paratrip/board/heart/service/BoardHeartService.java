@@ -42,4 +42,21 @@ public class BoardHeartService {
 
 		return new AddBoardHeartResponseDto(boardHeartEntity.getBoardHeartSeq());
 	}
+
+	@Transactional
+	public void deleteBoardHeart(DeleteBoardHeartRequestDto deleteBoardHeartRequestDto) {
+		/*
+		 1. Member 유효성 검사
+		 2. Board Heart 유효성 검사
+		 3. 작성자 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(deleteBoardHeartRequestDto.memberSeq());
+		boardHeartRepository.findByBoardHeartSeq(deleteBoardHeartRequestDto.boardHeartSeq());
+		BoardHeartEntity boardHeartEntity = boardHeartRepository.findByBoardHeartSeqAndMemberEntity(
+			deleteBoardHeartRequestDto.boardHeartSeq(), memberEntity
+		);
+
+		// Board Heart 삭제
+		boardHeartRepository.deleteBoardHeartEntity(boardHeartEntity);
+	}
 }
