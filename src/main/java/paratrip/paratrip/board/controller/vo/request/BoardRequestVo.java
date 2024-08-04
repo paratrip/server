@@ -26,4 +26,24 @@ public class BoardRequestVo {
 			);
 		}
 	}
+
+	public record ModifyBoardRequest(
+		Long memberSeq,
+		Long boardSeq,
+		String title,
+		String content,
+		String location,
+		List<MultipartFile> images
+	) {
+		public ModifyBoardRequestDto toModifyBoardRequestDto() {
+			return new ModifyBoardRequestDto(
+				this.memberSeq,
+				this.boardSeq,
+				this.title,
+				this.content,
+				this.location,
+				this.images
+			);
+		}
+	}
 }

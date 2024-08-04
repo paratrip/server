@@ -14,4 +14,15 @@ public class BoardRequestDto {
 	) {
 
 	}
+
+	public record ModifyBoardRequestDto(
+		Long memberSeq,
+		Long boardSeq,
+		String title,
+		String content,
+		String location,
+		List<MultipartFile> images
+	) {
+
+	}
 }
