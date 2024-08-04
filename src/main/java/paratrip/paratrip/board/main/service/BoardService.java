@@ -70,7 +70,8 @@ public class BoardService {
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyBoardRequestDto.memberSeq());
 		boardRepository.findByBoardSeq(modifyBoardRequestDto.boardSeq());
-		BoardEntity boardEntity = boardRepository.findByMemberEntity(memberEntity);
+		BoardEntity boardEntity
+			= boardRepository.findByCreatorMemberEntityAndBoardSeq(memberEntity, modifyBoardRequestDto.boardSeq());
 
 		// Board Image Entity 전체 삭제 (Update 불가능)
 		List<BoardImageEntity> boardImageEntities = boardImageRepository.findAllByBoardEntity(boardEntity);
