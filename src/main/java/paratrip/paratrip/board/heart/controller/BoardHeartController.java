@@ -27,7 +27,7 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 @RestController
 @RequestMapping("/board-heart")
 @RequiredArgsConstructor
-@Tag(name = "회원 API", description = "담당자(박종훈)")
+@Tag(name = "게시물 좋아요 API", description = "담당자(박종훈)")
 public class BoardHeartController {
 	private final AddBoardHeartValidator addBoardHeartValidator;
 
