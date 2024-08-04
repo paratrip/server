@@ -4,6 +4,7 @@ import static paratrip.paratrip.board.service.dto.request.BoardRequestDto.*;
 import static paratrip.paratrip.board.service.dto.response.BoardResponseDto.*;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.domain.BoardDomain;
 import paratrip.paratrip.board.entity.BoardEntity;
+import paratrip.paratrip.board.entity.BoardImageEntity;
 import paratrip.paratrip.board.mapper.BoardImageMapper;
 import paratrip.paratrip.board.mapper.BoardMapper;
 import paratrip.paratrip.board.repository.BoardImageRepository;
@@ -57,5 +59,37 @@ public class BoardService {
 		}
 
 		return new AddBoardResponseDto(boardEntity.getBoardSeq());
+	}
+
+	@Transactional
+	public void modifyBoard(ModifyBoardRequestDto modifyBoardRequestDto) throws IOException {
+		/*
+		 1. MemberSeq 유효성 검사
+		 2. BoardSeq 유효성 검사
+		 3. 작성자 확인
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyBoardRequestDto.memberSeq());
+		boardRepository.findByBoardSeq(modifyBoardRequestDto.boardSeq());
+		BoardEntity boardEntity = boardRepository.findByMemberEntity(memberEntity);
+
+		// Board Image Entity 전체 삭제 (Update 불가능)
+		List<BoardImageEntity> boardImageEntities = boardImageRepository.findAllByBoardEntity(boardEntity);
+		boardImageRepository.deleteAll(boardImageEntities);
+
+		// Update BoardEntity
+		BoardEntity updateBoardEntity = boardEntity.updateBoardEntity(
+			modifyBoardRequestDto.title(),
+			modifyBoardRequestDto.content(),
+			modifyBoardRequestDto.location()
+		);
+		boardRepository.saveBoardEntity(updateBoardEntity);
+
+		// Board Image Entity 저장
+		if (boardDomain.checkImages(modifyBoardRequestDto.images())) {
+			for (MultipartFile multipartFile : modifyBoardRequestDto.images()) {
+				String imageURL = s3Domain.uploadMultipartFile(multipartFile);
+				boardImageRepository.saveBoardImageEntity(boardImageMapper.toBoardImageEntity(boardEntity, imageURL));
+			}
+		}
 	}
 }

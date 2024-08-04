@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,7 @@ public class BoardEntity extends BaseEntity {
 	@Column(name = "title", nullable = false)
 	private String title;
 
+	@Lob
 	@Column(name = "content", nullable = false)
 	private String content;
 
@@ -45,4 +47,11 @@ public class BoardEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_seq")
 	private MemberEntity memberEntity;
+
+	public BoardEntity updateBoardEntity(String title, String content, String location) {
+		this.title = title;
+		this.content = content;
+		this.location = location;
+		return this;
+	}
 }
