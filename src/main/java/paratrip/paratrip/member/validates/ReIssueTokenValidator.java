@@ -1,6 +1,6 @@
 package paratrip.paratrip.member.validates;
 
-import static paratrip.paratrip.member.vo.request.MemberRequestVo.*;
+import static paratrip.paratrip.member.controller.vo.request.MemberRequestVo.*;
 
 import java.util.regex.Pattern;
 

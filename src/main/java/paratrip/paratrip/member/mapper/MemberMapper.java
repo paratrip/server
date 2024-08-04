@@ -1,6 +1,6 @@
 package paratrip.paratrip.member.mapper;
 
-import static paratrip.paratrip.member.dto.request.MemberRequestDto.*;
+import static paratrip.paratrip.member.service.dto.request.MemberRequestDto.*;
 
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

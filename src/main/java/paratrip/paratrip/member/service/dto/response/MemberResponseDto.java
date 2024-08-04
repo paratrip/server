@@ -1,4 +1,4 @@
-package paratrip.paratrip.member.dto.response;
+package paratrip.paratrip.member.service.dto.response;
 
 public class MemberResponseDto {
 	public record LoginMemberResponseDto(

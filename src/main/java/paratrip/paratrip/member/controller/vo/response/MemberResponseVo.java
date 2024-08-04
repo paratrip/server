@@ -1,4 +1,4 @@
-package paratrip.paratrip.member.vo.response;
+package paratrip.paratrip.member.controller.vo.response;
 
 public class MemberResponseVo {
 	public record LoginMemberResponse(
