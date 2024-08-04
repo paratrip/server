@@ -6,5 +6,5 @@ import paratrip.paratrip.member.entity.MemberEntity;
 public interface BoardRepository {
 	BoardEntity saveBoardEntity(BoardEntity boardEntity);
 	BoardEntity findByBoardSeq(Long boardSeq);
-	BoardEntity findByMemberEntity(MemberEntity memberEntity);
+	BoardEntity findByCreatorMemberEntityAndBoardSeq(MemberEntity memberEntity, Long boardSeq);
 }

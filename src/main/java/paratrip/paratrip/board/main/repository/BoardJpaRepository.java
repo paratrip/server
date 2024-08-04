@@ -12,5 +12,5 @@ import paratrip.paratrip.member.entity.MemberEntity;
 public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 	Optional<BoardEntity> findByBoardSeq(Long boardSeq);
 
-	Optional<BoardEntity> findByMemberEntity(MemberEntity memberEntity);
+	Optional<BoardEntity> findByCreatorMemberEntityAndBoardSeq(MemberEntity memberEntity, Long boardSeq);
 }
