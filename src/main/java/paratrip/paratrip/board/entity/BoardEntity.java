@@ -31,7 +31,7 @@ public class BoardEntity extends BaseEntity {
 	@Id
 	@Column(name = "board_seq")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long memberSeq;
+	private Long boardSeq;
 
 	@Column(name = "title", nullable = false)
 	private String title;
