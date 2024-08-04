@@ -33,7 +33,8 @@ public class BoardHeartService {
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(addBoardHeartRequestDto.memberSeq());
 		boardRepository.findByBoardSeq(addBoardHeartRequestDto.boardSeq());
-		BoardEntity boardEntity = boardRepository.findByMemberEntity(memberEntity);
+		BoardEntity boardEntity
+			= boardRepository.findByCreatorMemberEntityAndBoardSeq(memberEntity, addBoardHeartRequestDto.boardSeq());
 
 		// BoardHeart 저장
 		BoardHeartEntity boardHeartEntity
