@@ -70,15 +70,16 @@ public class SecurityConfiguration {
 			"/h2-console/**",
 
 			// 개방 URL
-			"/sms-certification/**",
-			"/member/verify-userId",
-			"/member/verify-phone",
-			"/member/verify-password",
-			"/member/verify-email",
-			"/member/reset-password",
-			"/member/join",
-			"/member/login",
-			"/member/find-email"
+			"/**"
+			// "/sms-certification/**",
+			// "/member/verify-userId",
+			// "/member/verify-phone",
+			// "/member/verify-password",
+			// "/member/verify-email",
+			// "/member/reset-password",
+			// "/member/join",
+			// "/member/login",
+			// "/member/find-email"
 		);
 		return new JwtTokenFilter(jwtSecret, permitAllEndpoints, blackListTemplate);
 	}
