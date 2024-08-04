@@ -14,4 +14,16 @@ public class BoardHeartRequestVo {
 			);
 		}
 	}
+
+	public record DeleteBoardHeartRequest(
+		Long memberSeq,
+		Long boardHeartSeq
+	) {
+		public DeleteBoardHeartRequestDto toDeleteBoardHeartRequestDto() {
+			return new DeleteBoardHeartRequestDto(
+				this.memberSeq,
+				this.boardHeartSeq
+			);
+		}
+	}
 }

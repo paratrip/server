@@ -7,4 +7,11 @@ public class BoardHeartRequestDto {
 	) {
 
 	}
+
+	public record DeleteBoardHeartRequestDto(
+		Long memberSeq,
+		Long boardHeartSeq
+	) {
+
+	}
 }
