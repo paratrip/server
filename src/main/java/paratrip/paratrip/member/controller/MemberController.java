@@ -1,8 +1,8 @@
 package paratrip.paratrip.member.controller;
 
-import static paratrip.paratrip.member.dto.response.MemberResponseDto.*;
-import static paratrip.paratrip.member.vo.request.MemberRequestVo.*;
-import static paratrip.paratrip.member.vo.response.MemberResponseVo.*;
+import static paratrip.paratrip.member.service.dto.response.MemberResponseDto.*;
+import static paratrip.paratrip.member.controller.vo.request.MemberRequestVo.*;
+import static paratrip.paratrip.member.controller.vo.response.MemberResponseVo.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

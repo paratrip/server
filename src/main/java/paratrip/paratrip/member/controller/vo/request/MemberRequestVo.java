@@ -1,6 +1,6 @@
-package paratrip.paratrip.member.vo.request;
+package paratrip.paratrip.member.controller.vo.request;
 
-import static paratrip.paratrip.member.dto.request.MemberRequestDto.*;
+import static paratrip.paratrip.member.service.dto.request.MemberRequestDto.*;
 
 import paratrip.paratrip.member.util.Gender;
 

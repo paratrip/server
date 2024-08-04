@@ -1,4 +1,4 @@
-package paratrip.paratrip.member.dto.request;
+package paratrip.paratrip.member.service.dto.request;
 
 import paratrip.paratrip.member.util.Gender;
 

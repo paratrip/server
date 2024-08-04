@@ -1,0 +1,17 @@
+package paratrip.paratrip.board.service.dto.request;
+
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public class BoardRequestDto {
+	public record AddBoardRequestDto(
+		Long memberSeq,
+		String title,
+		String content,
+		String location,
+		List<MultipartFile> images
+	) {
+
+	}
+}

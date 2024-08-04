@@ -1,7 +1,7 @@
 package paratrip.paratrip.member.service;
 
-import static paratrip.paratrip.member.dto.request.MemberRequestDto.*;
-import static paratrip.paratrip.member.dto.response.MemberResponseDto.*;
+import static paratrip.paratrip.member.service.dto.request.MemberRequestDto.*;
+import static paratrip.paratrip.member.service.dto.response.MemberResponseDto.*;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
