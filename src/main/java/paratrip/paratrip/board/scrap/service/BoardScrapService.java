@@ -43,4 +43,22 @@ public class BoardScrapService {
 
 		return new AddBoardScrapResponseDto(boardScrapEntity.getBoardScrapSeq());
 	}
+
+	@Transactional
+	public void deleteBoardScrap(DeleteBoardScrapRequestDto deleteBoardScrapRequestDto) {
+		/*
+		 1. Member 유효성 검사
+		 2. Board Scrap 유효성 검사
+		 3. 작성자 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(deleteBoardScrapRequestDto.memberSeq());
+		boardScrapRepository.findByBoardScrapSeq(deleteBoardScrapRequestDto.boardScrapSeq());
+		BoardScrapEntity boardScrapEntity = boardScrapRepository.findByMemberEntityAndBoardScrapSeq(
+			memberEntity,
+			deleteBoardScrapRequestDto.boardScrapSeq()
+		);
+
+		// 삭제
+		boardScrapRepository.deleteBoardScrapEntity(boardScrapEntity);
+	}
 }
