@@ -46,6 +46,13 @@ public enum ErrorResult {
 		"BNCBMB006"
 	),
 
+	BOARD_HEART_SEQ_BAD_REQUEST_EXCEPTION(
+		HttpStatus.BAD_REQUEST.value(),
+		"BOARD_HEART_SEQ_BAD_REQUEST_EXCEPTION",
+		"BHSB007"
+	),
+
+
 	// NOT FOUND
 	EMAIL_NOT_FOUND_EXCEPTION(
 		HttpStatus.NOT_FOUND.value(),
@@ -57,6 +64,12 @@ public enum ErrorResult {
 		HttpStatus.NOT_FOUND.value(),
 		"PHONE_NUMBER_NOT_FOUND_EXCEPTION",
 		"PNNF002"
+	),
+
+	BOARD_HEART_NOT_FOUND_EXCEPTION(
+		HttpStatus.NOT_FOUND.value(),
+		"BOARD_HEART_NOT_FOUND_EXCEPTION",
+		"BHNF003"
 	),
 
 	// CONFLICT
