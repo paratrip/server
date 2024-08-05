@@ -44,6 +44,9 @@ public class BoardEntity extends BaseEntity {
 	@Column(name = "location", nullable = true)
 	private String location;
 
+	@Column(name = "hearts", nullable = false)
+	private Long hearts;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_seq")
 	private MemberEntity creatorMemberEntity;
@@ -52,6 +55,20 @@ public class BoardEntity extends BaseEntity {
 		this.title = title;
 		this.content = content;
 		this.location = location;
+		return this;
+	}
+
+	public BoardEntity increaseHearts() {
+		this.hearts++;
+		return this;
+	}
+
+	public BoardEntity decreaseHearts() {
+		if (this.hearts > 0L) {
+			this.hearts--;
+		} else {
+			this.hearts = 0L;
+		}
 		return this;
 	}
 }
