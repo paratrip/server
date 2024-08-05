@@ -47,6 +47,7 @@ public class BoardService {
 			addBoardRequestDto.title(),
 			addBoardRequestDto.content(),
 			addBoardRequestDto.location(),
+			0L,
 			memberEntity
 		));
 
