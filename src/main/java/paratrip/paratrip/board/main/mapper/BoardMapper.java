@@ -14,6 +14,7 @@ public interface BoardMapper {
 	@Mapping(target = "title", source = "title")
 	@Mapping(target = "content", source = "content")
 	@Mapping(target = "location", source = "location")
+	@Mapping(target = "hearts", source = "hearts")
 	@Mapping(target = "creatorMemberEntity", source = "creatorMemberEntity")
-	BoardEntity toBoardEntity(String title, String content, String location, MemberEntity creatorMemberEntity);
+	BoardEntity toBoardEntity(String title, String content, String location, Long hearts, MemberEntity creatorMemberEntity);
 }

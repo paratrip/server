@@ -1,6 +1,6 @@
-package paratrip.paratrip.board.heart.validates;
+package paratrip.paratrip.board.hearts.validates;
 
-import static paratrip.paratrip.board.heart.controller.vo.request.BoardHeartRequestVo.*;
+import static paratrip.paratrip.board.hearts.controller.vo.BoardHeartsRequestVo.*;
 
 import org.springframework.stereotype.Component;
 
@@ -8,10 +8,10 @@ import paratrip.paratrip.core.exception.BadRequestException;
 import paratrip.paratrip.core.exception.ErrorResult;
 
 @Component
-public class DeleteBoardHeartValidator {
-	public void validate(DeleteBoardHeartRequest request) {
+public class IncreaseBoardHeartsValidator {
+	public void validate(IncreaseBoardHeartsRequest request) {
 		validateMemberSeq(request.memberSeq());
-		validateBoardHeartSeq(request.boardHeartSeq());
+		validateBoardSeq(request.boardSeq());
 	}
 
 	private void validateMemberSeq(Long memberSeq) {
@@ -20,8 +20,8 @@ public class DeleteBoardHeartValidator {
 		}
 	}
 
-	private void validateBoardHeartSeq(Long boardHeartSeq) {
-		if (boardHeartSeq == null) {
+	private void validateBoardSeq(Long boardSeq) {
+		if (boardSeq == null) {
 			throw new BadRequestException(ErrorResult.DTO_BAD_REQUEST_EXCEPTION);
 		}
 	}

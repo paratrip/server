@@ -1,12 +1,9 @@
-package paratrip.paratrip.board.heart.controller;
+package paratrip.paratrip.board.hearts.controller;
 
-import static paratrip.paratrip.board.heart.controller.vo.request.BoardHeartRequestVo.*;
-import static paratrip.paratrip.board.heart.controller.vo.response.BoardHeartResponseVo.*;
-import static paratrip.paratrip.board.heart.service.dto.response.BoardHeartResponseDto.*;
+import static paratrip.paratrip.board.hearts.controller.vo.BoardHeartsRequestVo.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,24 +17,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import paratrip.paratrip.board.heart.service.BoardHeartService;
-import paratrip.paratrip.board.heart.validates.AddBoardHeartValidator;
-import paratrip.paratrip.board.heart.validates.DeleteBoardHeartValidator;
+import paratrip.paratrip.board.hearts.service.BoardHeartService;
+import paratrip.paratrip.board.hearts.validates.DecreaseBoardHeartsValidator;
+import paratrip.paratrip.board.hearts.validates.IncreaseBoardHeartsValidator;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 
 @RestController
-@RequestMapping("/board-heart")
+@RequestMapping("/board-hearts")
 @RequiredArgsConstructor
-@Tag(name = "게시물 좋아요 API", description = "담당자(박종훈)")
-public class BoardHeartController {
-	private final AddBoardHeartValidator addBoardHeartValidator;
-	private final DeleteBoardHeartValidator deleteBoardHeartValidator;
+@Tag(name = "커뮤니티 좋아요", description = "담당자(박종훈)")
+public class BoardHeartsController {
+	private final IncreaseBoardHeartsValidator addBoardHeartsValidator;
+	private final DecreaseBoardHeartsValidator decreaseBoardHeartsValidator;
 
 	private final BoardHeartService boardHeartService;
 
-	@PostMapping(name = "게시물 좋아요 생성")
-	@Operation(summary = "게시물 좋아요 생성 API", description = "게시물 좋아요 생성")
+	@PostMapping(value = "increase", name = "커뮤니티 게시물 좋아요 증가")
+	@Operation(summary = "커뮤니티 게시물 좋아요 증가 API", description = "커뮤니티 게시물 좋아요 증가")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -67,32 +64,22 @@ public class BoardHeartController {
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "BNCBMB006",
-			description = "400 BOARD_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION / Member가 해당 Board 작성자가 아닐 때 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse<AddBoardHeartResponse>> saveBoardHeart(
+	public ResponseEntity<BaseResponse> increaseBoardHearts(
 		@Valid
-		@RequestBody AddBoardHeartRequest request
+		@RequestBody IncreaseBoardHeartsRequest request
 	) {
 		// 유효성 검사
-		addBoardHeartValidator.validate(request);
+		addBoardHeartsValidator.validate(request);
 
 		// VO -> DTO
-		AddBoardHeartResponseDto addBoardHeartResponseDto
-			= boardHeartService.saveBoardHeart(request.toAddBoardHeartRequestDto());
+		boardHeartService.increaseBoardHearts(request.toIncreaseBoardHeartsRequestDto());
 
-		// DTO -> VO
-		AddBoardHeartResponse response = addBoardHeartResponseDto.toAddBoardHeartResponse();
-
-		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 
-	@DeleteMapping(name = "게시물 좋아요 삭제")
-	@Operation(summary = "게시물 좋아요 삭제 API", description = "게시물 좋아요 삭제")
+	@PostMapping(value = "decrease", name = "커뮤니티 게시물 좋아요 감소")
+	@Operation(summary = "커뮤니티 게시물 좋아요 감소 API", description = "커뮤니티 게시물 좋아요 감소")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -117,27 +104,21 @@ public class BoardHeartController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 		@ApiResponse(
-			responseCode = "BHSB007",
-			description = "400 BOARD_HEART_SEQ_BAD_REQUEST_EXCEPTION / Board Heart Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "BHNF003",
-			description = "404 BOARD_HEART_NOT_FOUND_EXCEPTION / Member 가 설정한 좋아요 게시물이 없을 시 요류",
+			responseCode = "BSB005",
+			description = "400 BOARD_SEQ_BAD_REQUEST_EXCEPTION / Board Seq 요류",
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse> deleteBoardHeart(
+	public ResponseEntity<BaseResponse> decreaseBoardHearts(
 		@Valid
-		@RequestBody DeleteBoardHeartRequest request
+		@RequestBody DecreaseBoardHeartsRequest request
 	) {
 		// 유효성 검사
-		deleteBoardHeartValidator.validate(request);
+		decreaseBoardHeartsValidator.validate(request);
 
 		// VO -> DTO
-		boardHeartService.deleteBoardHeart(request.toDeleteBoardHeartRequestDto());
+		boardHeartService.decreaseBoardHearts(request.toDecreaseBoardHeartsRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
