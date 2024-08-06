@@ -6,9 +6,9 @@ build/
 !**/src/test/**/build/
 **/src/main/resources/*.yml
 **/src/main/resources/firebase/*.json
-db/mysql/data/*
-db/mysql/init/*
 
+data/*
+db/*
 
 ### STS ###
 .apt_generated
