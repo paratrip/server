@@ -12,6 +12,7 @@ services:
       - xpack.security.enabled=false
     ports:
       - 9200:9200
+      - 9300:9300
     networks:
       - es-bridge
 
