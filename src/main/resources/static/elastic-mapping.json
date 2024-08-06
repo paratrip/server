@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "boardSeq": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text"
+    }
+  }
+}
