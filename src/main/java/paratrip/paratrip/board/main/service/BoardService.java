@@ -6,6 +6,8 @@ import static paratrip.paratrip.board.main.service.dto.response.BoardResponseDto
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,8 @@ import paratrip.paratrip.board.main.mapper.BoardImageMapper;
 import paratrip.paratrip.board.main.mapper.BoardMapper;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
+import paratrip.paratrip.board.search.mapper.BoardDocumentsMapper;
+import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.repository.MemberRepository;
 import paratrip.paratrip.s3.domain.S3Domain;
@@ -28,12 +32,14 @@ public class BoardService {
 	private final MemberRepository memberRepository;
 	private final BoardRepository boardRepository;
 	private final BoardImageRepository boardImageRepository;
+	private final BoardDocumentsRepository boardDocumentsRepository;
 
 	private final S3Domain s3Domain;
 	private final BoardDomain boardDomain;
 
 	private final BoardMapper boardMapper;
 	private final BoardImageMapper boardImageMapper;
+	private final BoardDocumentsMapper boardDocumentsMapper;
 
 	@Transactional
 	public AddBoardResponseDto saveBoard(AddBoardRequestDto addBoardRequestDto) throws IOException {
@@ -42,13 +48,20 @@ public class BoardService {
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(addBoardRequestDto.memberSeq());
 
-		// Board Entity 저장
-		BoardEntity boardEntity = boardRepository.saveBoardEntity(boardMapper.toBoardEntity(
+		BoardEntity boardEntity = boardMapper.toBoardEntity(
 			addBoardRequestDto.title(),
 			addBoardRequestDto.content(),
 			addBoardRequestDto.location(),
 			0L,
 			memberEntity
+		);
+
+		boardEntity = boardRepository.saveBoardEntity(boardEntity);
+
+		// BoardDocumentsEntity 저장
+		boardDocumentsRepository.saveBoardDocuments(boardDocumentsMapper.toBoardDocuments(
+			boardEntity.getBoardSeq(),
+			boardEntity.getTitle()
 		));
 
 		// Board Image Entity 저장
