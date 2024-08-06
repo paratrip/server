@@ -62,6 +62,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: 1234
       SPRING_ELASTICSEARCH_URIS: http://es:9200
       REDIS_HOST: redis
+      SPRING_PROFILES_ACTIVE: production
     depends_on:
       - es
       - kibana
