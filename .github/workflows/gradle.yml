@@ -86,14 +86,14 @@ jobs:
           sudo chown $USER /var/run/docker.sock
           newgrp docker
 
-      - name: Pull Docker images
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+      - name: Set Docker Compose
         run: |
           docker pull ${{secrets.DOCKER_USERNAME}}/paratrip:latest
-
-      - name: Stop and Remove Containers
-        run: |
           sudo docker-compose -f docker-compose.yml down
-
-      - name: Run Docker Compose
-        run: |
           sudo docker-compose -f docker-compose.yml up -d
