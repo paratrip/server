@@ -92,6 +92,13 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
+      - name: Clean up Docker to free space
+        run: |
+          sudo docker container prune -f
+          sudo docker image prune -a -f
+          sudo docker volume prune -f
+          sudo docker network prune -f
+
       - name: Set Docker Compose
         run: |
           docker pull ${{secrets.DOCKER_USERNAME}}/paratrip:latest
