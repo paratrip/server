@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
   es:
     container_name: es
@@ -11,7 +12,6 @@ services:
       - xpack.security.enabled=false
     ports:
       - 9200:9200
-      - 9300:9300
     networks:
       - es-bridge
 
@@ -29,17 +29,17 @@ services:
       - es-bridge
 
   mysql:
+    image: mysql:latest
     container_name: mysql
-    image: mysql:8.0
     restart: always
-    ports:
-      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: 1234
-      TZ: Asia/Seoul
+      MYSQL_DATABASE: paratrip
+    ports:
+      - "3306:3306"
     volumes:
-      - ./db/mysql/data:/var/lib/mysql
-      - ./db/mysql/init:/docker-entrypoint-initdb.d
+      - ./data/:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     networks:
       - es-bridge
 
