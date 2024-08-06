@@ -47,7 +47,7 @@ dependencies {
     // JWT
     implementation group: 'io.jsonwebtoken',name:'jjwt',version:'0.9.1'
 
-    // modelmapper 라이브러리
+    // Modelmapper
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 
     // AWS
@@ -76,6 +76,9 @@ dependencies {
 
     // coolSMS
     implementation 'net.nurigo:sdk:4.3.0'
+
+    // elastic search
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 }
 
 tasks.named('test') {
