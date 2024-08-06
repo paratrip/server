@@ -14,7 +14,7 @@ services:
       - 9200:9200
       - 9300:9300
     networks:
-      - es-bridge
+      - docker-bridge
 
   kibana:
     container_name: kibana
@@ -27,7 +27,7 @@ services:
     depends_on:
       - es
     networks:
-      - es-bridge
+      - docker-bridge
 
   mysql:
     container_name: mysql
@@ -40,7 +40,7 @@ services:
     ports:
       - 3306:3306
     networks:
-      - es-bridge
+      - docker-bridge
 
   redis:
     container_name: redis
@@ -49,8 +49,24 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - es-bridge
+      - docker-bridge
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - es
+      - kibana
+      - mysql
+      - redis
+    ports:
+      - 8080:8080
+    container_name: paratrip
+    networks:
+      - docker-bridge
 
 networks:
-  es-bridge:
+  docker-bridge:
     driver: bridge
