@@ -9,6 +9,7 @@ build/
 
 data/*
 db/*
+.env
 
 ### STS ###
 .apt_generated

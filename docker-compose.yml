@@ -56,13 +56,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/paratrip?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 1234
-      SPRING_ELASTICSEARCH_URIS: http://es:9200
-      REDIS_HOST: redis
-      SPRING_PROFILES_ACTIVE: production
+    env_file:
+      - .env
     depends_on:
       - es
       - kibana
