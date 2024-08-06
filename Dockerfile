@@ -1,13 +1,12 @@
+# 빌드 단계
+FROM bellsoft/liberica-openjdk-alpine:17 as build
+WORKDIR /app
+COPY . .
+RUN ./gradlew clean build
+
+# 실행 단계
 FROM bellsoft/liberica-openjdk-alpine:17
-
-CMD ["./gradlew", "clean", "build"]
-
-VOLUME /tmp
-
-ARG JAR_FILE=build/libs/*.jar
-
-COPY ${JAR_FILE} app.jar
-
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
