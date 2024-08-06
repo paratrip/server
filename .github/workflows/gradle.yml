@@ -81,7 +81,7 @@ jobs:
           sudo chown $USER /var/run/docker.sock
           newgrp docker
 
-      - name: Install Docker Compose if not exists
+      - name: Install Docker Compose
         run: |
           if ! command -v docker-compose &> /dev/null
           then
