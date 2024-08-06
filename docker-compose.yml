@@ -1,5 +1,4 @@
 version: '3.7'
-
 services:
   es:
     container_name: es
@@ -29,17 +28,17 @@ services:
       - es-bridge
 
   mysql:
-    image: mysql:latest
     container_name: mysql
+    image: mysql:8.0
     restart: always
+    ports:
+      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: paratrip
-    ports:
-      - "3306:3306"
+      TZ: Asia/Seoul
     volumes:
-      - ./data/:/var/lib/mysql
-      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./db/mysql/data:/var/lib/mysql
+      - ./db/mysql/init:/docker-entrypoint-initdb.d
     networks:
       - es-bridge
 
