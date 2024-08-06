@@ -104,7 +104,7 @@ jobs:
 
       - name: Set Docker Compose
         run: |
-          docker pull ${{secrets.DOCKER_USERNAME}}/paratrip:latest
+          sudo docker pull ${{secrets.DOCKER_USERNAME}}/paratrip:latest
           sudo docker-compose -f docker-compose.yml down
           sudo docker-compose -f docker-compose.yml up -d
           sudo docker run -d --name paratrip --rm -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/paratrip
