@@ -2,6 +2,7 @@
 FROM bellsoft/liberica-openjdk-alpine:17 as build
 WORKDIR /app
 COPY . .
+RUN chmod +x gradlew
 RUN ./gradlew clean build
 
 # 실행 단계
