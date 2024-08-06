@@ -102,6 +102,11 @@ jobs:
           sudo apt-get clean
           sudo apt-get autoremove
 
+      # 소유권 변경을 추가하여 권한 문제 해결
+      - name: Fix permissions
+        run: |
+          sudo chown -R $USER:$USER /home/ubuntu/actions-runner/_work/server/server/db
+
       - name: Set Docker Compose
         run: |
           sudo docker pull ${{secrets.DOCKER_USERNAME}}/paratrip:latest
