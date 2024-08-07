@@ -10,6 +10,7 @@ build/
 data/*
 db/*
 .env
+docker-compose-local.yml
 
 ### STS ###
 .apt_generated
