@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # 파일 복사
-COPY build/libs/paratrip-0.0.1-SNAPSHOT.jar paratrip.jar
+COPY build/libs/paratrip-0.0.1-SNAPSHOT.jar app.jar
 
 # 커맨드 실행
-CMD ["java", "-jar", "ProjectName.jar"]
+CMD ["java", "-jar", "app.jar"]
