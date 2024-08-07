@@ -51,6 +51,25 @@ services:
     networks:
       - docker-bridge
 
+  app:
+    image: paratrip:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - es
+      - kibana
+      - mysql
+      - redis
+    ports:
+      - 8080:8080
+    container_name: paratrip
+    networks:
+      - docker-bridge
+
 networks:
   docker-bridge:
     driver: bridge
