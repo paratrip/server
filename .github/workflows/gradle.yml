@@ -25,6 +25,11 @@ jobs:
           echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
           echo "${{ secrets.APPLICATION_PRODUCTION_YML }}" | base64 --decode > src/main/resources/application-production.yml
 
+      # .env 파일 생성
+      - name: Set .env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" | base64 --decode > .env
+
       # Gradle Build
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
