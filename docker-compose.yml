@@ -51,18 +51,18 @@ services:
     networks:
       - docker-bridge
 
-  app:
-    container_name: app
-    image: euics/paratrip:latest
-    depends_on:
-      - es
-      - kibana
-      - mysql
-      - redis
-    ports:
-      - 8080:8080
-    networks:
-      - docker-bridge
+#  app:
+#    container_name: app
+#    image: euics/paratrip:latest
+#    depends_on:
+#      - es
+#      - kibana
+#      - mysql
+#      - redis
+#    ports:
+#      - 8080:8080
+#    networks:
+#      - docker-bridge
 
 networks:
   docker-bridge:

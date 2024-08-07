@@ -107,8 +107,11 @@ jobs:
           sudo docker-compose -f docker-compose.yml down
           sudo docker-compose -f docker-compose.yml up -d
 
-#      - name: Run Docker
-#        run: |
-#          sudo docker ps -q --filter "name=paratrip" | grep -q . && sudo docker stop "paratrip" && sudo docker rmi -f "${{secrets.DOCKER_USERNAME}}/paratrip"
-#          sudo docker pull ${{secrets.DOCKER_USERNAME}}/paratrip
-#          sudo docker run -d --name paratrip --rm -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/paratrip
+      - name: Wait for 2 minutes
+        run: sleep 120
+
+      - name: Run Docker
+        run: |
+          sudo docker ps -q --filter "name=paratrip" | grep -q . && sudo docker stop "paratrip" && sudo docker rmi -f "${{secrets.DOCKER_USERNAME}}/paratrip"
+          sudo docker pull ${{secrets.DOCKER_USERNAME}}/paratrip
+          sudo docker run -d --name paratrip --rm -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/paratrip
