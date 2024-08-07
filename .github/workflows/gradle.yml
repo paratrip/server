@@ -109,5 +109,6 @@ jobs:
 
       - name: Set Docker Compose
         run: |
+          cp .env /home/ubuntu/actions-runner/_work/server/server/.env
           sudo docker-compose -f docker-compose.yml down
           sudo docker-compose -f docker-compose.yml up -d
