@@ -33,8 +33,5 @@ COPY src/main/resources/application-production.yml /app/application-production.y
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
-# Set environment variable to activate production profile
-ENV SPRING_PROFILES_ACTIVE=production
-
 # Run the jar file
 ENTRYPOINT ["java", "-jar", "app.jar"]
