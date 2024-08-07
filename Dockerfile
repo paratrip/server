@@ -1,11 +1,29 @@
-# 베이스 이미지 설정
-FROM openjdk:17-jdk-slim
+# Use an official Gradle image to create the build artifact
+FROM gradle:7.5.1-jdk17 as builder
 
-# 작업 디렉토리를 설정
+# Set the working directory in the container
 WORKDIR /app
 
-# 파일 복사
-COPY build/libs/paratrip-0.0.1-SNAPSHOT.jar app.jar
+# Copy build.gradle and settings.gradle
+COPY build.gradle settings.gradle /app/
 
-# 커맨드 실행
-CMD ["java", "-jar", "app.jar"]
+# Copy the source code
+COPY src /app/src
+
+# Build the application
+RUN gradle build --no-daemon
+
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:17-jdk
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the executable jar file from the builder stage
+COPY --from=builder /app/build/libs/paratrip-0.0.1-SNAPSHOT.jar app.jar
+
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
+
+# Run the jar file
+ENTRYPOINT ["java", "-jar", "app.jar"]
