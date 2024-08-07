@@ -52,6 +52,7 @@ services:
       - docker-bridge
 
   app:
+    image: paratrip:latest
     build:
       context: .
       dockerfile: ./Dockerfile
