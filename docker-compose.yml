@@ -53,6 +53,9 @@ services:
 
   app:
     image: paratrip:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     restart: always
     depends_on:
       - es
