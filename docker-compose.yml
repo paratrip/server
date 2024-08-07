@@ -53,7 +53,7 @@ services:
 
   app:
     container_name: app
-    image: euics/paratrip
+    image: euics/paratrip:latest
     depends_on:
       - es
       - kibana
