@@ -8,4 +8,12 @@ public class CommentRequestDto {
 	) {
 
 	}
+
+	public record ModifyCommentRequestDto(
+		Long memberSeq,
+		Long commentSeq,
+		String comment
+	) {
+
+	}
 }

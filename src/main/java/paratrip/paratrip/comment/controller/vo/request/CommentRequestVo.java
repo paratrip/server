@@ -16,4 +16,18 @@ public class CommentRequestVo {
 			);
 		}
 	}
+
+	public record ModifyCommentRequest(
+		Long memberSeq,
+		Long commentSeq,
+		String comment
+	) {
+		public ModifyCommentRequestDto toModifyCommentRequestDto() {
+			return new ModifyCommentRequestDto(
+				this.memberSeq,
+				this.commentSeq,
+				this.comment
+			);
+		}
+	}
 }
