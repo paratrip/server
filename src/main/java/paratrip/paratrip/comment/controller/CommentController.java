@@ -1,13 +1,13 @@
-package paratrip.paratrip.board.scrap.controller;
+package paratrip.paratrip.comment.controller;
 
-import static paratrip.paratrip.board.scrap.controller.vo.request.BoardScrapRequestVo.*;
-import static paratrip.paratrip.board.scrap.controller.vo.response.BoardScrapResponseVo.*;
-import static paratrip.paratrip.board.scrap.service.dto.response.BoardScrapResponseDto.*;
+import static paratrip.paratrip.comment.controller.vo.request.CommentRequestVo.*;
+import static paratrip.paratrip.comment.controller.vo.response.CommentResponseVo.*;
+import static paratrip.paratrip.comment.service.dto.response.CommentResponseDto.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,24 +20,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import paratrip.paratrip.board.scrap.service.BoardScrapService;
-import paratrip.paratrip.board.scrap.validates.AddBoardScrapValidator;
-import paratrip.paratrip.board.scrap.validates.DeleteBoardScrapValidator;
+import paratrip.paratrip.comment.validates.AddCommentValidator;
+import paratrip.paratrip.comment.service.CommentService;
+import paratrip.paratrip.comment.validates.ModifyCommentValidator;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 
 @RestController
-@RequestMapping("/board-scrap")
+@RequestMapping("/comment")
 @RequiredArgsConstructor
-@Tag(name = "게시물 스크랩 API", description = "담당자(박종훈)")
-public class BoardScrapController {
-	private final AddBoardScrapValidator addBoardScrapValidator;
-	private final DeleteBoardScrapValidator deleteBoardHeart;
+@Tag(name = "댓글 API", description = "담당자(박종훈)")
+public class CommentController {
+	private final AddCommentValidator addCommentRequestValidator;
+	private final ModifyCommentValidator modifyCommentValidator;
 
-	private final BoardScrapService boardScrapService;
+	private final CommentService commentService;
 
-	@PostMapping(name = "게시물 스크랩 생성")
-	@Operation(summary = "게시물 스크랩 생성 API", description = "게시물 스크랩 생성")
+	@PostMapping(name = "댓글 작성")
+	@Operation(summary = "댓글 작성 API", description = "댓글 작성 API")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -67,32 +67,22 @@ public class BoardScrapController {
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "SBDC004",
-			description = "409 SCRAP_BOARD_DUPLICATION_CONFLICT_EXCEPTION / 이미 Scrap 했을 때 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse<AddBoardScrapResponse>> saveBoardScrap(
+	public ResponseEntity<BaseResponse<AddCommentResponseVo>> addComment(
 		@Valid
-		@RequestBody AddBoardScrapRequest request
-	) {
+		@RequestBody AddCommentRequest request) {
 		// 유효성 검사
-		addBoardScrapValidator.validate(request);
+		addCommentRequestValidator.validate(request);
 
 		// VO -> DTO
-		AddBoardScrapResponseDto addBoardScrapResponseDto
-			= boardScrapService.saveBoardScrap(request.toAddBoardScrapRequestDto());
-
-		// DTO -> VO
-		AddBoardScrapResponse response = addBoardScrapResponseDto.toAddBoardScrapResponse();
+		AddCommentResponseDto addCommentResponseDto = commentService.addComment(request.toAddCommentRequestDto());
+		AddCommentResponseVo response = addCommentResponseDto.toAddCommentResponseVo();
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
 
-	@DeleteMapping(name = "게시물 스크랩 삭제")
-	@Operation(summary = "게시물 스크랩 삭제 API", description = "게시물 스크랩 삭제")
+	@PutMapping(name = "댓글 수정")
+	@Operation(summary = "댓글 수정 API", description = "댓글 수정 API")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -117,27 +107,26 @@ public class BoardScrapController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 		@ApiResponse(
-			responseCode = "BSSB008",
-			description = "400 BOARD_SCRAP_SEQ_BAD_REQUEST_EXCEPTION / Board Scrap Seq 요류",
+			responseCode = "CSB009",
+			description = "400 COMMENT_SEQ_BAD_REQUEST_EXCEPTION / Comment Seq 요류",
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 		@ApiResponse(
-			responseCode = "BSNF004",
-			description = "404 BOARD_SCRAP_NOT_FOUND_EXCEPTION / Member 가 설정한 스크랩 게시물이 없을 시 요류",
+			responseCode = "CNCBMB010",
+			description = "400 COMMENT_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION / Comment 작성자 요류",
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse> deleteBoardHeart(
+	public ResponseEntity<BaseResponse> modifyComment(
 		@Valid
-		@RequestBody DeleteBoardScrapRequest request
-	) {
+		@RequestBody ModifyCommentRequest request) {
 		// 유효성 검사
-		deleteBoardHeart.validate(request);
+		modifyCommentValidator.validate(request);
 
 		// VO -> DTO
-		boardScrapService.deleteBoardScrap(request.toDeleteBoardScrapRequestDto());
+		commentService.modifyComment(request.toModifyCommentRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}

@@ -6,15 +6,22 @@ import static paratrip.paratrip.board.main.service.dto.response.BoardResponseDto
 
 import java.io.IOException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,6 +31,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.service.BoardService;
 import paratrip.paratrip.board.main.validates.AddBoardValidator;
+import paratrip.paratrip.board.main.validates.GetAllBoardValidator;
 import paratrip.paratrip.board.main.validates.ModifyBoardValidator;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
@@ -31,10 +39,11 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
-@Tag(name = "게시판 API", description = "담당자(박종훈)")
+@Tag(name = "커뮤니티 API", description = "담당자(박종훈)")
 public class BoardController {
 	private final AddBoardValidator addBoardValidator;
 	private final ModifyBoardValidator modifyBoardValidator;
+	private final GetAllBoardValidator getAllBoardValidator;
 
 	private final BoardService boardService;
 
@@ -129,5 +138,61 @@ public class BoardController {
 		boardService.modifyBoard(request.toModifyBoardRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+	}
+
+	@GetMapping(value = "all", name = "전체 게시물 조회")
+	@Operation(summary = "전체 게시물 조회 API", description = "전체 게시물 조회")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "MSB003",
+			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	@Parameters({
+		@Parameter(
+			name = "memberSeq",
+			description = "Member Seq",
+			example = "1",
+			required = true),
+		@Parameter(
+			name = "page",
+			description = "페이지 번호 (기본값: 0)",
+			example = "0"),
+		@Parameter(
+			name = "size",
+			description = "페이지당 항목 수 (기본값: 10)",
+			example = "10")
+	})
+	public ResponseEntity<BaseResponse> getAllBoard(
+		@Valid
+		@RequestParam(value = "memberSeq") Long memberSeq,
+		@RequestParam(value = "page", defaultValue = "0") int page,
+		@RequestParam(value = "size", defaultValue = "10") int size
+	) {
+		// 유효성 검사
+		getAllBoardValidator.validate(memberSeq);
+
+		Pageable pageable = PageRequest.of(page, size);
+		Page<GetAllBoardResponseDto> response = boardService.getAllBoard(memberSeq, pageable);
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
 }

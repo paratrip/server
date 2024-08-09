@@ -32,9 +32,8 @@ public class BoardScrapService {
 		 3. 작성자 유효성 검사
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(addBoardScrapRequestDto.memberSeq());
-		boardRepository.findByBoardSeq(addBoardScrapRequestDto.boardSeq());
-		BoardEntity boardEntity
-			= boardRepository.findByCreatorMemberEntityAndBoardSeq(memberEntity, addBoardScrapRequestDto.boardSeq());
+		BoardEntity boardEntity = boardRepository.findByBoardSeq(addBoardScrapRequestDto.boardSeq());
+		boardScrapRepository.duplicateBoardScrap(memberEntity, boardEntity);
 
 		// 저장
 		BoardScrapEntity boardScrapEntity = boardScrapRepository.saveBoardScrapEntity(

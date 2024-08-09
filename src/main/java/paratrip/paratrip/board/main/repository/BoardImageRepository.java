@@ -7,6 +7,10 @@ import paratrip.paratrip.board.main.entity.BoardImageEntity;
 
 public interface BoardImageRepository {
 	BoardImageEntity saveBoardImageEntity(BoardImageEntity boardImageEntity);
+
 	List<BoardImageEntity> findAllByBoardEntity(BoardEntity boardEntity);
+
 	void deleteAll(List<BoardImageEntity> boardImageEntities);
+
+	List<String> extractImageURLsByBoardEntity(BoardEntity boardEntity);
 }
