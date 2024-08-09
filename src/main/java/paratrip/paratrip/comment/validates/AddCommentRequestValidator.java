@@ -1,4 +1,4 @@
-package paratrip.paratrip.comment.controller.validates;
+package paratrip.paratrip.comment.validates;
 
 import static paratrip.paratrip.comment.controller.vo.request.CommentRequestVo.*;
 

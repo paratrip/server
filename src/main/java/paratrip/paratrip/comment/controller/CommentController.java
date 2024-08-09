@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import paratrip.paratrip.comment.controller.validates.AddCommentRequestValidator;
+import paratrip.paratrip.comment.validates.AddCommentRequestValidator;
 import paratrip.paratrip.comment.service.CommentService;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
