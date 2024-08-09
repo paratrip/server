@@ -1,6 +1,7 @@
 package paratrip.paratrip.board.main.repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -26,5 +27,14 @@ public class BoardImageRepositoryImpl implements BoardImageRepository {
 	@Override
 	public void deleteAll(List<BoardImageEntity> boardImageEntities) {
 		boardImageJpaRepository.deleteAll(boardImageEntities);
+	}
+
+	@Override
+	public List<String> extractImageURLsByBoardEntity(BoardEntity boardEntity) {
+		List<BoardImageEntity> boardImageEntities = boardImageJpaRepository.findAllByBoardEntity(boardEntity);
+
+		return boardImageEntities.stream()
+			.map(BoardImageEntity::getImageURL)
+			.collect(Collectors.toList());
 	}
 }
