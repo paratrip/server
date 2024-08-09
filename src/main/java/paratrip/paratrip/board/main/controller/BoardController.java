@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -163,6 +165,21 @@ public class BoardController {
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	@Parameters({
+		@Parameter(
+			name = "memberSeq",
+			description = "Member Seq",
+			example = "1",
+			required = true),
+		@Parameter(
+			name = "page",
+			description = "페이지 번호 (기본값: 0)",
+			example = "0"),
+		@Parameter(
+			name = "size",
+			description = "페이지당 항목 수 (기본값: 10)",
+			example = "10")
 	})
 	public ResponseEntity<BaseResponse> getAllBoard(
 		@Valid
