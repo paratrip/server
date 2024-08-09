@@ -40,7 +40,7 @@ public class CommentEntity extends BaseEntity {
 	private BoardEntity boardEntity;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "item_id")
+	@JoinColumn(name = "member_seq")
 	private MemberEntity memberEntity;
 
 	@Column(name = "comment", nullable = false)
