@@ -1,4 +1,4 @@
-package paratrip.paratrip.board.hearts.controller.vo;
+package paratrip.paratrip.board.hearts.controller.vo.request;
 
 import static paratrip.paratrip.board.hearts.service.dto.BoardHeartRequestDto.*;
 

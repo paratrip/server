@@ -1,6 +1,6 @@
 package paratrip.paratrip.board.hearts.validates;
 
-import static paratrip.paratrip.board.hearts.controller.vo.BoardHeartsRequestVo.*;
+import static paratrip.paratrip.board.hearts.controller.vo.request.BoardHeartsRequestVo.*;
 
 import org.springframework.stereotype.Component;
 
