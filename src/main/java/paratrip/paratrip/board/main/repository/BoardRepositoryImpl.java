@@ -1,5 +1,7 @@
 package paratrip.paratrip.board.main.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -28,5 +30,10 @@ public class BoardRepositoryImpl implements BoardRepository {
 	public BoardEntity findByCreatorMemberEntityAndBoardSeq(MemberEntity memberEntity, Long boardSeq) {
 		return boardJpaRepository.findByCreatorMemberEntityAndBoardSeq(memberEntity, boardSeq)
 			.orElseThrow(() -> new BadRequestException(ErrorResult.BOARD_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION));
+	}
+
+	@Override
+	public Page<BoardEntity> findAllBoardEntity(Pageable pageable) {
+		return boardJpaRepository.findAllByOrderByUpdatedAtDesc(pageable);
 	}
 }
