@@ -1,10 +1,15 @@
 package paratrip.paratrip.comment.repository;
 
+import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.comment.entity.CommentEntity;
 import paratrip.paratrip.member.entity.MemberEntity;
 
 public interface CommentRepository {
 	CommentEntity saveCommentEntity(CommentEntity commentEntity);
+
 	CommentEntity findByCommentSeq(Long commentSeq);
+
 	CommentEntity findByCommentSeqAndMemberEntity(Long commentSeq, MemberEntity memberEntity);
+
+	long countByBoardEntity(BoardEntity boardEntity);
 }
