@@ -1,6 +1,6 @@
 package paratrip.paratrip.board.hearts.controller;
 
-import static paratrip.paratrip.board.hearts.controller.vo.BoardHeartsRequestVo.*;
+import static paratrip.paratrip.board.hearts.controller.vo.request.BoardHeartsRequestVo.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
