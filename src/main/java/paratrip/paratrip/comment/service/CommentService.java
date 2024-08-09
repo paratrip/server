@@ -40,4 +40,23 @@ public class CommentService {
 
 		return new AddCommentResponseDto(commentEntity.getCommentSeq());
 	}
+
+	@Transactional
+	public void modifyComment(ModifyCommentRequestDto modifyCommentRequestDto) {
+		/*
+		 1. Member 유효성 검사
+		 2. Comment 유효성 검사
+		 3. Comment 작성자 오류
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyCommentRequestDto.memberSeq());
+		commentRepository.findByCommentSeq(modifyCommentRequestDto.commentSeq());
+		CommentEntity commentEntity
+			= commentRepository.findByCommentSeqAndMemberEntity(modifyCommentRequestDto.commentSeq(), memberEntity);
+
+		// Comment 업데이트
+		CommentEntity newCommentEntity = commentEntity.updateCommentEntity(modifyCommentRequestDto.comment());
+
+		// 저장
+		commentRepository.saveCommentEntity(newCommentEntity);
+	}
 }
