@@ -31,7 +31,7 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
-@Tag(name = "게시판 API", description = "담당자(박종훈)")
+@Tag(name = "커뮤니티 API", description = "담당자(박종훈)")
 public class BoardController {
 	private final AddBoardValidator addBoardValidator;
 	private final ModifyBoardValidator modifyBoardValidator;
