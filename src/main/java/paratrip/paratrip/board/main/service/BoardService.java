@@ -2,12 +2,13 @@ package paratrip.paratrip.board.main.service;
 
 import static paratrip.paratrip.board.main.service.dto.request.BoardRequestDto.*;
 import static paratrip.paratrip.board.main.service.dto.response.BoardResponseDto.*;
+import static paratrip.paratrip.board.main.service.dto.response.BoardResponseDto.GetAllBoardResponseDto.*;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,8 +21,10 @@ import paratrip.paratrip.board.main.mapper.BoardImageMapper;
 import paratrip.paratrip.board.main.mapper.BoardMapper;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
+import paratrip.paratrip.board.scrap.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.mapper.BoardDocumentsMapper;
 import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
+import paratrip.paratrip.comment.repository.CommentRepository;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.repository.MemberRepository;
 import paratrip.paratrip.s3.domain.S3Domain;
@@ -33,6 +36,8 @@ public class BoardService {
 	private final BoardRepository boardRepository;
 	private final BoardImageRepository boardImageRepository;
 	private final BoardDocumentsRepository boardDocumentsRepository;
+	private final BoardScrapRepository boardScrapRepository;
+	private final CommentRepository commentRepository;
 
 	private final S3Domain s3Domain;
 	private final BoardDomain boardDomain;
@@ -106,5 +111,42 @@ public class BoardService {
 				boardImageRepository.saveBoardImageEntity(boardImageMapper.toBoardImageEntity(boardEntity, imageURL));
 			}
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public Page<GetAllBoardResponseDto> getAllBoard(Long memberSeq, Pageable pageable) {
+		/*
+		 1. MemberSeq 유효성 검사
+		*/
+		memberRepository.findByMemberSeq(memberSeq);
+		Page<BoardEntity> boardEntityPage = boardRepository.findAllBoardEntity(pageable);
+
+		return boardEntityPage.map(boardEntity -> {
+			// 댓글 개수와 스크랩 개수를 계산
+			long scrapCount = boardScrapRepository.countByBoardEntity(boardEntity);
+			long commentCount = commentRepository.countByBoardEntity(boardEntity);
+			List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
+
+			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
+			MemberInfo memberInfo = new MemberInfo(
+				boardEntity.getCreatorMemberEntity().getUserId()
+			);
+
+			BoardInfo boardInfo = new BoardInfo(
+				boardEntity.getBoardSeq(),
+				boardEntity.getTitle(),
+				boardEntity.getLocation(),
+				boardEntity.getUpdatedAt(),
+				imageURLs
+			);
+
+			CountInfo countInfo = new CountInfo(
+				commentCount,
+				boardEntity.getHearts(),
+				scrapCount
+			);
+
+			return new GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
+		});
 	}
 }
