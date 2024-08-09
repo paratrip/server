@@ -39,7 +39,7 @@ public class CommentEntity extends BaseEntity {
 	@JoinColumn(name = "board_seq")
 	private BoardEntity boardEntity;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_seq")
 	private MemberEntity memberEntity;
 
