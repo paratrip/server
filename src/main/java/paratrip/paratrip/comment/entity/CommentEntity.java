@@ -45,4 +45,9 @@ public class CommentEntity extends BaseEntity {
 
 	@Column(name = "comment", nullable = false)
 	private String comment;
+
+	public CommentEntity updateCommentEntity(String comment) {
+		this.comment = comment;
+		return this;
+	}
 }
