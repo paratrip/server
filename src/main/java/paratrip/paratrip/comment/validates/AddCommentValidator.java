@@ -8,7 +8,7 @@ import paratrip.paratrip.core.exception.BadRequestException;
 import paratrip.paratrip.core.exception.ErrorResult;
 
 @Component
-public class AddCommentRequestValidator {
+public class AddCommentValidator {
 	public void validate(AddCommentRequest request) {
 		validateMemberSeq(request.memberSeq());
 		validateBoardSeq(request.boardSeq());
