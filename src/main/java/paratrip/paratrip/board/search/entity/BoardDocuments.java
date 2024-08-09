@@ -30,6 +30,6 @@ public class BoardDocuments {
 	@Field(type = FieldType.Long)
 	private Long boardSeq;
 
-	@Field(type = FieldType.Text)
+	@Field(type = FieldType.Text, analyzer = "standard")
 	private String title;
 }
