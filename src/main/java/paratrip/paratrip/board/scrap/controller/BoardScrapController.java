@@ -68,8 +68,8 @@ public class BoardScrapController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 		@ApiResponse(
-			responseCode = "BNCBMB006",
-			description = "400 BOARD_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION / Member가 해당 Board 작성자가 아닐 때 요류",
+			responseCode = "SBDC004",
+			description = "409 SCRAP_BOARD_DUPLICATION_CONFLICT_EXCEPTION / 이미 Scrap 했을 때 요류",
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
