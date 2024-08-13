@@ -16,4 +16,6 @@ public interface BoardScrapRepository {
 	long countByBoardEntity(BoardEntity boardEntity);
 
 	void duplicateBoardScrap(MemberEntity memberEntity, BoardEntity boardEntity);
+
+	boolean existsByBoardEntityAndMemberEntity(MemberEntity memberEntity, BoardEntity boardEntity);
 }
