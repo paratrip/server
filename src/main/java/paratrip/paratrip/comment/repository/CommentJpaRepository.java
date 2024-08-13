@@ -1,5 +1,6 @@
 package paratrip.paratrip.comment.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,6 @@ public interface CommentJpaRepository extends JpaRepository<CommentEntity, Long>
 	Optional<CommentEntity> findByCommentSeqAndMemberEntity(Long commentSeq, MemberEntity memberEntity);
 
 	long countByBoardEntity(BoardEntity boardEntity);
+
+	List<CommentEntity> findByBoardEntity(BoardEntity boardEntity);
 }

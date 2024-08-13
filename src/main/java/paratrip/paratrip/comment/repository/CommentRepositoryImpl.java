@@ -1,5 +1,7 @@
 package paratrip.paratrip.comment.repository;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -34,5 +36,15 @@ public class CommentRepositoryImpl implements CommentRepository {
 	@Override
 	public long countByBoardEntity(BoardEntity boardEntity) {
 		return commentJpaRepository.countByBoardEntity(boardEntity);
+	}
+
+	@Override
+	public void deleteCommentEntity(CommentEntity commentEntity) {
+		commentJpaRepository.delete(commentEntity);
+	}
+
+	@Override
+	public List<CommentEntity> findByBoardEntity(BoardEntity boardEntity) {
+		return commentJpaRepository.findByBoardEntity(boardEntity);
 	}
 }

@@ -30,4 +30,16 @@ public class CommentRequestVo {
 			);
 		}
 	}
+
+	public record DeleteCommentRequest(
+		Long memberSeq,
+		Long commentSeq
+	) {
+		public DeleteCommentRequestDto toDeleteCommentRequestDto() {
+			return new DeleteCommentRequestDto(
+				this.memberSeq,
+				this.commentSeq
+			);
+		}
+	}
 }

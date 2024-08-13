@@ -6,6 +6,7 @@ import static paratrip.paratrip.board.main.service.dto.response.BoardResponseDto
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -129,6 +130,7 @@ public class BoardService {
 
 			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
 			MemberInfo memberInfo = new MemberInfo(
+				boardEntity.getCreatorMemberEntity().getMemberSeq(),
 				boardEntity.getCreatorMemberEntity().getUserId()
 			);
 
@@ -148,5 +150,87 @@ public class BoardService {
 
 			return new GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
 		});
+	}
+
+	@Transactional(readOnly = true)
+	public GetBoardResponseDto getBoard(Long memberSeq, Long boardSeq) {
+		/*
+		 1. MemberSeq 유효성 검사
+		 2. BoardSeq 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
+		BoardEntity boardEntity = boardRepository.findByBoardSeq(boardSeq);
+		List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
+
+		// Board Info 생성
+		GetBoardResponseDto.BoardInfo boardInfo = new GetBoardResponseDto.BoardInfo(
+			boardEntity.getBoardSeq(),
+			boardEntity.getTitle(),
+			boardEntity.getContent(),
+			boardEntity.getLocation(),
+			boardEntity.getUpdatedAt(),
+			imageURLs
+		);
+
+		// Board Creator Info 생성
+		GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo = new GetBoardResponseDto.BoardCreatorInfo(
+			boardEntity.getCreatorMemberEntity().getMemberSeq(),
+			boardEntity.getCreatorMemberEntity().getUserId()
+		);
+
+		// Count Info 생성
+		GetBoardResponseDto.CountInfo countInfo = new GetBoardResponseDto.CountInfo(
+			commentRepository.countByBoardEntity(boardEntity),
+			false, // boardHeart는 현재 false로 고정
+			boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
+		);
+
+		// Comment Info 생성
+		List<GetBoardResponseDto.CommentInfo> commentInfos = commentRepository.findByBoardEntity(boardEntity)
+			.stream()
+			.map(commentEntity -> new GetBoardResponseDto.CommentInfo(
+				commentEntity.getCommentSeq(),
+				commentEntity.getComment(),
+				commentEntity.getUpdatedAt(),
+				commentEntity.getMemberEntity().getMemberSeq(),
+				commentEntity.getMemberEntity().getUserId()
+			))
+			.collect(Collectors.toList());
+
+		return new GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
+	}
+
+	@Transactional(readOnly = true)
+	public List<GetPopularityBoardResponseDto> getPopularityBoard(Long memberSeq, Pageable pageable) {
+		/*
+		 1. Member 유효성 검사
+		*/
+		memberRepository.findByMemberSeq(memberSeq);
+
+		Page<BoardEntity> boardEntityPage = boardRepository.findByPopularity(pageable);
+
+		// Stream API를 사용하여 DTO로 변환
+		return boardEntityPage.stream()
+			.map(boardEntity -> {
+				// Image 추출
+				List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
+
+				// Board Info 생성
+				GetPopularityBoardResponseDto.BoardInfo boardInfo = new GetPopularityBoardResponseDto.BoardInfo(
+					boardEntity.getBoardSeq(),
+					boardEntity.getTitle(),
+					imageURLs
+				);
+
+				// Board Creator Member Info 생성
+				GetPopularityBoardResponseDto.BoardCreatorMemberInfo boardCreatorMemberInfo = new GetPopularityBoardResponseDto.BoardCreatorMemberInfo(
+					boardEntity.getCreatorMemberEntity().getMemberSeq(),
+					boardEntity.getCreatorMemberEntity().getUserId()
+				);
+
+				// 최종 DTO 생성
+				return new GetPopularityBoardResponseDto(boardCreatorMemberInfo, boardInfo);
+			})
+			.collect(Collectors.toList());
 	}
 }
