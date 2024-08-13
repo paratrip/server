@@ -32,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.service.BoardService;
 import paratrip.paratrip.board.main.validates.AddBoardValidator;
 import paratrip.paratrip.board.main.validates.GetAllBoardValidator;
+import paratrip.paratrip.board.main.validates.GetBoardValidator;
 import paratrip.paratrip.board.main.validates.ModifyBoardValidator;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
@@ -44,6 +45,7 @@ public class BoardController {
 	private final AddBoardValidator addBoardValidator;
 	private final ModifyBoardValidator modifyBoardValidator;
 	private final GetAllBoardValidator getAllBoardValidator;
+	private final GetBoardValidator getBoardValidator;
 
 	private final BoardService boardService;
 
@@ -192,6 +194,62 @@ public class BoardController {
 
 		Pageable pageable = PageRequest.of(page, size);
 		Page<GetAllBoardResponseDto> response = boardService.getAllBoard(memberSeq, pageable);
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+	}
+
+	@GetMapping(name = "게시물 조회")
+	@Operation(summary = "게시물 조회 API", description = "게시물 조회")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "MSB003",
+			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "BSB005",
+			description = "400 BOARD_SEQ_BAD_REQUEST_EXCEPTION / Board Seq 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	@Parameters({
+		@Parameter(
+			name = "memberSeq",
+			description = "Member Seq",
+			example = "1",
+			required = true),
+		@Parameter(
+			name = "boardSeq",
+			description = "Board Seq",
+			example = "1"),
+	})
+	public ResponseEntity<BaseResponse<GetBoardResponseDto>> getBoard(
+		@Valid
+		@RequestParam(value = "memberSeq") Long memberSeq,
+		@RequestParam(value = "boardSeq") Long boardSeq
+	) {
+		// 유효성 검사
+		getBoardValidator.validate(memberSeq, boardSeq);
+
+		GetBoardResponseDto response = boardService.getBoard(memberSeq, boardSeq);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
