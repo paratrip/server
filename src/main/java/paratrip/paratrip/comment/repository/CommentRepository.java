@@ -1,5 +1,7 @@
 package paratrip.paratrip.comment.repository;
 
+import java.util.List;
+
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.comment.entity.CommentEntity;
 import paratrip.paratrip.member.entity.MemberEntity;
@@ -14,4 +16,6 @@ public interface CommentRepository {
 	long countByBoardEntity(BoardEntity boardEntity);
 
 	void deleteCommentEntity(CommentEntity commentEntity);
+
+	List<CommentEntity> findByBoardEntity(BoardEntity boardEntity);
 }
