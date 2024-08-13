@@ -6,8 +6,8 @@ public class CommentResponseDto {
 	public record AddCommentResponseDto(
 		Long commentSeq
 	) {
-		public AddCommentResponseVo toAddCommentResponseVo() {
-			return new AddCommentResponseVo(
+		public AddCommentResponse toAddCommentResponseVo() {
+			return new AddCommentResponse(
 				this.commentSeq
 			);
 		}
