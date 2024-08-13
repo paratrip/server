@@ -12,4 +12,6 @@ public interface CommentRepository {
 	CommentEntity findByCommentSeqAndMemberEntity(Long commentSeq, MemberEntity memberEntity);
 
 	long countByBoardEntity(BoardEntity boardEntity);
+
+	void deleteCommentEntity(CommentEntity commentEntity);
 }
