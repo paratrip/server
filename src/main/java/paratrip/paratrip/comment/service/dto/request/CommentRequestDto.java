@@ -16,4 +16,11 @@ public class CommentRequestDto {
 	) {
 
 	}
+
+	public record DeleteCommentRequestDto(
+		Long memberSeq,
+		Long commentSeq
+	) {
+
+	}
 }
