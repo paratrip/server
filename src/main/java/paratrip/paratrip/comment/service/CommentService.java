@@ -59,4 +59,19 @@ public class CommentService {
 		// 저장
 		commentRepository.saveCommentEntity(newCommentEntity);
 	}
+
+	@Transactional
+	public void deleteComment(DeleteCommentRequestDto deleteCommentRequestDto) {
+		/*
+		 1. Member 유효성 검사
+		 2. Comment 유효성 검사
+		 3. Comment 작성자 오류
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(deleteCommentRequestDto.memberSeq());
+		commentRepository.findByCommentSeq(deleteCommentRequestDto.commentSeq());
+		CommentEntity commentEntity
+			= commentRepository.findByCommentSeqAndMemberEntity(deleteCommentRequestDto.commentSeq(), memberEntity);
+
+		commentRepository.deleteCommentEntity(commentEntity);
+	}
 }
