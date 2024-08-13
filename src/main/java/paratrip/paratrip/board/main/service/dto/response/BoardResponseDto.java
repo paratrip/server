@@ -22,6 +22,7 @@ public class BoardResponseDto {
 		CountInfo countInfo
 	) {
 		public record MemberInfo(
+			Long memberSeq,
 			String userId
 		) {
 
@@ -41,6 +42,49 @@ public class BoardResponseDto {
 			Long commentCnt,
 			Long heartCnt,
 			Long scrapCnt
+		) {
+
+		}
+	}
+
+	public record GetBoardResponseDto(
+		BoardCreatorInfo boardCreatorInfo,
+		BoardInfo boardInfo,
+		CountInfo countInfo,
+		List<CommentInfo> commentInfos
+	) {
+		public record BoardCreatorInfo(
+			Long memberSeq,
+			String userId
+		) {
+
+		}
+
+		public record BoardInfo(
+			Long boardSeq,
+			String title,
+			String content,
+			String location,
+			LocalDateTime updatedAt,
+			List<String> imageURLs
+		) {
+
+		}
+
+		public record CountInfo(
+			Long commentCnt,
+			Boolean heart,
+			Boolean scrap
+		) {
+
+		}
+
+		public record CommentInfo(
+			Long commentSeq,
+			String comment,
+			LocalDateTime updatedAt,
+			Long memberSeq,
+			String userId
 		) {
 
 		}
