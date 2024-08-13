@@ -89,4 +89,24 @@ public class BoardResponseDto {
 
 		}
 	}
+
+	public record GetPopularityBoardResponseDto(
+		BoardCreatorMemberInfo boardCreatorMemberInfo,
+		BoardInfo boardInfo
+	) {
+		public record BoardCreatorMemberInfo(
+			Long memberSeq,
+			String userId
+		) {
+
+		}
+
+		public record BoardInfo(
+			Long boardSeq,
+			String title,
+			List<String> imageURLs
+		) {
+
+		}
+	}
 }
