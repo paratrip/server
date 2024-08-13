@@ -14,4 +14,6 @@ public interface BoardRepository {
 	BoardEntity findByCreatorMemberEntityAndBoardSeq(MemberEntity memberEntity, Long boardSeq);
 
 	Page<BoardEntity> findAllBoardEntity(Pageable pageable);
+
+	Page<BoardEntity> findByPopularity(Pageable pageable);
 }
