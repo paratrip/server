@@ -199,4 +199,38 @@ public class BoardService {
 
 		return new GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
 	}
+
+	@Transactional(readOnly = true)
+	public List<GetPopularityBoardResponseDto> getPopularityBoard(Long memberSeq, Pageable pageable) {
+		/*
+		 1. Member 유효성 검사
+		*/
+		memberRepository.findByMemberSeq(memberSeq);
+
+		Page<BoardEntity> boardEntityPage = boardRepository.findByPopularity(pageable);
+
+		// Stream API를 사용하여 DTO로 변환
+		return boardEntityPage.stream()
+			.map(boardEntity -> {
+				// Image 추출
+				List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
+
+				// Board Info 생성
+				GetPopularityBoardResponseDto.BoardInfo boardInfo = new GetPopularityBoardResponseDto.BoardInfo(
+					boardEntity.getBoardSeq(),
+					boardEntity.getTitle(),
+					imageURLs
+				);
+
+				// Board Creator Member Info 생성
+				GetPopularityBoardResponseDto.BoardCreatorMemberInfo boardCreatorMemberInfo = new GetPopularityBoardResponseDto.BoardCreatorMemberInfo(
+					boardEntity.getCreatorMemberEntity().getMemberSeq(),
+					boardEntity.getCreatorMemberEntity().getUserId()
+				);
+
+				// 최종 DTO 생성
+				return new GetPopularityBoardResponseDto(boardCreatorMemberInfo, boardInfo);
+			})
+			.collect(Collectors.toList());
+	}
 }
