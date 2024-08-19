@@ -7,6 +7,7 @@ import static paratrip.paratrip.member.controller.vo.response.MemberResponseVo.*
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +27,7 @@ import paratrip.paratrip.member.validates.FindMemberEmailValidator;
 import paratrip.paratrip.member.validates.JoinMemberValidator;
 import paratrip.paratrip.member.validates.LoginMemberValidator;
 import paratrip.paratrip.member.validates.LogoutMemberValidator;
+import paratrip.paratrip.member.validates.ModifyMemberValidator;
 import paratrip.paratrip.member.validates.ReIssueTokenValidator;
 import paratrip.paratrip.member.validates.ResetMemberPasswordValidator;
 import paratrip.paratrip.member.validates.VerifyEmailMemberValidator;
@@ -48,6 +50,7 @@ public class MemberController {
 	private final FindMemberEmailValidator findMemberEmailValidator;
 	private final ResetMemberPasswordValidator resetMemberPasswordValidator;
 	private final ReIssueTokenValidator reIssueTokenValidator;
+	private final ModifyMemberValidator modifyMemberValidator;
 
 	private final MemberService memberService;
 
@@ -196,7 +199,7 @@ public class MemberController {
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 
-	@PostMapping(value = "join", name = "회원 가입 (이전 Verify URL 전부 통과 이후 회원 가입 URL 요청 (EMAIL, USERID 중복 처리 똑같이 진행.))")
+	@PostMapping(name = "회원 가입 (이전 Verify URL 전부 통과 이후 회원 가입 URL 요청 (EMAIL, USERID 중복 처리 똑같이 진행.))")
 	@Operation(summary = "회원 가입 요청 API", description = "회원 가입 요청 API (Gender의 경우 MALE, FEMAIL로 구분됩니다.)")
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -460,5 +463,43 @@ public class MemberController {
 		);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+	}
+
+	@PutMapping(name = "회원 정보 수정")
+	@Operation(summary = "회원 정보 수정 API", description = "회원 정보 수정")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "TU001",
+			description = "401 TOKEN_UNAUTHORIZED_EXCEPTION / Token 인증 요류 (기간 만료 + 일치 여부)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse> modifyMember(
+		@Valid
+		@RequestBody ModifyMemberRequest request
+	) {
+		// 유효성 검사
+		modifyMemberValidator.validate(request);
+
+		memberService.modifyMember(request.toModifyMemberRequestDto());
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 }
