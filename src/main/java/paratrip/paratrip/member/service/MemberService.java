@@ -159,4 +159,22 @@ public class MemberService {
 
 		return new ReIssueTokenResponseDto(reIssueTokenRequestDto.email(), accessToken, refreshToken);
 	}
+
+	@Transactional
+	public void modifyMember(ModifyMemberRequestDto modifyMemberRequestDto) {
+		/*
+		 1. Member 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyMemberRequestDto.memberSeq());
+
+		// Update
+		MemberEntity updateMemberEntity = memberEntity.updateMemberEntity(
+			modifyMemberRequestDto.userId(),
+			modifyMemberRequestDto.birth(),
+			modifyMemberRequestDto.gender()
+		);
+
+		// 저장
+		memberRepository.saveMemberEntity(updateMemberEntity);
+	}
 }
