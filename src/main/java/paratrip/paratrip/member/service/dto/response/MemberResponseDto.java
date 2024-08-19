@@ -1,5 +1,9 @@
 package paratrip.paratrip.member.service.dto.response;
 
+import static paratrip.paratrip.member.controller.vo.response.MemberResponseVo.*;
+
+import paratrip.paratrip.member.util.Gender;
+
 public class MemberResponseDto {
 	public record LoginMemberResponseDto(
 		Long memberSeq,
@@ -21,5 +25,28 @@ public class MemberResponseDto {
 		String refreshToken
 	) {
 
+	}
+
+	public record GetMemberInfoResponseDto(
+		Long memberSeq,
+		String email,
+		String phoneNumber,
+
+		String userId,
+
+		String birth,
+
+		Gender gender
+	) {
+		public GetMemberInfoResponse toGetMemberInfoResponse() {
+			return new GetMemberInfoResponse(
+				this.memberSeq,
+				this.email,
+				this.phoneNumber,
+				this.userId,
+				this.birth,
+				this.gender
+			);
+		}
 	}
 }
