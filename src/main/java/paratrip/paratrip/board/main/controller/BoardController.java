@@ -255,8 +255,8 @@ public class BoardController {
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
 
-	@GetMapping(value = "popularity", name = "게시물 조회")
-	@Operation(summary = "게시물 조회 API", description = "게시물 조회")
+	@GetMapping(value = "popularity", name = "이번주 인기 게시물")
+	@Operation(summary = "이번주 인기 게시물 API", description = "이번주 인기 게시물")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",

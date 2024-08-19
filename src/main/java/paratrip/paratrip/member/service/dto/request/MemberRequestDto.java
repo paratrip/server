@@ -66,4 +66,13 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record ModifyMemberRequestDto(
+		Long memberSeq,
+		String userId,
+		String birth,
+		Gender gender
+	) {
+
+	}
 }
