@@ -177,4 +177,21 @@ public class MemberService {
 		// 저장
 		memberRepository.saveMemberEntity(updateMemberEntity);
 	}
+
+	@Transactional(readOnly = true)
+	public GetMemberInfoResponseDto getMemberInfo(Long memberSeq) {
+		/*
+		 1. Member 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
+
+		return new GetMemberInfoResponseDto(
+			memberEntity.getMemberSeq(),
+			memberEntity.getEmail(),
+			memberEntity.getPhoneNumber(),
+			memberEntity.getUserId(),
+			memberEntity.getBirth(),
+			memberEntity.getGender()
+		);
+	}
 }
