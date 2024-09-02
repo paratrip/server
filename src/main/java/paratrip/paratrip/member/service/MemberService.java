@@ -53,9 +53,11 @@ public class MemberService {
 		/*
 		 1. Email 중복 검사
 		 2. UserId 중복 검사
+		 3. PhoneNum 중복 검사
 		*/
 		memberRepository.isDuplicatedEmail(joinMemberRequestDto.email());
 		memberRepository.isDuplicatedUserId(joinMemberRequestDto.userId());
+		memberRepository.isDuplicatedPhoneNumber(joinMemberRequestDto.phoneNumber());
 
 		// Member 저장
 		memberRepository.saveMemberEntity(memberMapper.toMemberEntity(

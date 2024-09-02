@@ -234,6 +234,12 @@ public class MemberController {
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "PNDC003",
+			description = "409 PHONE_NUMBER_DUPLICATION_CONFLICT_EXCEPTION / 전화번호 중복 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class)))
 	})
 	public ResponseEntity<BaseResponse> joinMember(
 		@Valid
