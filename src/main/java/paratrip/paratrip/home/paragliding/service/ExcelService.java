@@ -36,6 +36,11 @@ public class ExcelService {
 
     @PostConstruct
     public void init() {
+        if (isDataAlreadyPresent()) {
+            System.out.println("데이터가 이미 존재합니다. 삽입을 중단합니다.");
+            return;  // 데이터가 존재하면 삽입 중단
+        }
+
         try {
             // resources 폴더의 파일 불러오기
             String filePath = "paratrip.xls"; // 파일 이름
@@ -150,5 +155,9 @@ public class ExcelService {
         } else {
             return false; // 기본값 false
         }
+    }
+
+    private boolean isDataAlreadyPresent() {
+        return paraglidingRepository.count() > 0; // 데이터가 존재하는지 확인
     }
 }
