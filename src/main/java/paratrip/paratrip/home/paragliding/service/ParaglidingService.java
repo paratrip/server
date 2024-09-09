@@ -1,14 +1,18 @@
 package paratrip.paratrip.home.paragliding.service;
 
+import com.amazonaws.services.s3.model.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import paratrip.paratrip.home.paragliding.dto.request.ParaglidingRequestDto;
 import paratrip.paratrip.home.paragliding.dto.response.ParaglidingResponseDto;
+import paratrip.paratrip.home.paragliding.dto.response.RegionResponseDto;
 import paratrip.paratrip.home.paragliding.entity.Paragliding;
 import paratrip.paratrip.home.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.home.paragliding.util.ParaglidingUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * packageName    : paratrip.paratrip.home.paragliding.service
@@ -46,5 +50,11 @@ public class ParaglidingService {
     public List<ParaglidingResponseDto> getAllParagliding() {
         List<Paragliding> paraglidingList = paraglidingRepository.findAll();
         return paraglidingUtils.toResponseDtoList(paraglidingList);
+    }
+
+    public List<RegionResponseDto> getAllRegions(){
+        return Stream.of(Region.values())
+                .map(region -> new RegionResponseDto(region.name()))
+                .collect(Collectors.toList());
     }
 }
