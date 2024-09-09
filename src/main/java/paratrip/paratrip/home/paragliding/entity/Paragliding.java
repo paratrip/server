@@ -88,4 +88,8 @@ public class Paragliding extends BaseEntity {
     @ElementCollection(fetch=FetchType.LAZY)
     private List<String> tickets;
 
+    @Column(name="image_url")
+    private String imageUrl;
+
+
 }

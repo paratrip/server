@@ -79,6 +79,7 @@ public class ExcelService {
                     .collect(Collectors.toList());
             String regionStr=(String)row.get(14);
             Region region=Region.valueOf(regionStr.toUpperCase());
+            String imageUrl=(String)row.get(15);
 
             // 엑셀 데이터에 없는 heart 필드 추가 처리
             int heart = 0; // 기본값으로 설정
@@ -101,6 +102,7 @@ public class ExcelService {
                     .longitude(longitude)
                     .tickets(tickets)
                     .region(region) // Region 값 설정
+                    .imageUrl(imageUrl)
                     .build();
 
             paraglidingList.add(paragliding);
