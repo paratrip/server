@@ -54,4 +54,11 @@ public class MemberEntity {
 		this.encodedPassword = encodedPassword;
 		return this;
 	}
+
+	public MemberEntity updateMemberEntity(String userId, String birth, Gender gender) {
+		this.userId = userId;
+		this.birth = birth;
+		this.gender = gender;
+		return this;
+	}
 }

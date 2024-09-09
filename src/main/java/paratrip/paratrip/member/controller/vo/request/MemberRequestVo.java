@@ -120,4 +120,20 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record ModifyMemberRequest(
+		Long memberSeq,
+		String userId,
+		String birth,
+		Gender gender
+	) {
+		public ModifyMemberRequestDto toModifyMemberRequestDto() {
+			return new ModifyMemberRequestDto(
+				this.memberSeq,
+				this.userId,
+				this.birth,
+				this.gender
+			);
+		}
+	}
 }

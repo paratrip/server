@@ -53,9 +53,11 @@ public class MemberService {
 		/*
 		 1. Email 중복 검사
 		 2. UserId 중복 검사
+		 3. PhoneNum 중복 검사
 		*/
 		memberRepository.isDuplicatedEmail(joinMemberRequestDto.email());
 		memberRepository.isDuplicatedUserId(joinMemberRequestDto.userId());
+		memberRepository.isDuplicatedPhoneNumber(joinMemberRequestDto.phoneNumber());
 
 		// Member 저장
 		memberRepository.saveMemberEntity(memberMapper.toMemberEntity(
@@ -158,5 +160,40 @@ public class MemberService {
 		memberDomain.saveRefreshToken(refreshToken, reIssueTokenRequestDto.email());
 
 		return new ReIssueTokenResponseDto(reIssueTokenRequestDto.email(), accessToken, refreshToken);
+	}
+
+	@Transactional
+	public void modifyMember(ModifyMemberRequestDto modifyMemberRequestDto) {
+		/*
+		 1. Member 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyMemberRequestDto.memberSeq());
+
+		// Update
+		MemberEntity updateMemberEntity = memberEntity.updateMemberEntity(
+			modifyMemberRequestDto.userId(),
+			modifyMemberRequestDto.birth(),
+			modifyMemberRequestDto.gender()
+		);
+
+		// 저장
+		memberRepository.saveMemberEntity(updateMemberEntity);
+	}
+
+	@Transactional(readOnly = true)
+	public GetMemberInfoResponseDto getMemberInfo(Long memberSeq) {
+		/*
+		 1. Member 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
+
+		return new GetMemberInfoResponseDto(
+			memberEntity.getMemberSeq(),
+			memberEntity.getEmail(),
+			memberEntity.getPhoneNumber(),
+			memberEntity.getUserId(),
+			memberEntity.getBirth(),
+			memberEntity.getGender()
+		);
 	}
 }

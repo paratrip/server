@@ -49,4 +49,9 @@ public class BoardScrapRepositoryImpl implements BoardScrapRepository {
 				throw new ConflictException(ErrorResult.SCRAP_BOARD_DUPLICATION_CONFLICT_EXCEPTION);
 			});
 	}
+
+	@Override
+	public boolean existsByBoardEntityAndMemberEntity(MemberEntity memberEntity, BoardEntity boardEntity) {
+		return boardScrapJpaRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity);
+	}
 }

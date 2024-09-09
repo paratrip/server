@@ -6,6 +6,7 @@ import static paratrip.paratrip.comment.service.dto.response.CommentResponseDto.
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.comment.validates.AddCommentValidator;
 import paratrip.paratrip.comment.service.CommentService;
+import paratrip.paratrip.comment.validates.DeleteCommentValidator;
 import paratrip.paratrip.comment.validates.ModifyCommentValidator;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
@@ -33,6 +35,7 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 public class CommentController {
 	private final AddCommentValidator addCommentRequestValidator;
 	private final ModifyCommentValidator modifyCommentValidator;
+	private final DeleteCommentValidator deleteCommentValidator;
 
 	private final CommentService commentService;
 
@@ -68,7 +71,7 @@ public class CommentController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse<AddCommentResponseVo>> addComment(
+	public ResponseEntity<BaseResponse<AddCommentResponse>> addComment(
 		@Valid
 		@RequestBody AddCommentRequest request) {
 		// 유효성 검사
@@ -76,7 +79,7 @@ public class CommentController {
 
 		// VO -> DTO
 		AddCommentResponseDto addCommentResponseDto = commentService.addComment(request.toAddCommentRequestDto());
-		AddCommentResponseVo response = addCommentResponseDto.toAddCommentResponseVo();
+		AddCommentResponse response = addCommentResponseDto.toAddCommentResponseVo();
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
@@ -127,6 +130,56 @@ public class CommentController {
 
 		// VO -> DTO
 		commentService.modifyComment(request.toModifyCommentRequestDto());
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+	}
+
+	@DeleteMapping(name = "댓글 삭제")
+	@Operation(summary = "댓글 삭제 API", description = "댓글 삭제 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "MSB003",
+			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "CSB009",
+			description = "400 COMMENT_SEQ_BAD_REQUEST_EXCEPTION / Comment Seq 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "CNCBMB010",
+			description = "400 COMMENT_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION / Comment 작성자 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	public ResponseEntity<BaseResponse> deleteComment(
+		@Valid
+		@RequestBody DeleteCommentRequest request) {
+		// 유효성 검사
+		deleteCommentValidator.validate(request);
+
+		// VO -> DTO
+		commentService.deleteComment(request.toDeleteCommentRequestDto());
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}

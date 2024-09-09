@@ -1,5 +1,7 @@
 package paratrip.paratrip.member.controller.vo.response;
 
+import paratrip.paratrip.member.util.Gender;
+
 public class MemberResponseVo {
 	public record LoginMemberResponse(
 		Long memberSeq,
@@ -19,6 +21,20 @@ public class MemberResponseVo {
 		String email,
 		String accessToken,
 		String refreshToken
+	) {
+
+	}
+
+	public record GetMemberInfoResponse(
+		Long memberSeq,
+		String email,
+		String phoneNumber,
+
+		String userId,
+
+		String birth,
+
+		Gender gender
 	) {
 
 	}
