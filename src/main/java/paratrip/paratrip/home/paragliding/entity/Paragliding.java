@@ -53,7 +53,7 @@ public class Paragliding extends BaseEntity {
     private String openingHour;
 
     @Column(name = "cost", nullable = false)
-    private String cost;
+    private Double cost;
 
     @Column(name="closed_days", nullable = false)
     private String closedDays;
@@ -71,7 +71,7 @@ public class Paragliding extends BaseEntity {
     @Column(name="credit_card", nullable = false)
     private boolean creditCard=false;
 
-    @Column(name="description",nullable = false)
+    @Column(name="description",nullable = false, columnDefinition = "LONGTEXT")
     @Lob
     private String description;
 
