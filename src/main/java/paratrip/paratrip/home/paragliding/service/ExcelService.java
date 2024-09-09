@@ -12,7 +12,9 @@ import paratrip.paratrip.home.paragliding.util.ExcelUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.math3.random.RandomGeneratorFactory.convertToLong;
 
@@ -69,7 +71,12 @@ public class ExcelService {
             boolean parkingLot = convertToBoolean(row.get(10));
             boolean stroller = convertToBoolean(row.get(11));
             boolean creditCard = convertToBoolean(row.get(12));
-            List<String> tickets = List.of(((String) row.get(13)).split(","));
+            // 원을 기준으로 나누고 불필요한 공백이나 줄바꿈을 제거
+            List<String> tickets = Arrays.stream(((String) row.get(13)).split("원\\s*"))
+                    .map(String::trim) // 공백과 줄바꿈 제거
+                    .filter(ticket -> !ticket.isEmpty()) // 빈 문자열 제외
+                    .map(ticket -> ticket + "원") // 다시 '원'을 붙임
+                    .collect(Collectors.toList());
             String regionStr=(String)row.get(14);
             Region region=Region.valueOf(regionStr.toUpperCase());
 
