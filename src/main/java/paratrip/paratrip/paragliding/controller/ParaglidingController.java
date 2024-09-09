@@ -1,18 +1,18 @@
-package paratrip.paratrip.home.paragliding.controller;
+package paratrip.paratrip.paragliding.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import paratrip.paratrip.home.paragliding.dto.request.ParaglidingRequestDto;
-import paratrip.paratrip.home.paragliding.dto.response.ParaglidingResponseDto;
-import paratrip.paratrip.home.paragliding.dto.response.RegionResponseDto;
-import paratrip.paratrip.home.paragliding.service.ParaglidingService;
+import paratrip.paratrip.paragliding.dto.request.ParaglidingRequestDto;
+import paratrip.paratrip.paragliding.dto.response.ParaglidingResponseDto;
+import paratrip.paratrip.paragliding.dto.response.RegionResponseDto;
+import paratrip.paratrip.paragliding.service.ParaglidingService;
 
 import java.util.List;
 
 /**
- * packageName    : paratrip.paratrip.home.paragliding.controller
+ * packageName    : paratrip.paratrip.paragliding.controller
  * fileName       : ParaglidingController
  * author         : tlswl
  * date           : 2024-09-09

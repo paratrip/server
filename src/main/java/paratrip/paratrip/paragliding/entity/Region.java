@@ -1,4 +1,4 @@
-package paratrip.paratrip.home.paragliding.entity;
+package paratrip.paratrip.paragliding.entity;
 
 /**
  * packageName    : paratrip.paratrip.paraglidiing.entity
