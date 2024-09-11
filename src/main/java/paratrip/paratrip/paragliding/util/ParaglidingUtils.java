@@ -1,6 +1,7 @@
 package paratrip.paratrip.paragliding.util;
 
 import org.springframework.stereotype.Component;
+import paratrip.paratrip.paragliding.dto.response.DetailResponseDto;
 import paratrip.paratrip.paragliding.dto.response.ParaglidingResponseDto;
 import paratrip.paratrip.paragliding.entity.Paragliding;
 
@@ -32,5 +33,25 @@ public class ParaglidingUtils {
                         paragliding.getImageUrl()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public DetailResponseDto convertToDetailResponseDto(Paragliding paragliding) {
+        return new DetailResponseDto(
+                paragliding.getName(),
+                paragliding.getDescription(),
+                paragliding.getImageUrl(),
+                paragliding.getTickets(),
+                String.valueOf(paragliding.getCost()),
+                paragliding.getPageUrl(),
+                paragliding.isParkingLot(),
+                paragliding.isStroller(),
+                paragliding.isCreditCard(),
+                paragliding.getClosedDays(),
+                paragliding.getOpeningHour(),
+                paragliding.getTellNumber(),
+                paragliding.getLatitude(),
+                paragliding.getLongitude(),
+                paragliding.getAddress()
+        );
     }
 }

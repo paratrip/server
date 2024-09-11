@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import paratrip.paratrip.paragliding.dto.request.ParaglidingRequestDto;
+import paratrip.paratrip.paragliding.dto.response.DetailResponseDto;
 import paratrip.paratrip.paragliding.dto.response.ParaglidingResponseDto;
 import paratrip.paratrip.paragliding.dto.response.RegionResponseDto;
 import paratrip.paratrip.paragliding.entity.Paragliding;
@@ -36,8 +37,6 @@ public class ParaglidingService {
 
     public List<ParaglidingResponseDto> getParaglidingList(ParaglidingRequestDto request) {
         List<Paragliding> paraglidingList;
-
-        // 지역 필터가 있으면 필터링, 없으면 전체 리스트
         if (request.region() != null) {
             paraglidingList = paraglidingRepository.findByRegion(request.region());
         } else {
@@ -56,5 +55,12 @@ public class ParaglidingService {
         return Stream.of(Region.values())
                 .map(region -> new RegionResponseDto(region.name()))
                 .collect(Collectors.toList());
+    }
+
+    public DetailResponseDto getParaglidingDetails(Long id) {
+        Paragliding paragliding = paraglidingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("정보가 없습니다"));
+
+        return paraglidingUtils.convertToDetailResponseDto(paragliding);
     }
 }
