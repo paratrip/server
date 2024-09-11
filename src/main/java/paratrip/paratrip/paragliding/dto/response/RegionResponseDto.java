@@ -1,10 +1,8 @@
-package paratrip.paratrip.home.paragliding.dto.request;
-
-import paratrip.paratrip.home.paragliding.entity.Region;
+package paratrip.paratrip.paragliding.dto.response;
 
 /**
- * packageName    : paratrip.paratrip.home.paragliding.dto.request
- * fileName       : ParaglidingListDto
+ * packageName    : paratrip.paratrip.paragliding.dto.response
+ * fileName       : RegionResponseDto
  * author         : tlswl
  * date           : 2024-09-09
  * description    :
@@ -13,5 +11,5 @@ import paratrip.paratrip.home.paragliding.entity.Region;
  * -----------------------------------------------------------
  * 2024-09-09        tlswl       최초 생성
  */
-public record ParaglidingRequestDto(Region region, String accessToken) {
+public record RegionResponseDto(String region) {
 }

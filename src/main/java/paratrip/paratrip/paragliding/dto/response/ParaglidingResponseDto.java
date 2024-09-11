@@ -1,7 +1,7 @@
-package paratrip.paratrip.home.paragliding.dto.response;
+package paratrip.paratrip.paragliding.dto.response;
 
 /**
- * packageName    : paratrip.paratrip.home.paragliding.dto.response
+ * packageName    : paratrip.paratrip.paragliding.dto.response
  * fileName       : ParaglidingListResponseDto
  * author         : tlswl
  * date           : 2024-09-09

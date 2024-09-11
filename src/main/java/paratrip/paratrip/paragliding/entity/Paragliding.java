@@ -1,4 +1,4 @@
-package paratrip.paratrip.home.paragliding.entity;
+package paratrip.paratrip.paragliding.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

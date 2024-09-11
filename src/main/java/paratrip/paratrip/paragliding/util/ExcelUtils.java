@@ -1,17 +1,16 @@
-package paratrip.paratrip.home.paragliding.util;
+package paratrip.paratrip.paragliding.util;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * packageName    : paratrip.paratrip.home.paragliding.util
+ * packageName    : paratrip.paratrip.paragliding.util
  * fileName       : ExcelUtils
  * author         : tlswl
  * date           : 2024-09-09

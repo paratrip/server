@@ -1,13 +1,13 @@
-package paratrip.paratrip.home.paragliding.service;
+package paratrip.paratrip.paragliding.service;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import paratrip.paratrip.home.paragliding.entity.Paragliding;
-import paratrip.paratrip.home.paragliding.entity.Region;
-import paratrip.paratrip.home.paragliding.repository.ParaglidingRepository;
-import paratrip.paratrip.home.paragliding.util.ExcelUtils;
+import paratrip.paratrip.paragliding.entity.Paragliding;
+import paratrip.paratrip.paragliding.entity.Region;
+import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
+import paratrip.paratrip.paragliding.util.ExcelUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.math3.random.RandomGeneratorFactory.convertToLong;
-
 /**
- * packageName    : paratrip.paratrip.home.paragliding.service
+ * packageName    : paratrip.paratrip.paragliding.service
  * fileName       : ExcelService
  * author         : tlswl
  * date           : 2024-09-09
