@@ -86,9 +86,9 @@ public class SecurityConfiguration {
 			"/h2-console/**",
 
 			// 개방 URL
-			// "/**"
-			"/sms-certification/**",
-			"/member/**"
+			"/**"
+			// "/sms-certification/**",
+			// "/member/**"
 		);
 		return new JwtTokenFilter(jwtSecret, permitAllEndpoints, blackListTemplate);
 	}
