@@ -4,6 +4,8 @@ import static paratrip.paratrip.member.service.dto.response.MemberResponseDto.*;
 import static paratrip.paratrip.member.controller.vo.request.MemberRequestVo.*;
 import static paratrip.paratrip.member.controller.vo.response.MemberResponseVo.*;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -510,7 +512,7 @@ public class MemberController {
 	public ResponseEntity<BaseResponse> modifyMember(
 		@Valid
 		@RequestBody ModifyMemberRequest request
-	) {
+	) throws IOException {
 		// 유효성 검사
 		modifyMemberValidator.validate(request);
 

@@ -50,15 +50,19 @@ public class MemberEntity {
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
+	@Column(name = "profile_image", nullable = true)
+	private String profileImage;
+
 	public MemberEntity updatePassword(String encodedPassword) {
 		this.encodedPassword = encodedPassword;
 		return this;
 	}
 
-	public MemberEntity updateMemberEntity(String userId, String birth, Gender gender) {
+	public MemberEntity updateMemberEntity(String userId, String birth, Gender gender, String profileImage) {
 		this.userId = userId;
 		this.birth = birth;
 		this.gender = gender;
+		this.profileImage = profileImage;
 		return this;
 	}
 }

@@ -1,5 +1,7 @@
 package paratrip.paratrip.member.service.dto.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import paratrip.paratrip.member.util.Gender;
 
 public class MemberRequestDto {
@@ -71,7 +73,8 @@ public class MemberRequestDto {
 		Long memberSeq,
 		String userId,
 		String birth,
-		Gender gender
+		Gender gender,
+		MultipartFile profileImage
 	) {
 
 	}

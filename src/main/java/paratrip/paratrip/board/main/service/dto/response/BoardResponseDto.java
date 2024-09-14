@@ -23,7 +23,8 @@ public class BoardResponseDto {
 	) {
 		public record MemberInfo(
 			Long memberSeq,
-			String userId
+			String userId,
+			String profileImage
 		) {
 
 		}
@@ -55,7 +56,8 @@ public class BoardResponseDto {
 	) {
 		public record BoardCreatorInfo(
 			Long memberSeq,
-			String userId
+			String userId,
+			String profileImage
 		) {
 
 		}
@@ -96,7 +98,8 @@ public class BoardResponseDto {
 	) {
 		public record BoardCreatorMemberInfo(
 			Long memberSeq,
-			String userId
+			String userId,
+			String profileImage
 		) {
 
 		}

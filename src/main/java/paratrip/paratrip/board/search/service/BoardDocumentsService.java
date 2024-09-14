@@ -56,7 +56,8 @@ public class BoardDocumentsService {
 				MemberEntity boardCreatorMemberEntity = boardEntity.getCreatorMemberEntity();
 				BoardCreatorInfo boardCreatorInfo = new BoardCreatorInfo(
 					boardCreatorMemberEntity.getMemberSeq(),
-					boardCreatorMemberEntity.getUserId()
+					boardCreatorMemberEntity.getUserId(),
+					boardCreatorMemberEntity.getProfileImage()
 				);
 
 				// Count Info 생성

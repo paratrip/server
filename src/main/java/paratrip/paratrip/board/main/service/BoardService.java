@@ -127,7 +127,8 @@ public class BoardService {
 			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
 			MemberInfo memberInfo = new MemberInfo(
 				boardEntity.getCreatorMemberEntity().getMemberSeq(),
-				boardEntity.getCreatorMemberEntity().getUserId()
+				boardEntity.getCreatorMemberEntity().getUserId(),
+				boardEntity.getCreatorMemberEntity().getProfileImage()
 			);
 
 			BoardInfo boardInfo = new BoardInfo(
@@ -170,7 +171,8 @@ public class BoardService {
 		// Board Creator Info 생성
 		GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo = new GetBoardResponseDto.BoardCreatorInfo(
 			boardEntity.getCreatorMemberEntity().getMemberSeq(),
-			boardEntity.getCreatorMemberEntity().getUserId()
+			boardEntity.getCreatorMemberEntity().getUserId(),
+			boardEntity.getCreatorMemberEntity().getProfileImage()
 		);
 
 		// Count Info 생성
@@ -216,7 +218,8 @@ public class BoardService {
 				// Board Creator Member Info 생성
 				GetPopularityBoardResponseDto.BoardCreatorMemberInfo boardCreatorMemberInfo = new GetPopularityBoardResponseDto.BoardCreatorMemberInfo(
 					boardEntity.getCreatorMemberEntity().getMemberSeq(),
-					boardEntity.getCreatorMemberEntity().getUserId()
+					boardEntity.getCreatorMemberEntity().getUserId(),
+					boardEntity.getCreatorMemberEntity().getProfileImage()
 				);
 
 				// 최종 DTO 생성
@@ -242,7 +245,8 @@ public class BoardService {
 			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
 			MemberInfo memberInfo = new MemberInfo(
 				boardEntity.getCreatorMemberEntity().getMemberSeq(),
-				boardEntity.getCreatorMemberEntity().getUserId()
+				boardEntity.getCreatorMemberEntity().getUserId(),
+				boardEntity.getCreatorMemberEntity().getProfileImage()
 			);
 
 			BoardInfo boardInfo = new BoardInfo(
