@@ -86,7 +86,8 @@ public class BoardResponseDto {
 			String comment,
 			LocalDateTime updatedAt,
 			Long memberSeq,
-			String userId
+			String userId,
+			String profileImage
 		) {
 
 		}
