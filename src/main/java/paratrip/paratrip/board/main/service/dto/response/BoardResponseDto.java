@@ -75,6 +75,8 @@ public class BoardResponseDto {
 
 		public record CountInfo(
 			Long commentCnt,
+			Long heartCnt,
+			Long scrapCnt,
 			Boolean heart,
 			Boolean scrap
 		) {
