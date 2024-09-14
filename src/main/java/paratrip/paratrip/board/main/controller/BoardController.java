@@ -162,19 +162,8 @@ public class BoardController {
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
 	@Parameters({
-		@Parameter(
-			name = "memberSeq",
-			description = "Member Seq",
-			example = "1",
-			required = true),
 		@Parameter(
 			name = "page",
 			description = "페이지 번호 (기본값: 0)",
@@ -186,15 +175,11 @@ public class BoardController {
 	})
 	public ResponseEntity<BaseResponse> getAllBoard(
 		@Valid
-		@RequestParam(value = "memberSeq") Long memberSeq,
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "10") int size
 	) {
-		// 유효성 검사
-		getAllBoardValidator.validate(memberSeq);
-
 		Pageable pageable = PageRequest.of(page, size);
-		Page<GetAllBoardResponseDto> response = boardService.getAllBoard(memberSeq, pageable);
+		Page<GetAllBoardResponseDto> response = boardService.getAllBoard(pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
@@ -219,12 +204,6 @@ public class BoardController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
 			responseCode = "BSB005",
 			description = "400 BOARD_SEQ_BAD_REQUEST_EXCEPTION / Board Seq 요류",
 			content = @Content(
@@ -233,24 +212,18 @@ public class BoardController {
 	})
 	@Parameters({
 		@Parameter(
-			name = "memberSeq",
-			description = "Member Seq",
-			example = "1",
-			required = true),
-		@Parameter(
 			name = "boardSeq",
 			description = "Board Seq",
 			example = "1"),
 	})
 	public ResponseEntity<BaseResponse<GetBoardResponseDto>> getBoard(
 		@Valid
-		@RequestParam(value = "memberSeq") Long memberSeq,
 		@RequestParam(value = "boardSeq") Long boardSeq
 	) {
 		// 유효성 검사
-		getBoardValidator.validate(memberSeq, boardSeq);
+		getBoardValidator.validate(boardSeq);
 
-		GetBoardResponseDto response = boardService.getBoard(memberSeq, boardSeq);
+		GetBoardResponseDto response = boardService.getBoard(boardSeq);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
@@ -274,19 +247,8 @@ public class BoardController {
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
 	@Parameters({
-		@Parameter(
-			name = "memberSeq",
-			description = "Member Seq",
-			example = "1",
-			required = true),
 		@Parameter(
 			name = "page",
 			description = "페이지 번호 (기본값: 0)",
@@ -298,15 +260,11 @@ public class BoardController {
 	})
 	public ResponseEntity<BaseResponse<List<GetPopularityBoardResponseDto>>> getPopularityBoard(
 		@Valid
-		@RequestParam(value = "memberSeq") Long memberSeq,
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "10") int size
 	) {
-		// 유효성 검사
-		getAllBoardValidator.validate(memberSeq);
-
 		Pageable pageable = PageRequest.of(page, size);
-		List<GetPopularityBoardResponseDto> response = boardService.getPopularityBoard(memberSeq, pageable);
+		List<GetPopularityBoardResponseDto> response = boardService.getPopularityBoard(pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}

@@ -115,11 +115,7 @@ public class BoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<GetAllBoardResponseDto> getAllBoard(Long memberSeq, Pageable pageable) {
-		/*
-		 1. MemberSeq 유효성 검사
-		*/
-		memberRepository.findByMemberSeq(memberSeq);
+	public Page<GetAllBoardResponseDto> getAllBoard(Pageable pageable) {
 		Page<BoardEntity> boardEntityPage = boardRepository.findAllBoardEntity(pageable);
 
 		return boardEntityPage.map(boardEntity -> {
@@ -153,12 +149,11 @@ public class BoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetBoardResponseDto getBoard(Long memberSeq, Long boardSeq) {
+	public GetBoardResponseDto getBoard(Long boardSeq) {
 		/*
 		 1. MemberSeq 유효성 검사
 		 2. BoardSeq 유효성 검사
 		*/
-		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
 		BoardEntity boardEntity = boardRepository.findByBoardSeq(boardSeq);
 		List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
@@ -182,7 +177,8 @@ public class BoardService {
 		GetBoardResponseDto.CountInfo countInfo = new GetBoardResponseDto.CountInfo(
 			commentRepository.countByBoardEntity(boardEntity),
 			false, // boardHeart는 현재 false로 고정
-			boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
+			// boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
+			false
 		);
 
 		// Comment Info 생성
@@ -201,12 +197,7 @@ public class BoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<GetPopularityBoardResponseDto> getPopularityBoard(Long memberSeq, Pageable pageable) {
-		/*
-		 1. Member 유효성 검사
-		*/
-		memberRepository.findByMemberSeq(memberSeq);
-
+	public List<GetPopularityBoardResponseDto> getPopularityBoard(Pageable pageable) {
 		Page<BoardEntity> boardEntityPage = boardRepository.findByPopularity(pageable);
 
 		// Stream API를 사용하여 DTO로 변환

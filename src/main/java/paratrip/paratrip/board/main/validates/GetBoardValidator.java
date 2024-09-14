@@ -7,15 +7,8 @@ import paratrip.paratrip.core.exception.ErrorResult;
 
 @Component
 public class GetBoardValidator {
-	public void validate(Long memberSeq, Long boardSeq) {
-		validateMemberSeq(memberSeq);
+	public void validate(Long boardSeq) {
 		validateBoardSeq(boardSeq);
-	}
-
-	private void validateMemberSeq(Long memberSeq) {
-		if (memberSeq == null) {
-			throw new BadRequestException(ErrorResult.DTO_BAD_REQUEST_EXCEPTION);
-		}
 	}
 
 	private void validateBoardSeq(Long boardSeq) {
