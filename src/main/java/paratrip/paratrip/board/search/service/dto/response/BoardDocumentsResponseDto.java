@@ -11,7 +11,8 @@ public class BoardDocumentsResponseDto {
 	) {
 		public record BoardCreatorInfo(
 			Long memberSeq,
-			String userId
+			String userId,
+			String profileImage
 		) {
 
 		}
