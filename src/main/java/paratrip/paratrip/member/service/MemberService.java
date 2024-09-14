@@ -3,6 +3,8 @@ package paratrip.paratrip.member.service;
 import static paratrip.paratrip.member.service.dto.request.MemberRequestDto.*;
 import static paratrip.paratrip.member.service.dto.response.MemberResponseDto.*;
 
+import java.io.IOException;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import paratrip.paratrip.member.domain.MemberDomain;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.mapper.MemberMapper;
 import paratrip.paratrip.member.repository.MemberRepository;
+import paratrip.paratrip.s3.domain.S3Domain;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,8 @@ public class MemberService {
 	private final BCryptPasswordEncoder encoder;
 
 	private final MemberDomain memberDomain;
+
+	private final S3Domain s3Domain;
 
 	@Transactional(readOnly = true)
 	public void verifyMemberEmail(VerifyEmailMemberRequestDto verifyEmailMemberRequestDto) {
@@ -163,17 +168,20 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void modifyMember(ModifyMemberRequestDto modifyMemberRequestDto) {
+	public void modifyMember(ModifyMemberRequestDto modifyMemberRequestDto) throws IOException {
 		/*
 		 1. Member 유효성 검사
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyMemberRequestDto.memberSeq());
+		String profileImage = "";
+		profileImage = s3Domain.uploadMultipartFile(modifyMemberRequestDto.profileImage());
 
 		// Update
 		MemberEntity updateMemberEntity = memberEntity.updateMemberEntity(
 			modifyMemberRequestDto.userId(),
 			modifyMemberRequestDto.birth(),
-			modifyMemberRequestDto.gender()
+			modifyMemberRequestDto.gender(),
+			profileImage
 		);
 
 		// 저장

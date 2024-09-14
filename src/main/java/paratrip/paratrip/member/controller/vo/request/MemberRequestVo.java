@@ -2,6 +2,8 @@ package paratrip.paratrip.member.controller.vo.request;
 
 import static paratrip.paratrip.member.service.dto.request.MemberRequestDto.*;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import paratrip.paratrip.member.util.Gender;
 
 public class MemberRequestVo {
@@ -125,14 +127,16 @@ public class MemberRequestVo {
 		Long memberSeq,
 		String userId,
 		String birth,
-		Gender gender
+		Gender gender,
+		MultipartFile profileImage
 	) {
 		public ModifyMemberRequestDto toModifyMemberRequestDto() {
 			return new ModifyMemberRequestDto(
 				this.memberSeq,
 				this.userId,
 				this.birth,
-				this.gender
+				this.gender,
+				this.profileImage
 			);
 		}
 	}
