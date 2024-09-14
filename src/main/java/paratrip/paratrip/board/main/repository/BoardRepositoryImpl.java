@@ -63,4 +63,27 @@ public class BoardRepositoryImpl implements BoardRepository {
 
 		return new PageImpl<>(result, pageable, total);
 	}
+
+	@Override
+	public Page<BoardEntity> findAllMyBoardEntity(MemberEntity memberEntity, Pageable pageable) {
+		QBoardEntity board = QBoardEntity.boardEntity;
+
+		List<BoardEntity> result = queryFactory
+			.selectFrom(board)
+			.where(
+				board.creatorMemberEntity.eq(memberEntity)
+			)
+			.orderBy(board.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		// 전체 개수 계산
+		long total = queryFactory
+			.select(board.count())
+			.from(board)
+			.fetchOne();
+
+		return new PageImpl<>(result, pageable, total);
+	}
 }

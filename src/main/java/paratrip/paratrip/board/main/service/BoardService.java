@@ -224,4 +224,42 @@ public class BoardService {
 			})
 			.collect(Collectors.toList());
 	}
+
+	@Transactional(readOnly = true)
+	public Page<GetAllBoardResponseDto> myBoard(Long memberSeq, Pageable pageable) {
+		/*
+		 1. Member 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
+		Page<BoardEntity> boardEntityPage = boardRepository.findAllMyBoardEntity(memberEntity, pageable);
+
+		return boardEntityPage.map(boardEntity -> {
+			// 댓글 개수와 스크랩 개수를 계산
+			long scrapCount = boardScrapRepository.countByBoardEntity(boardEntity);
+			long commentCount = commentRepository.countByBoardEntity(boardEntity);
+			List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
+
+			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
+			MemberInfo memberInfo = new MemberInfo(
+				boardEntity.getCreatorMemberEntity().getMemberSeq(),
+				boardEntity.getCreatorMemberEntity().getUserId()
+			);
+
+			BoardInfo boardInfo = new BoardInfo(
+				boardEntity.getBoardSeq(),
+				boardEntity.getTitle(),
+				boardEntity.getLocation(),
+				boardEntity.getUpdatedAt(),
+				imageURLs
+			);
+
+			CountInfo countInfo = new CountInfo(
+				commentCount,
+				boardEntity.getHearts(),
+				scrapCount
+			);
+
+			return new GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
+		});
+	}
 }

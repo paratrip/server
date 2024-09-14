@@ -16,4 +16,6 @@ public interface BoardRepository {
 	Page<BoardEntity> findAllBoardEntity(Pageable pageable);
 
 	Page<BoardEntity> findByPopularity(Pageable pageable);
+
+	Page<BoardEntity> findAllMyBoardEntity(MemberEntity memberEntity, Pageable pageable);
 }

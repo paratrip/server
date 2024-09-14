@@ -173,7 +173,7 @@ public class BoardController {
 			description = "페이지당 항목 수 (기본값: 10)",
 			example = "10")
 	})
-	public ResponseEntity<BaseResponse> getAllBoard(
+	public ResponseEntity<BaseResponse<Page<GetAllBoardResponseDto>>> getAllBoard(
 		@Valid
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "10") int size
@@ -265,6 +265,58 @@ public class BoardController {
 	) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<GetPopularityBoardResponseDto> response = boardService.getPopularityBoard(pageable);
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+	}
+
+	@GetMapping(value = "my", name = "내가 쓴 게시물")
+	@Operation(summary = "내가 쓴 게시물 API", description = "내가 쓴 게시물")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "요청에 성공하였습니다.",
+			useReturnTypeSchema = true),
+		@ApiResponse(
+			responseCode = "S500",
+			description = "500 SERVER_ERROR (나도 몰라 ..)",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "B001",
+			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+		@ApiResponse(
+			responseCode = "MSB003",
+			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
+			content = @Content(
+				schema = @Schema(
+					implementation = GlobalExceptionHandler.ErrorResponse.class))),
+	})
+	@Parameters({
+		@Parameter(
+			name = "memberSeq",
+			description = "Member Seq",
+			example = "0"),
+		@Parameter(
+			name = "page",
+			description = "페이지 번호 (기본값: 0)",
+			example = "0"),
+		@Parameter(
+			name = "size",
+			description = "페이지당 항목 수 (기본값: 10)",
+			example = "10")
+	})
+	public ResponseEntity<BaseResponse<Page<GetAllBoardResponseDto>>> myBoard(
+		@Valid
+		@RequestParam(value = "memberSeq", defaultValue = "0") Long memberSeq,
+		@RequestParam(value = "page", defaultValue = "0") int page,
+		@RequestParam(value = "size", defaultValue = "10") int size
+	) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<GetAllBoardResponseDto> response = boardService.myBoard(memberSeq, pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
