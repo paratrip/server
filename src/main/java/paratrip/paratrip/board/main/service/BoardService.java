@@ -175,14 +175,6 @@ public class BoardService {
 			boardEntity.getCreatorMemberEntity().getProfileImage()
 		);
 
-		// Count Info 생성
-		GetBoardResponseDto.CountInfo countInfo = new GetBoardResponseDto.CountInfo(
-			commentRepository.countByBoardEntity(boardEntity),
-			false, // boardHeart는 현재 false로 고정
-			// boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
-			false
-		);
-
 		// Comment Info 생성
 		List<GetBoardResponseDto.CommentInfo> commentInfos = commentRepository.findByBoardEntity(boardEntity)
 			.stream()
@@ -195,6 +187,16 @@ public class BoardService {
 				commentEntity.getMemberEntity().getProfileImage()
 			))
 			.collect(Collectors.toList());
+
+		// Count Info 생성
+		GetBoardResponseDto.CountInfo countInfo = new GetBoardResponseDto.CountInfo(
+			commentRepository.countByBoardEntity(boardEntity),
+			boardEntity.getHearts(),
+			boardScrapRepository.countByBoardEntity(boardEntity),
+			false, // boardHeart는 현재 false로 고정
+			// boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
+			false
+		);
 
 		return new GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
 	}
