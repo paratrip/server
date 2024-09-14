@@ -191,7 +191,8 @@ public class BoardService {
 				commentEntity.getComment(),
 				commentEntity.getUpdatedAt(),
 				commentEntity.getMemberEntity().getMemberSeq(),
-				commentEntity.getMemberEntity().getUserId()
+				commentEntity.getMemberEntity().getUserId(),
+				commentEntity.getMemberEntity().getProfileImage()
 			))
 			.collect(Collectors.toList());
 

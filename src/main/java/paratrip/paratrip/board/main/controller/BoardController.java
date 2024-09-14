@@ -45,7 +45,6 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 public class BoardController {
 	private final AddBoardValidator addBoardValidator;
 	private final ModifyBoardValidator modifyBoardValidator;
-	private final GetAllBoardValidator getAllBoardValidator;
 	private final GetBoardValidator getBoardValidator;
 
 	private final BoardService boardService;
