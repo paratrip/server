@@ -23,7 +23,6 @@ import paratrip.paratrip.member.repository.MemberRepository;
 @Service
 @RequiredArgsConstructor
 public class BoardDocumentsService {
-	private final MemberRepository memberRepository;
 	private final BoardDocumentsRepository boardDocumentsRepository;
 	private final BoardRepository boardRepository;
 	private final BoardImageRepository boardImageRepository;
@@ -31,12 +30,7 @@ public class BoardDocumentsService {
 	private final BoardScrapRepository boardScrapRepository;
 
 	@Transactional(readOnly = true)
-	public List<GetBoardDocumentsResponseDto> getBoardDocuments(Long memberSeq, String title, Pageable pageable) {
-		/*
-		 1. Member 유효성 검사
-		*/
-		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
-
+	public List<GetBoardDocumentsResponseDto> getBoardDocuments(String title, Pageable pageable) {
 		return boardDocumentsRepository.findByTitleContains(title, pageable)
 			.stream()
 			.map(boardDocuments -> {

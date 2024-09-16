@@ -56,19 +56,8 @@ public class BoardDocumentsController {
 			content = @Content(
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
 	@Parameters({
-		@Parameter(
-			name = "memberSeq",
-			description = "Member Seq",
-			example = "1",
-			required = true),
 		@Parameter(
 			name = "title",
 			description = "검색 제목",
@@ -85,17 +74,13 @@ public class BoardDocumentsController {
 	})
 	public ResponseEntity<BaseResponse<List<GetBoardDocumentsResponseDto>>> getBoardDocuments(
 		@Valid
-		@RequestParam(value = "memberSeq") Long memberSeq,
 		@RequestParam(value = "title") String title,
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "10") int size
 	) {
-		// 유효성 검사
-		getAllBoardValidator.validate(memberSeq);
-
 		Pageable pageable = PageRequest.of(page, size);
 		List<GetBoardDocumentsResponseDto> response
-			= boardDocumentsService.getBoardDocuments(memberSeq, title, pageable);
+			= boardDocumentsService.getBoardDocuments(title, pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
