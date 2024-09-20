@@ -173,21 +173,37 @@ public class MemberService {
 		 1. Member 유효성 검사
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyMemberRequestDto.memberSeq());
-		String profileImage = "";
-		if(modifyMemberRequestDto.profileImage() != null) {
-			profileImage = s3Domain.uploadMultipartFile(modifyMemberRequestDto.profileImage());
+
+		if (modifyMemberRequestDto.profileImage() != null) {
+			String profileImage = s3Domain.uploadMultipartFile(modifyMemberRequestDto.profileImage());
+
+			MemberEntity updateMemberEntity = memberEntity.updateMemberEntity(
+				modifyMemberRequestDto.userId(),
+				modifyMemberRequestDto.birth(),
+				modifyMemberRequestDto.gender(),
+				profileImage
+			);
+
+			memberRepository.saveMemberEntity(updateMemberEntity);
+		} else {
+			MemberEntity updateMemberEntity = memberEntity.updateMemberEntity(
+				modifyMemberRequestDto.userId(),
+				modifyMemberRequestDto.birth(),
+				modifyMemberRequestDto.gender()
+			);
+
+			memberRepository.saveMemberEntity(updateMemberEntity);
 		}
+	}
 
-		// Update
-		MemberEntity updateMemberEntity = memberEntity.updateMemberEntity(
-			modifyMemberRequestDto.userId(),
-			modifyMemberRequestDto.birth(),
-			modifyMemberRequestDto.gender(),
-			profileImage
-		);
+	@Transactional
+	public void deleteMemberProfileImage(DeleteMemberProfileImageRequestDto deleteMemberProfileImageRequestDto){
+		/*
+		 1. Member 유효성 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(deleteMemberProfileImageRequestDto.memberSeq());
 
-		// 저장
-		memberRepository.saveMemberEntity(updateMemberEntity);
+		memberEntity.deleteMemberProfileImage();
 	}
 
 	@Transactional(readOnly = true)
