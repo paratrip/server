@@ -29,12 +29,10 @@ public class MemberResponseVo {
 		Long memberSeq,
 		String email,
 		String phoneNumber,
-
 		String userId,
-
 		String birth,
-
-		Gender gender
+		Gender gender,
+		String profileImage
 	) {
 
 	}

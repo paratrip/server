@@ -36,7 +36,8 @@ public class MemberResponseDto {
 
 		String birth,
 
-		Gender gender
+		Gender gender,
+		String profileImage
 	) {
 		public GetMemberInfoResponse toGetMemberInfoResponse() {
 			return new GetMemberInfoResponse(
@@ -45,7 +46,8 @@ public class MemberResponseDto {
 				this.phoneNumber,
 				this.userId,
 				this.birth,
-				this.gender
+				this.gender,
+				profileImage
 			);
 		}
 	}

@@ -203,7 +203,8 @@ public class MemberService {
 			memberEntity.getPhoneNumber(),
 			memberEntity.getUserId(),
 			memberEntity.getBirth(),
-			memberEntity.getGender()
+			memberEntity.getGender(),
+			memberEntity.getProfileImage()
 		);
 	}
 }
