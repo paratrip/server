@@ -58,11 +58,23 @@ public class MemberEntity {
 		return this;
 	}
 
+	public MemberEntity updateMemberEntity(String userId, String birth, Gender gender) {
+		this.userId = userId;
+		this.birth = birth;
+		this.gender = gender;
+		return this;
+	}
+
 	public MemberEntity updateMemberEntity(String userId, String birth, Gender gender, String profileImage) {
 		this.userId = userId;
 		this.birth = birth;
 		this.gender = gender;
 		this.profileImage = profileImage;
+		return this;
+	}
+
+	public MemberEntity deleteMemberProfileImage() {
+		this.profileImage = null;
 		return this;
 	}
 }
