@@ -174,7 +174,9 @@ public class MemberService {
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(modifyMemberRequestDto.memberSeq());
 		String profileImage = "";
-		profileImage = s3Domain.uploadMultipartFile(modifyMemberRequestDto.profileImage());
+		if(!modifyMemberRequestDto.profileImage().isEmpty()) {
+			profileImage = s3Domain.uploadMultipartFile(modifyMemberRequestDto.profileImage());
+		}
 
 		// Update
 		MemberEntity updateMemberEntity = memberEntity.updateMemberEntity(
