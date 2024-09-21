@@ -20,8 +20,9 @@ public class TouristSpot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String touristSpotName; // <tAtsNm>
+    // private String touristSpotName; // <tAtsNm>
     private String basicAddress;    // <rlteBsicAdres>
     private String category;        // <rlteCtgryMclsNm>
     private String regionCode;      // 해당 지역 코드
+    private String rlteTatsNm;      // rlteTatsNm
 }

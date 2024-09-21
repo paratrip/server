@@ -14,7 +14,7 @@ public class TouristSpotController {
 
     private final TouristSpotService touristSpotService;
 
-    @GetMapping("/fetch/{region}/{signgu}")
+    @GetMapping("/fetch")
     public String fetchTouristData(@PathVariable("region") String region, @PathVariable("signgu") String signgu) {
         touristSpotService.fetchAndSaveTouristData(region, signgu);
         return "Tourist spots data fetching initiated.";

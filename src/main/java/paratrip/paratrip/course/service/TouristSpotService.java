@@ -12,7 +12,9 @@ import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.repository.TouristSpotRepository;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
@@ -20,15 +22,6 @@ public class TouristSpotService {
 
     private final TouristSpotRepository touristSpotRepository;
     private final WebClient.Builder webClientBuilder;
-
-    // 인코딩 처리된 서비스 키 생성 메소드
-    public String encodeServiceKey(String serviceKey) {
-        try {
-            return URLEncoder.encode(serviceKey, "UTF-8").replace("+", "%2B");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Error encoding service key", e);
-        }
-    }
 
     String decodedServiceKey = "MlY68M1MmMMegGoGX5sZVrtEuniuCGrjlz93nJdrGeCc+j1rRAISWcEOW7+Nf8uvYkG+OhNkvsUfi4yo3+bO3g==";
 
@@ -58,32 +51,32 @@ public class TouristSpotService {
     public void fetchAndSaveTouristData(String regionCode, String signguCode) {
         try {
             // 서비스 키 인코딩
-            String encodedServiceKey = encodeServiceKey(decodedServiceKey);
+            String encodedServiceKey = URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8);
 
             // URI를 먼저 빌드하고, 콘솔에 출력
-            String uri = UriComponentsBuilder.fromHttpUrl("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
-                    .queryParam("serviceKey", encodedServiceKey)
-                    .queryParam("numOfRows", 30)
-                    .queryParam("pageNo", 1)
-                    .queryParam("MobileOS", "ETC")
-                    .queryParam("MobileApp", "myapp")
-                    .queryParam("baseYm", "202408")
-                    .queryParam("areaCd", regionCode)
-                    .queryParam("signguCd", signguCode)
-                    .queryParam("_type", "json")
-                    .build()
-                    .toUriString();
+            URI URL = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
+                .queryParam("serviceKey", encodedServiceKey)
+                .queryParam("numOfRows", 1000)
+                .queryParam("pageNo", 1)
+                .queryParam("MobileOS", "ETC")
+                .queryParam("MobileApp", "myapp")
+                .queryParam("baseYm", "202408")
+                .queryParam("areaCd", regionCode)
+                .queryParam("signguCd", signguCode)
+                .queryParam("_type", "json")
+                .build(true)
+                .toUri();
 
             // 생성된 URL을 출력
-            System.out.println("Generated URL: " + uri);
+            System.out.println("Generated URL: " + URL);
 
             // WebClient로 요청을 보내기 전에 URL을 확인한 후 요청
             WebClient webClient = webClientBuilder.build();
             String response = webClient.get()
-                    .uri(uri)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+                .uri(URL)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
             // 응답 데이터 확인
             System.out.println("API Response: " + response);
@@ -103,29 +96,29 @@ public class TouristSpotService {
                 for (JsonNode itemNode : itemsNode) {
                     String basicAddress = itemNode.path("rlteBsicAdres").asText();
                     String middleCategory = itemNode.path("rlteCtgryMclsNm").asText();
-                    String touristSpotName = itemNode.path("tAtsNm").asText();
+                    String rlteTatsNm = itemNode.path("rlteTatsNm").asText();
 
                     // TouristSpot 엔티티 생성 및 저장
-                    if (!touristSpotRepository.existsByTouristSpotName(touristSpotName)) {
+                    if (!touristSpotRepository.existsByRlteTatsNm(rlteTatsNm)) {
                         TouristSpot touristSpot = TouristSpot.builder()
                                 .basicAddress(basicAddress)
                                 .category(middleCategory)
-                                .touristSpotName(touristSpotName)
+                                .rlteTatsNm(rlteTatsNm)
                                 .regionCode(regionCode)
                                 .build();
 
                         // DB에 저장
                         touristSpotRepository.save(touristSpot);
-                        System.out.println("Saved Tourist Spot: " + touristSpotName);
+                        System.out.println("Saved Tourist Spot: " + rlteTatsNm);
                     } else {
-                        System.out.println("Tourist Spot already exists: " + touristSpotName);
+                        System.out.println("Tourist Spot already exists: " + rlteTatsNm);
                     }
                 }
             } else {
                 System.err.println("No items found in the API response.");
             }
         } catch (WebClientResponseException e) {
-            System.err.println("Error response from API: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            System.err.println("Error response from API: " + e.getStatusCode() + " - " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
