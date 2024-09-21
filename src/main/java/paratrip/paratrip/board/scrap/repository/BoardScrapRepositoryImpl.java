@@ -1,10 +1,18 @@
 package paratrip.paratrip.board.scrap.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.scrap.entity.BoardScrapEntity;
+import paratrip.paratrip.board.scrap.entity.QBoardScrapEntity;
 import paratrip.paratrip.core.exception.BadRequestException;
 import paratrip.paratrip.core.exception.ConflictException;
 import paratrip.paratrip.core.exception.ErrorResult;
@@ -14,6 +22,7 @@ import paratrip.paratrip.member.entity.MemberEntity;
 @RequiredArgsConstructor
 public class BoardScrapRepositoryImpl implements BoardScrapRepository {
 	private final BoardScrapJpaRepository boardScrapJpaRepository;
+	private final JPAQueryFactory queryFactory;
 
 	@Override
 	public BoardScrapEntity saveBoardScrapEntity(BoardScrapEntity boardScrapEntity) {
@@ -54,4 +63,26 @@ public class BoardScrapRepositoryImpl implements BoardScrapRepository {
 	public boolean existsByBoardEntityAndMemberEntity(MemberEntity memberEntity, BoardEntity boardEntity) {
 		return boardScrapJpaRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity);
 	}
+
+	@Override
+	public Page<BoardScrapEntity> findAllByMemberEntity(MemberEntity memberEntity, Pageable pageable) {
+		QBoardScrapEntity boardScrap = QBoardScrapEntity.boardScrapEntity;
+
+		List<BoardScrapEntity> results = queryFactory
+			.selectFrom(boardScrap)
+			.where(
+				boardScrap.memberEntity.eq(memberEntity)
+			)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		long total = queryFactory
+			.select(boardScrap.count())
+			.from(boardScrap)
+			.fetchOne();
+
+		return new PageImpl<>(results, pageable, total);
+	}
+
 }
