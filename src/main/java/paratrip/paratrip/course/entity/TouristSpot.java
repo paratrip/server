@@ -25,4 +25,8 @@ public class TouristSpot {
     private String category;        // <rlteCtgryMclsNm>
     private String regionCode;      // 해당 지역 코드
     private String rlteTatsNm;      // rlteTatsNm
+
+    private String rlteCtgrySclsNm;
+    private String imageUrl;         // 이미지 URL 추가
+
 }

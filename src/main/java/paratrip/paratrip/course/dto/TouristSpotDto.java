@@ -5,6 +5,9 @@ public record TouristSpotDto(
         String largeCategory,
         String middleCategory,
         String smallCategory,
+        String rlteCtgrySclsNm,
         String touristSpotName,
-        String regionCode
+        String regionCode,
+        String imageUrl  // 이미지 URL 추가
+
 ) {}

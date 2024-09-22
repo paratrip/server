@@ -23,13 +23,12 @@ public class TouristSpotService {
     private final TouristSpotRepository touristSpotRepository;
     private final WebClient.Builder webClientBuilder;
 
-    String decodedServiceKey = "MlY68M1MmMMegGoGX5sZVrtEuniuCGrjlz93nJdrGeCc+j1rRAISWcEOW7+Nf8uvYkG+OhNkvsUfi4yo3+bO3g==";
+    String decodedServiceKey = "GqNKkxUkL86uGd2y/xTIoabmqZwi0BQqyPUWRaafwi3pfYSDud9IvxKnBNI1gpFafvC05XZ0H4sCwGEyH2//YA==";
 
     @PostConstruct
-    public void init() {
-        // 9개의 지역 코드와 시군구 코드를 미리 설정
+    public void init() throws InterruptedException {
+        // 8개의 지역 코드와 시군구 코드를 설정
         String[][] regionSignguPairs = {
-                //{"41", "41461"}, // 용인--> 용인은 제외
                 {"51", "51760"}, // 평창
                 {"44", "44180"}, // 보령
                 {"43", "43800"}, // 단양
@@ -45,6 +44,8 @@ public class TouristSpotService {
             String regionCode = pair[0];
             String signguCode = pair[1];
             fetchAndSaveTouristData(regionCode, signguCode);
+            Thread.sleep(10);
+
         }
     }
 
@@ -52,13 +53,13 @@ public class TouristSpotService {
         try {
             // URI 빌더의 인코딩 모드 설정
             DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
-            factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);  // NONE 또는 VALUES_ONLY로 설정 가능
+            factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
             // WebClientBuilder에 적용
             WebClient webClient = webClientBuilder.uriBuilderFactory(factory).build();
 
-            // URI를 먼저 빌드하고, 콘솔에 출력
-            URI URL = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
+            // 관광 정보 API 호출
+            URI url = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
                     .queryParam("serviceKey", URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8))
                     .queryParam("numOfRows", 100)
                     .queryParam("pageNo", 1)
@@ -72,14 +73,9 @@ public class TouristSpotService {
                     .toUri();
 
             // 생성된 URL을 출력
-            System.out.println("Generated URL: " + URL);
+            System.out.println("Generated URL: " + url);
 
-            // WebClient로 요청을 보내기 전에 URL을 확인한 후 요청
-            String response = webClient.get()
-                    .uri(URL)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            String response = webClient.get().uri(url).retrieve().bodyToMono(String.class).block();
 
             // 응답 데이터 확인
             System.out.println("API Response: " + response);
@@ -99,22 +95,32 @@ public class TouristSpotService {
                 for (JsonNode itemNode : itemsNode) {
                     String basicAddress = itemNode.path("rlteBsicAdres").asText();
                     String middleCategory = itemNode.path("rlteCtgryMclsNm").asText();
-                    String rlteTatsNm = itemNode.path("rlteTatsNm").asText();
+                    String tAtsNm = itemNode.path("rlteTatsNm").asText();
+                    String rlteCtgrySclsNm = itemNode.path("rlteCtgrySclsNm").asText();
 
-                    // TouristSpot 엔티티 생성 및 저장
-                    if (!touristSpotRepository.existsByRlteTatsNm(rlteTatsNm)) {
+                    // TouristSpot 엔티티 생성 및 저장 전에 이미지 검색 API 호출
+                    String imageUrl = fetchImageUrl(tAtsNm);
+
+                    // 이미지가 있을 경우에만 TouristSpot 저장
+                    if (imageUrl != null) {
                         TouristSpot touristSpot = TouristSpot.builder()
                                 .basicAddress(basicAddress)
                                 .category(middleCategory)
-                                .rlteTatsNm(rlteTatsNm)
+                                .rlteTatsNm(tAtsNm)
+                                .rlteCtgrySclsNm(rlteCtgrySclsNm)
                                 .regionCode(regionCode)
+                                .imageUrl(imageUrl)
                                 .build();
 
                         // DB에 저장
-                        touristSpotRepository.save(touristSpot);
-                        System.out.println("Saved Tourist Spot: " + rlteTatsNm);
+                        if (!touristSpotRepository.existsByRlteTatsNm(tAtsNm)) {
+                            touristSpotRepository.save(touristSpot);
+                            System.out.println("Saved Tourist Spot: " + tAtsNm);
+                        } else {
+                            System.out.println("Tourist Spot already exists: " + tAtsNm);
+                        }
                     } else {
-                        System.out.println("Tourist Spot already exists: " + rlteTatsNm);
+                        System.out.println("No image found for Tourist Spot: " + tAtsNm);
                     }
                 }
             } else {
@@ -124,6 +130,46 @@ public class TouristSpotService {
             System.err.println("Error response from API: " + e.getStatusCode() + " - " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // 이미지 검색 API 호출 메서드
+    public String fetchImageUrl(String keyword) {
+        try {
+            WebClient webClient = webClientBuilder.build();
+
+            URI url = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/PhotoGalleryService1/gallerySearchList1")
+                    .queryParam("serviceKey", URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8))
+                    .queryParam("numOfRows", 1)
+                    .queryParam("pageNo", 1)
+                    .queryParam("MobileOS", "ETC")
+                    .queryParam("MobileApp", "myapp")
+                    .queryParam("arrange", "A")
+                    .queryParam("keyword", URLEncoder.encode(keyword, StandardCharsets.UTF_8))
+                    .queryParam("_type", "json")
+                    .build(true)
+                    .toUri();
+
+            // 이미지 검색 요청
+            String response = webClient.get().uri(url).retrieve().bodyToMono(String.class).block();
+
+            // JSON 파싱
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response);
+            JsonNode itemsNode = rootNode.path("response").path("body").path("items").path("item");
+
+            // 첫 번째 이미지 URL을 반환 (있다면)
+            if (itemsNode.isArray() && itemsNode.size() > 0) {
+                return itemsNode.get(0).path("galWebImageUrl").asText();
+            } else {
+                return null;  // 이미지가 없을 경우
+            }
+        } catch (WebClientResponseException e) {
+            System.err.println("Error response from Image API: " + e.getStatusCode() + " - " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
