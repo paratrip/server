@@ -125,21 +125,22 @@ public class BoardService {
 			List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
 			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
-			MemberInfo memberInfo = new MemberInfo(
+			GetAllBoardResponseDto.MemberInfo memberInfo = new GetAllBoardResponseDto.MemberInfo(
 				boardEntity.getCreatorMemberEntity().getMemberSeq(),
 				boardEntity.getCreatorMemberEntity().getUserId(),
 				boardEntity.getCreatorMemberEntity().getProfileImage()
 			);
 
-			BoardInfo boardInfo = new BoardInfo(
+			GetAllBoardResponseDto.BoardInfo boardInfo = new GetAllBoardResponseDto.BoardInfo(
 				boardEntity.getBoardSeq(),
 				boardEntity.getTitle(),
 				boardEntity.getLocation(),
+				boardEntity.getContent(),
 				boardEntity.getUpdatedAt(),
 				imageURLs
 			);
 
-			CountInfo countInfo = new CountInfo(
+			GetAllBoardResponseDto.CountInfo countInfo = new GetAllBoardResponseDto.CountInfo(
 				commentCount,
 				boardEntity.getHearts(),
 				scrapCount
@@ -202,31 +203,42 @@ public class BoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<GetPopularityBoardResponseDto> getPopularityBoard(Pageable pageable) {
+	public List<GetAllBoardResponseDto> getPopularityBoard(Pageable pageable) {
 		Page<BoardEntity> boardEntityPage = boardRepository.findByPopularity(pageable);
 
 		// Stream API를 사용하여 DTO로 변환
 		return boardEntityPage.stream()
 			.map(boardEntity -> {
-				// Image 추출
+				// 댓글 개수와 스크랩 개수를 계산
+				long scrapCount = boardScrapRepository.countByBoardEntity(boardEntity);
+				long commentCount = commentRepository.countByBoardEntity(boardEntity);
 				List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
 				// Board Info 생성
-				GetPopularityBoardResponseDto.BoardInfo boardInfo = new GetPopularityBoardResponseDto.BoardInfo(
+				GetAllBoardResponseDto.BoardInfo boardInfo = new GetAllBoardResponseDto.BoardInfo(
 					boardEntity.getBoardSeq(),
 					boardEntity.getTitle(),
+					boardEntity.getLocation(),
+					boardEntity.getContent(),
+					boardEntity.getUpdatedAt(),
 					imageURLs
 				);
 
 				// Board Creator Member Info 생성
-				GetPopularityBoardResponseDto.BoardCreatorMemberInfo boardCreatorMemberInfo = new GetPopularityBoardResponseDto.BoardCreatorMemberInfo(
+				GetAllBoardResponseDto.MemberInfo memberInfo = new GetAllBoardResponseDto.MemberInfo(
 					boardEntity.getCreatorMemberEntity().getMemberSeq(),
 					boardEntity.getCreatorMemberEntity().getUserId(),
 					boardEntity.getCreatorMemberEntity().getProfileImage()
 				);
 
+				GetAllBoardResponseDto.CountInfo countInfo = new GetAllBoardResponseDto.CountInfo(
+					commentCount,
+					boardEntity.getHearts(),
+					scrapCount
+				);
+
 				// 최종 DTO 생성
-				return new GetPopularityBoardResponseDto(boardCreatorMemberInfo, boardInfo);
+				return new GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
 			})
 			.collect(Collectors.toList());
 	}
@@ -256,6 +268,7 @@ public class BoardService {
 				boardEntity.getBoardSeq(),
 				boardEntity.getTitle(),
 				boardEntity.getLocation(),
+				boardEntity.getContent(),
 				boardEntity.getUpdatedAt(),
 				imageURLs
 			);

@@ -257,13 +257,13 @@ public class BoardController {
 			description = "페이지당 항목 수 (기본값: 10)",
 			example = "10")
 	})
-	public ResponseEntity<BaseResponse<List<GetPopularityBoardResponseDto>>> getPopularityBoard(
+	public ResponseEntity<BaseResponse<List<GetAllBoardResponseDto>>> getPopularityBoard(
 		@Valid
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<GetPopularityBoardResponseDto> response = boardService.getPopularityBoard(pageable);
+		List<GetAllBoardResponseDto> response = boardService.getPopularityBoard(pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}

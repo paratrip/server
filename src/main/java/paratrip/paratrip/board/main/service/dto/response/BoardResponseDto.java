@@ -33,6 +33,7 @@ public class BoardResponseDto {
 			Long boardSeq,
 			String title,
 			String location,
+			String content,
 			LocalDateTime updatedAt,
 			List<String> imageURLs
 		) {
@@ -90,27 +91,6 @@ public class BoardResponseDto {
 			Long memberSeq,
 			String userId,
 			String profileImage
-		) {
-
-		}
-	}
-
-	public record GetPopularityBoardResponseDto(
-		BoardCreatorMemberInfo boardCreatorMemberInfo,
-		BoardInfo boardInfo
-	) {
-		public record BoardCreatorMemberInfo(
-			Long memberSeq,
-			String userId,
-			String profileImage
-		) {
-
-		}
-
-		public record BoardInfo(
-			Long boardSeq,
-			String title,
-			List<String> imageURLs
 		) {
 
 		}
