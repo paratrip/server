@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.repository.TouristSpotRepository;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +29,7 @@ public class TouristSpotService {
     public void init() {
         // 9개의 지역 코드와 시군구 코드를 미리 설정
         String[][] regionSignguPairs = {
-                {"41", "41461"}, // 용인
+                //{"41", "41461"}, // 용인--> 용인은 제외
                 {"51", "51760"}, // 평창
                 {"44", "44180"}, // 보령
                 {"43", "43800"}, // 단양
@@ -50,33 +50,36 @@ public class TouristSpotService {
 
     public void fetchAndSaveTouristData(String regionCode, String signguCode) {
         try {
-            // 서비스 키 인코딩
-            String encodedServiceKey = URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8);
+            // URI 빌더의 인코딩 모드 설정
+            DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
+            factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);  // NONE 또는 VALUES_ONLY로 설정 가능
+
+            // WebClientBuilder에 적용
+            WebClient webClient = webClientBuilder.uriBuilderFactory(factory).build();
 
             // URI를 먼저 빌드하고, 콘솔에 출력
             URI URL = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
-                .queryParam("serviceKey", encodedServiceKey)
-                .queryParam("numOfRows", 1000)
-                .queryParam("pageNo", 1)
-                .queryParam("MobileOS", "ETC")
-                .queryParam("MobileApp", "myapp")
-                .queryParam("baseYm", "202408")
-                .queryParam("areaCd", regionCode)
-                .queryParam("signguCd", signguCode)
-                .queryParam("_type", "json")
-                .build(true)
-                .toUri();
+                    .queryParam("serviceKey", URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8))
+                    .queryParam("numOfRows", 100)
+                    .queryParam("pageNo", 1)
+                    .queryParam("MobileOS", "ETC")
+                    .queryParam("MobileApp", "myapp")
+                    .queryParam("baseYm", "202408")
+                    .queryParam("areaCd", regionCode)
+                    .queryParam("signguCd", signguCode)
+                    .queryParam("_type", "json")
+                    .build(true)
+                    .toUri();
 
             // 생성된 URL을 출력
             System.out.println("Generated URL: " + URL);
 
             // WebClient로 요청을 보내기 전에 URL을 확인한 후 요청
-            WebClient webClient = webClientBuilder.build();
             String response = webClient.get()
-                .uri(URL)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+                    .uri(URL)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
             // 응답 데이터 확인
             System.out.println("API Response: " + response);
