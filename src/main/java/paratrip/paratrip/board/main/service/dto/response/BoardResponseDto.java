@@ -17,11 +17,11 @@ public class BoardResponseDto {
 	}
 
 	public record GetAllBoardResponseDto(
-		MemberInfo memberInfo,
-		BoardInfo boardInfo,
-		CountInfo countInfo
+		GetAllBoardResponseDto.AllBoardMemberInfo memberInfo,
+		GetAllBoardResponseDto.AllBoardBoardInfo boardInfo,
+		GetAllBoardResponseDto.AllBoardCountInfo countInfo
 	) {
-		public record MemberInfo(
+		public record AllBoardMemberInfo(
 			Long memberSeq,
 			String userId,
 			String profileImage
@@ -29,7 +29,7 @@ public class BoardResponseDto {
 
 		}
 
-		public record BoardInfo(
+		public record AllBoardBoardInfo(
 			Long boardSeq,
 			String title,
 			String location,
@@ -40,7 +40,7 @@ public class BoardResponseDto {
 
 		}
 
-		public record CountInfo(
+		public record AllBoardCountInfo(
 			Long commentCnt,
 			Long heartCnt,
 			Long scrapCnt
@@ -50,10 +50,10 @@ public class BoardResponseDto {
 	}
 
 	public record GetBoardResponseDto(
-		BoardCreatorInfo boardCreatorInfo,
-		BoardInfo boardInfo,
-		CountInfo countInfo,
-		List<CommentInfo> commentInfos
+		GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo,
+		GetBoardResponseDto.BoardInfo boardInfo,
+		GetBoardResponseDto.CountInfo countInfo,
+		List<GetBoardResponseDto.CommentInfo> commentInfos
 	) {
 		public record BoardCreatorInfo(
 			Long memberSeq,

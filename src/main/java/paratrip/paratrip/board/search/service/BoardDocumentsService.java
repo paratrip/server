@@ -1,8 +1,5 @@
 package paratrip.paratrip.board.search.service;
 
-import static paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto.*;
-import static paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,9 +13,9 @@ import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
 import paratrip.paratrip.board.scrap.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
+import paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto;
 import paratrip.paratrip.comment.repository.CommentRepository;
 import paratrip.paratrip.member.entity.MemberEntity;
-import paratrip.paratrip.member.repository.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +27,16 @@ public class BoardDocumentsService {
 	private final BoardScrapRepository boardScrapRepository;
 
 	@Transactional(readOnly = true)
-	public List<GetBoardDocumentsResponseDto> getBoardDocuments(String title, Pageable pageable) {
+	public List<BoardDocumentsResponseDto.GetBoardDocumentsResponseDto> getBoardDocuments(String title,
+		Pageable pageable) {
 		return boardDocumentsRepository.findByTitleContains(title, pageable)
 			.stream()
 			.map(boardDocuments -> {
 				// Board Info 생성
 				BoardEntity boardEntity = boardRepository.findByBoardSeq(boardDocuments.getBoardSeq());
 				List<String> boardImageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
-				BoardInfo boardInfo = new BoardInfo(
+				BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardInfo boardInfo
+					= new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardInfo(
 					boardEntity.getBoardSeq(),
 					boardEntity.getTitle(),
 					boardEntity.getContent(),
@@ -48,7 +47,8 @@ public class BoardDocumentsService {
 
 				// Board Creator Info 생성
 				MemberEntity boardCreatorMemberEntity = boardEntity.getCreatorMemberEntity();
-				BoardCreatorInfo boardCreatorInfo = new BoardCreatorInfo(
+				BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardCreatorInfo boardCreatorInfo
+					= new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardCreatorInfo(
 					boardCreatorMemberEntity.getMemberSeq(),
 					boardCreatorMemberEntity.getUserId(),
 					boardCreatorMemberEntity.getProfileImage()
@@ -58,13 +58,18 @@ public class BoardDocumentsService {
 				long commentCount = commentRepository.countByBoardEntity(boardEntity);
 				long scrapCount = boardScrapRepository.countByBoardEntity(boardEntity);
 				long hearts = boardEntity.getHearts();
-				CountInfo countInfo = new CountInfo(
+				BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.CountInfo countInfo
+					= new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.CountInfo(
 					commentCount,
 					hearts,
 					scrapCount
 				);
 
-				return new GetBoardDocumentsResponseDto(boardCreatorInfo, boardInfo, countInfo);
+				return new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto(
+					boardCreatorInfo,
+					boardInfo,
+					countInfo
+				);
 			})
 			.collect(Collectors.toList());
 	}

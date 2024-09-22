@@ -5,9 +5,9 @@ import java.util.List;
 
 public class BoardDocumentsResponseDto {
 	public record GetBoardDocumentsResponseDto(
-		BoardCreatorInfo boardCreatorInfo,
-		BoardInfo boardInfo,
-		CountInfo countInfo
+		GetBoardDocumentsResponseDto.BoardCreatorInfo boardCreatorInfo,
+		GetBoardDocumentsResponseDto.BoardInfo boardInfo,
+		GetBoardDocumentsResponseDto.CountInfo countInfo
 	) {
 		public record BoardCreatorInfo(
 			Long memberSeq,

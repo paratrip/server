@@ -1,7 +1,5 @@
 package paratrip.paratrip.board.search.controller;
 
-import static paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto.*;
-
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +23,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.validates.GetAllBoardValidator;
 import paratrip.paratrip.board.search.service.BoardDocumentsService;
+import paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 
@@ -33,7 +32,6 @@ import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 @RequiredArgsConstructor
 @Tag(name = "커뮤니티 검색 API", description = "담당자(박종훈)")
 public class BoardDocumentsController {
-	private final GetAllBoardValidator getAllBoardValidator;
 
 	private final BoardDocumentsService boardDocumentsService;
 
@@ -72,14 +70,14 @@ public class BoardDocumentsController {
 			description = "페이지당 항목 수 (기본값: 10)",
 			example = "10")
 	})
-	public ResponseEntity<BaseResponse<List<GetBoardDocumentsResponseDto>>> getBoardDocuments(
+	public ResponseEntity<BaseResponse<List<BoardDocumentsResponseDto.GetBoardDocumentsResponseDto>>> getBoardDocuments(
 		@Valid
 		@RequestParam(value = "title") String title,
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<GetBoardDocumentsResponseDto> response
+		List<BoardDocumentsResponseDto.GetBoardDocumentsResponseDto> response
 			= boardDocumentsService.getBoardDocuments(title, pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));

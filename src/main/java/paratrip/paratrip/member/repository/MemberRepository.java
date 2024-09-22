@@ -1,5 +1,7 @@
 package paratrip.paratrip.member.repository;
 
+import java.util.Optional;
+
 import paratrip.paratrip.member.entity.MemberEntity;
 
 public interface MemberRepository {

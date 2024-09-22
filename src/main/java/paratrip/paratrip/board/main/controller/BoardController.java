@@ -217,12 +217,13 @@ public class BoardController {
 	})
 	public ResponseEntity<BaseResponse<GetBoardResponseDto>> getBoard(
 		@Valid
-		@RequestParam(value = "boardSeq") Long boardSeq
+		@RequestParam(value = "boardSeq") Long boardSeq,
+		@RequestParam(value = "memberSeq", defaultValue = "-1") Long memberSeq
 	) {
 		// 유효성 검사
 		getBoardValidator.validate(boardSeq);
 
-		GetBoardResponseDto response = boardService.getBoard(boardSeq);
+		GetBoardResponseDto response = boardService.getBoard(boardSeq, memberSeq);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}

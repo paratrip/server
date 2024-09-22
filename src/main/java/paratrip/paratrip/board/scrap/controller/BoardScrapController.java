@@ -191,7 +191,7 @@ public class BoardScrapController {
 			description = "페이지당 항목 수 (기본값: 10)",
 			example = "10")
 	})
-	public ResponseEntity<BaseResponse<Page<GetAllBoardResponseDto>>> getBoardScrap(
+	public ResponseEntity<BaseResponse<Page<BoardResponseDto.GetAllBoardResponseDto>>> getBoardScrap(
 		@Valid
 		@RequestParam("memberSeq") Long memberSeq,
 		@RequestParam(value = "page", defaultValue = "0") int page,
@@ -200,7 +200,7 @@ public class BoardScrapController {
 		Pageable pageable = PageRequest.of(page, size);
 
 		// VO -> DTO
-		Page<GetAllBoardResponseDto> response = boardScrapService.getBoardScarp(memberSeq, pageable);
+		Page<BoardResponseDto.GetAllBoardResponseDto> response = boardScrapService.getBoardScarp(memberSeq, pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}

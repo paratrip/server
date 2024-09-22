@@ -88,13 +88,13 @@ public class BoardScrapService {
 				= boardImageRepository.extractImageURLsByBoardEntity(boardScrapEntity.getBoardEntity());
 
 			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
-			GetAllBoardResponseDto.MemberInfo memberInfo = new GetAllBoardResponseDto.MemberInfo(
+			GetAllBoardResponseDto.AllBoardMemberInfo memberInfo = new GetAllBoardResponseDto.AllBoardMemberInfo(
 				boardScrapEntity.getMemberEntity().getMemberSeq(),
 				boardScrapEntity.getMemberEntity().getUserId(),
 				boardScrapEntity.getMemberEntity().getProfileImage()
 			);
 
-			GetAllBoardResponseDto.BoardInfo boardInfo = new GetAllBoardResponseDto.BoardInfo(
+			GetAllBoardResponseDto.AllBoardBoardInfo boardInfo = new GetAllBoardResponseDto.AllBoardBoardInfo(
 				boardScrapEntity.getBoardEntity().getBoardSeq(),
 				boardScrapEntity.getBoardEntity().getTitle(),
 				boardScrapEntity.getBoardEntity().getLocation(),
@@ -103,7 +103,7 @@ public class BoardScrapService {
 				imageURLs
 			);
 
-			GetAllBoardResponseDto.CountInfo countInfo = new GetAllBoardResponseDto.CountInfo(
+			GetAllBoardResponseDto.AllBoardCountInfo countInfo = new GetAllBoardResponseDto.AllBoardCountInfo(
 				commentCount,
 				boardScrapEntity.getBoardEntity().getHearts(),
 				scrapCount

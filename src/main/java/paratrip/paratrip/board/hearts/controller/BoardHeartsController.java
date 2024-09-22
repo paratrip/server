@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.hearts.service.BoardHeartService;
+import paratrip.paratrip.board.hearts.service.dto.response.BoardHeartResponseDto;
 import paratrip.paratrip.board.hearts.validates.DecreaseBoardHeartsValidator;
 import paratrip.paratrip.board.hearts.validates.IncreaseBoardHeartsValidator;
 import paratrip.paratrip.core.base.BaseResponse;
@@ -65,7 +66,7 @@ public class BoardHeartsController {
 				schema = @Schema(
 					implementation = GlobalExceptionHandler.ErrorResponse.class))),
 	})
-	public ResponseEntity<BaseResponse> increaseBoardHearts(
+	public ResponseEntity<BaseResponse<BoardHeartResponseDto.AddBoardHeartResponseDto>> increaseBoardHearts(
 		@Valid
 		@RequestBody IncreaseBoardHeartsRequest request
 	) {
@@ -73,9 +74,10 @@ public class BoardHeartsController {
 		addBoardHeartsValidator.validate(request);
 
 		// VO -> DTO
-		boardHeartService.increaseBoardHearts(request.toIncreaseBoardHeartsRequestDto());
+		BoardHeartResponseDto.AddBoardHeartResponseDto response
+			= boardHeartService.increaseBoardHearts(request.toIncreaseBoardHeartsRequestDto());
 
-		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
 	}
 
 	@PostMapping(value = "decrease", name = "커뮤니티 게시물 좋아요 감소")
