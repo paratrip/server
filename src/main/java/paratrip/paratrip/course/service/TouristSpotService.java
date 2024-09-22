@@ -25,29 +25,29 @@ public class TouristSpotService {
 
     String decodedServiceKey = "GqNKkxUkL86uGd2y/xTIoabmqZwi0BQqyPUWRaafwi3pfYSDud9IvxKnBNI1gpFafvC05XZ0H4sCwGEyH2//YA==";
 
-    @PostConstruct
-    public void init() throws InterruptedException {
-        // 8개의 지역 코드와 시군구 코드를 설정
-        String[][] regionSignguPairs = {
-                {"51", "51760"}, // 평창
-                {"44", "44180"}, // 보령
-                {"43", "43800"}, // 단양
-                {"46", "46720"}, // 곡성
-                {"51", "51750"}, // 영월
-                {"52", "52130"}, // 군산
-                {"48", "48890"}, // 합천
-                {"46", "46130"}  // 여수
-        };
-
-        // 각 지역과 시군구에 대해 데이터를 가져와 저장
-        for (String[] pair : regionSignguPairs) {
-            String regionCode = pair[0];
-            String signguCode = pair[1];
-            fetchAndSaveTouristData(regionCode, signguCode);
-            Thread.sleep(10);
-
-        }
-    }
+//    @PostConstruct
+//    public void init() throws InterruptedException {
+//        // 8개의 지역 코드와 시군구 코드를 설정
+//        String[][] regionSignguPairs = {
+//                {"51", "51760"}, // 평창
+//                {"44", "44180"}, // 보령
+//                {"43", "43800"}, // 단양
+//                {"46", "46720"}, // 곡성
+//                {"51", "51750"}, // 영월
+//                {"52", "52130"}, // 군산
+//                {"48", "48890"}, // 합천
+//                {"46", "46130"}  // 여수
+//        };
+//
+//        // 각 지역과 시군구에 대해 데이터를 가져와 저장
+//        for (String[] pair : regionSignguPairs) {
+//            String regionCode = pair[0];
+//            String signguCode = pair[1];
+//            fetchAndSaveTouristData(regionCode, signguCode);
+//            Thread.sleep(10);
+//
+//        }
+//    }
 
     public void fetchAndSaveTouristData(String regionCode, String signguCode) {
         try {
