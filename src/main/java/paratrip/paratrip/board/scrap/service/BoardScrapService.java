@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import paratrip.paratrip.alarm.mapper.AlarmMapper;
+import paratrip.paratrip.alarm.repository.AlarmRepository;
+import paratrip.paratrip.alarm.utils.Type;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
@@ -31,8 +34,10 @@ public class BoardScrapService {
 	private final BoardScrapRepository boardScrapRepository;
 	private final CommentRepository commentRepository;
 	private final BoardImageRepository boardImageRepository;
+	private final AlarmRepository alarmRepository;
 
 	private final BoardScrapMapper boardScrapMapper;
+	private final AlarmMapper alarmMapper;
 
 	@Transactional
 	public AddBoardScrapResponseDto saveBoardScrap(AddBoardScrapRequestDto addBoardScrapRequestDto) {
@@ -45,10 +50,14 @@ public class BoardScrapService {
 		BoardEntity boardEntity = boardRepository.findByBoardSeq(addBoardScrapRequestDto.boardSeq());
 		boardScrapRepository.duplicateBoardScrap(memberEntity, boardEntity);
 
-		// 저장
+		/*
+		 1. BoardScarpEntity 저장
+		 2. AlarmEntity 저장
+		*/
 		BoardScrapEntity boardScrapEntity = boardScrapRepository.saveBoardScrapEntity(
 			boardScrapMapper.toBoardScrapEntity(memberEntity, boardEntity)
 		);
+		alarmRepository.saveAlarmEntity(alarmMapper.toAlarmEntity(boardEntity, memberEntity, Type.SCRAP));
 
 		return new AddBoardScrapResponseDto(boardScrapEntity.getBoardScrapSeq());
 	}
