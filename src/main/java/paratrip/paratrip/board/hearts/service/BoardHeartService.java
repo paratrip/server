@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import paratrip.paratrip.alarm.mapper.AlarmMapper;
+import paratrip.paratrip.alarm.repository.AlarmRepository;
+import paratrip.paratrip.alarm.utils.Type;
 import paratrip.paratrip.board.hearts.entity.BoardHeartEntity;
 import paratrip.paratrip.board.hearts.mapper.BoardHeartMapper;
 import paratrip.paratrip.board.hearts.repoisitory.BoardHeartRepository;
@@ -21,8 +24,10 @@ public class BoardHeartService {
 	private final MemberRepository memberRepository;
 	private final BoardRepository boardRepository;
 	private final BoardHeartRepository boardHeartRepository;
+	private final AlarmRepository alarmRepository;
 
 	private final BoardHeartMapper boardHeartMapper;
+	private final AlarmMapper alarmMapper;
 
 	@Transactional
 	public BoardHeartResponseDto.AddBoardHeartResponseDto increaseBoardHearts(
@@ -37,11 +42,15 @@ public class BoardHeartService {
 
 		// Hearts 1 증가
 		BoardEntity newBoardEntity = boardEntity.increaseHearts();
+		boardRepository.saveBoardEntity(newBoardEntity);
+
+		/*
+		 1. BoardHeartEntity 저장
+		 2. AlarmEntity 저장
+		*/
 		BoardHeartEntity boardHeartEntity
 			= boardHeartRepository.saveBoardHeartEntity(boardHeartMapper.toBoardHeartEntity(boardEntity, memberEntity));
-
-		// 저장
-		boardRepository.saveBoardEntity(newBoardEntity);
+		alarmRepository.saveAlarmEntity(alarmMapper.toAlarmEntity(boardEntity, memberEntity, Type.HEART));
 
 		return new BoardHeartResponseDto.AddBoardHeartResponseDto(boardHeartEntity.getBoardHeartSeq());
 	}

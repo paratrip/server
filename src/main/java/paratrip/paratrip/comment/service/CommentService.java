@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import paratrip.paratrip.alarm.mapper.AlarmMapper;
+import paratrip.paratrip.alarm.repository.AlarmRepository;
+import paratrip.paratrip.alarm.utils.Type;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.repository.BoardRepository;
 import paratrip.paratrip.comment.entity.CommentEntity;
@@ -21,8 +24,10 @@ public class CommentService {
 	private final MemberRepository memberRepository;
 	private final BoardRepository boardRepository;
 	private final CommentRepository commentRepository;
+	private final AlarmRepository alarmRepository;
 
 	private final CommentMapper commentMapper;
+	private final AlarmMapper alarmMapper;
 
 	@Transactional
 	public AddCommentResponseDto addComment(AddCommentRequestDto addCommentRequestDto) {
@@ -33,10 +38,14 @@ public class CommentService {
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(addCommentRequestDto.memberSeq());
 		BoardEntity boardEntity = boardRepository.findByBoardSeq(addCommentRequestDto.boardSeq());
 
-		// 저장
+		/*
+		 1. CommentEntity 저장
+		 2. AlarmEntity 저장
+		*/
 		CommentEntity commentEntity = commentRepository.saveCommentEntity(
 			commentMapper.toCommentEntity(boardEntity, memberEntity, addCommentRequestDto.comment())
 		);
+		alarmRepository.saveAlarmEntity(alarmMapper.toAlarmEntity(boardEntity, memberEntity, Type.COMMENT));
 
 		return new AddCommentResponseDto(commentEntity.getCommentSeq());
 	}
