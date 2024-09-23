@@ -87,7 +87,9 @@ jobs:
       # Timezone 설정 작업 추가
       - name: Set timezone to Asia/Seoul and verify
         run: |
-          sudo rm /etc/localtime
+          if [ -f /etc/localtime ]; then
+            sudo rm /etc/localtime
+          fi
           sudo ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
           date
 
