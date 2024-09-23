@@ -35,7 +35,7 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: paratrip
-      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: paratrip1!
       TZ: Asia/Seoul
     ports:
       - 3306:3306
