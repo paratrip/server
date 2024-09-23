@@ -89,6 +89,13 @@ jobs:
         run: |
           sudo rm /etc/localtime
 
+      - name: Set symbolic link for Asia/Seoul timezone
+        run: |
+          sudo ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+      - name: Verify timezone setting
+        run: date
+
       - name: Clean up Docker to free space
         run: |
           sudo docker container prune -f
