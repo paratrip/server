@@ -16,14 +16,13 @@ import paratrip.paratrip.member.repository.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class KakaoService {
 	private final MemberRepository memberRepository;
 
 	private final KakaoDomain kakaoDomain;
 	private final MemberDomain memberDomain;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public LoginMemberResponseDto loginKakaoMember(String code) throws Exception {
 		/*
 		 1. Kakao 회원가입 여부 확인
@@ -33,6 +32,11 @@ public class KakaoService {
 		JsonNode rootNode = kakaoDomain.getUserFromCode(code);
 		String email = kakaoDomain.getEmail(rootNode);
 		MemberEntity memberEntity = memberRepository.findByEmail(email);
+
+		// 이미지 수정
+		String profileImage = kakaoDomain.getProfileImage(rootNode);
+		MemberEntity updateMemberEntity = memberEntity.updateKakaoProfileImage(profileImage);
+		memberRepository.saveMemberEntity(updateMemberEntity);
 
 		// Token 발급
 		String accessToken = memberDomain.generateAccessToken(email);
