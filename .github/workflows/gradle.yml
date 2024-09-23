@@ -85,16 +85,11 @@ jobs:
           fi
 
       # Timezone 설정 작업 추가
-      - name: Remove current timezone symbolic link
+      - name: Set timezone to Asia/Seoul and verify
         run: |
           sudo rm /etc/localtime
-
-      - name: Set symbolic link for Asia/Seoul timezone
-        run: |
           sudo ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-
-      - name: Verify timezone setting
-        run: date
+          date
 
       - name: Clean up Docker to free space
         run: |
