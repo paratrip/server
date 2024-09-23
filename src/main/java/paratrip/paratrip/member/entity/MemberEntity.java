@@ -77,4 +77,9 @@ public class MemberEntity {
 		this.profileImage = null;
 		return this;
 	}
+
+	public MemberEntity updateKakaoProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+		return this;
+	}
 }

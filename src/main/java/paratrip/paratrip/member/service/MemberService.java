@@ -197,13 +197,14 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void deleteMemberProfileImage(DeleteMemberProfileImageRequestDto deleteMemberProfileImageRequestDto){
+	public void deleteMemberProfileImage(DeleteMemberProfileImageRequestDto deleteMemberProfileImageRequestDto) {
 		/*
 		 1. Member 유효성 검사
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(deleteMemberProfileImageRequestDto.memberSeq());
 
-		memberEntity.deleteMemberProfileImage();
+		MemberEntity updateMemberEntity = memberEntity.deleteMemberProfileImage();
+		memberRepository.saveMemberEntity(updateMemberEntity);
 	}
 
 	@Transactional(readOnly = true)
