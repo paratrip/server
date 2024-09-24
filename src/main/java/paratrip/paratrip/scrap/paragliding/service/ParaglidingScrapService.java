@@ -32,9 +32,11 @@ public class ParaglidingScrapService {
 		/*
 		 1. Member 유효성 검사
 		 2. Paragliding 유효성 검사
+		 3. 이미 SCRAP 존재 여부
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(request.memberSeq());
 		Paragliding paraglidingEntity = paraglidingRepository.findByParaglidingSeq(request.paraglidingSeq());
+		paraglidingScrapRepository.existsMemberEntityParaglidingScrapEntity(memberEntity, paraglidingEntity);
 
 		ParaglidingScrapEntity paraglidingScrapEntity = paraglidingScrapRepository.saveParaglidingScrapEntity(
 			paraglidingScrapMapper.toParaglidingScrapEntity(memberEntity, paraglidingEntity)
