@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.scrap.paragliding.service.ParaglidingScrapService;
@@ -22,6 +23,7 @@ import paratrip.paratrip.scrap.paragliding.service.ParaglidingScrapService;
 @RestController
 @RequestMapping("/paragliding/scrap")
 @RequiredArgsConstructor
+@Tag(name = "패러글라이딩 스크랩 API", description = "담당자(박종훈)")
 public class ParaglidingScrapController {
 	private final ParaglidingScrapService paraglidingScrapService;
 
