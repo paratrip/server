@@ -1,6 +1,6 @@
 package paratrip.paratrip.board.hearts.controller.vo.request;
 
-import static paratrip.paratrip.board.hearts.service.dto.BoardHeartRequestDto.*;
+import static paratrip.paratrip.board.hearts.service.dto.request.BoardHeartRequestDto.*;
 
 public class BoardHeartsRequestVo {
 	public record IncreaseBoardHeartsRequest(
@@ -17,12 +17,14 @@ public class BoardHeartsRequestVo {
 
 	public record DecreaseBoardHeartsRequest(
 		Long memberSeq,
-		Long boardSeq
+		Long boardSeq,
+		Long boardHeartSeq
 	) {
 		public DecreaseBoardHeartsRequestDto toDecreaseBoardHeartsRequestDto() {
 			return new DecreaseBoardHeartsRequestDto(
 				this.memberSeq,
-				this.boardSeq
+				this.boardSeq,
+				this.boardHeartSeq
 			);
 		}
 	}

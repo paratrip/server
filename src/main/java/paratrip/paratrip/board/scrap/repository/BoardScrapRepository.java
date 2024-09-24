@@ -1,5 +1,8 @@
 package paratrip.paratrip.board.scrap.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.scrap.entity.BoardScrapEntity;
 import paratrip.paratrip.member.entity.MemberEntity;
@@ -18,4 +21,6 @@ public interface BoardScrapRepository {
 	void duplicateBoardScrap(MemberEntity memberEntity, BoardEntity boardEntity);
 
 	boolean existsByBoardEntityAndMemberEntity(MemberEntity memberEntity, BoardEntity boardEntity);
+
+	Page<BoardScrapEntity> findAllByMemberEntity(MemberEntity memberEntity, Pageable pageable);
 }

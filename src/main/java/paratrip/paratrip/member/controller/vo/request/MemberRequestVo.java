@@ -140,4 +140,14 @@ public class MemberRequestVo {
 			);
 		}
 	}
+
+	public record DeleteMemberProfileImageRequest(
+		Long memberSeq
+	) {
+		public DeleteMemberProfileImageRequestDto toDeleteMemberProfileImageRequestDto() {
+			return new DeleteMemberProfileImageRequestDto(
+				this.memberSeq
+			);
+		}
+	}
 }

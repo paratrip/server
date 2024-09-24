@@ -78,4 +78,10 @@ public class MemberRequestDto {
 	) {
 
 	}
+
+	public record DeleteMemberProfileImageRequestDto(
+		Long memberSeq
+	) {
+
+	}
 }

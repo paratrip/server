@@ -1,4 +1,4 @@
-package paratrip.paratrip.board.hearts.service.dto;
+package paratrip.paratrip.board.hearts.service.dto.request;
 
 public class BoardHeartRequestDto {
 	public record IncreaseBoardHeartsRequestDto(
@@ -10,7 +10,8 @@ public class BoardHeartRequestDto {
 
 	public record DecreaseBoardHeartsRequestDto(
 		Long memberSeq,
-		Long boardSeq
+		Long boardSeq,
+		Long boardHeartSeq
 	) {
 
 	}
