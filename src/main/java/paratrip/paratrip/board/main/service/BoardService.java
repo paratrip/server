@@ -54,8 +54,6 @@ public class BoardService {
 	private final BoardImageMapper boardImageMapper;
 	private final BoardDocumentsMapper boardDocumentsMapper;
 
-	private final LocalDateTimeConverter converter;
-
 	@Transactional
 	public BoardResponseDto.AddBoardResponseDto saveBoard(
 		AddBoardRequestDto addBoardRequestDto
@@ -222,7 +220,6 @@ public class BoardService {
 	public List<BoardResponseDto.GetAllBoardResponseDto> getPopularityBoard(Pageable pageable) {
 		Page<BoardEntity> boardEntityPage = boardRepository.findByPopularity(pageable);
 
-		// Stream API를 사용하여 DTO로 변환
 		return boardEntityPage.stream()
 			.map(boardEntity -> {
 				// 댓글 개수와 스크랩 개수를 계산
@@ -232,29 +229,14 @@ public class BoardService {
 
 				// Board Info 생성
 				BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo boardInfo
-					= new BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo(
-					boardEntity.getBoardSeq(),
-					boardEntity.getTitle(),
-					boardEntity.getLocation(),
-					boardEntity.getContent(),
-					converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
-					imageURLs
-				);
+					= boardDomain.convertToAllBoardBoardInfo(boardEntity, imageURLs);
 
 				// Board Creator Member Info 생성
 				BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo memberInfo
-					= new BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo(
-					boardEntity.getCreatorMemberEntity().getMemberSeq(),
-					boardEntity.getCreatorMemberEntity().getUserId(),
-					boardEntity.getCreatorMemberEntity().getProfileImage()
-				);
+					= boardDomain.convertToAllBoardMemberInfo(boardEntity);
 
 				BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo countInfo
-					= new BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo(
-					commentCount,
-					boardEntity.getHearts(),
-					scrapCount
-				);
+					= boardDomain.convertToAllBoardCountInfo(boardEntity, commentCount, scrapCount);
 
 				// 최종 DTO 생성
 				return new BoardResponseDto.GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
@@ -276,30 +258,16 @@ public class BoardService {
 			long commentCount = commentRepository.countByBoardEntity(boardEntity);
 			List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
-			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
-			BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo memberInfo
-				= new BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo(
-				boardEntity.getCreatorMemberEntity().getMemberSeq(),
-				boardEntity.getCreatorMemberEntity().getUserId(),
-				boardEntity.getCreatorMemberEntity().getProfileImage()
-			);
-
+			// Board Info 생성
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo boardInfo
-				= new BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo(
-				boardEntity.getBoardSeq(),
-				boardEntity.getTitle(),
-				boardEntity.getLocation(),
-				boardEntity.getContent(),
-				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
-				imageURLs
-			);
+				= boardDomain.convertToAllBoardBoardInfo(boardEntity, imageURLs);
+
+			// Member Info 생성
+			BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo memberInfo
+				= boardDomain.convertToAllBoardMemberInfo(boardEntity);
 
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo countInfo
-				= new BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo(
-				commentCount,
-				boardEntity.getHearts(),
-				scrapCount
-			);
+				= boardDomain.convertToAllBoardCountInfo(boardEntity, commentCount, scrapCount);
 
 			return new BoardResponseDto.GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
 		});
