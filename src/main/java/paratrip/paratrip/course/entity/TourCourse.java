@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import paratrip.paratrip.paragliding.entity.Paragliding;
-import paratrip.paratrip.paragliding.entity.Region;
 
 import java.util.List;
 
@@ -33,9 +32,7 @@ public class TourCourse {
     @JoinColumn(name = "tourist_spot2_id")
     private TouristSpot touristSpot2;
 
-    @Column(name = "region")
-    @Enumerated(EnumType.STRING)  // Region enum을 문자열로 저장
-    private Region region;
+    private String region;  // 패러글라이딩의 지역 (주소 형태)
 
     // 이미지 URL 추가
     private String imageUrlParagliding;

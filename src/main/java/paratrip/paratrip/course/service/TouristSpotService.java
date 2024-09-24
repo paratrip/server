@@ -24,7 +24,7 @@ public class TouristSpotService {
     private final WebClient.Builder webClientBuilder;
     private final CourseService courseService;  // CourseService 의존성 주입
 
-    private String decodedServiceKey = "MlY68M1MmMMegGoGX5sZVrtEuniuCGrjlz93nJdrGeCc+j1rRAISWcEOW7+Nf8uvYkG+OhNkvsUfi4yo3+bO3g==";
+    private String decodedServiceKey = "0PDIwA52myrKA7RqVYA5cWJjNY58QPdUDUbL+YIfRKljfui3fmtvA5TBoTkUAybLnTgcI3I6SZVEgHdNPGljuw==";
 
     // 애플리케이션 시작 시 자동으로 데이터를 처리하고 코스 생성
     @PostConstruct
@@ -67,7 +67,7 @@ public class TouristSpotService {
             // API URL 생성
             URI url = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
                     .queryParam("serviceKey", URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8))
-                    .queryParam("numOfRows", 10)
+                    .queryParam("numOfRows", 50)
                     .queryParam("pageNo", 1)
                     .queryParam("MobileOS", "ETC")
                     .queryParam("MobileApp", "myapp")

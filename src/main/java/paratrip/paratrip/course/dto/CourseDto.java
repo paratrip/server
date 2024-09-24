@@ -1,12 +1,14 @@
 package paratrip.paratrip.course.dto;
 
+import paratrip.paratrip.paragliding.entity.Region;
+
 import java.util.List;
 
 public record CourseDto(
         String paraglidingName,
         String touristSpotName1,
         String touristSpotName2,
-        String region,
+        Region region,  // Region 추가
         String imageUrlParagliding,
         String imageUrl1,
         String imageUrl2,
@@ -14,5 +16,5 @@ public record CourseDto(
         String category2,
         String spotAddress1,
         String spotAddress2,
-        List<String> tags  // 태그 리스트 추가
+        List<String> tags
 ) {}

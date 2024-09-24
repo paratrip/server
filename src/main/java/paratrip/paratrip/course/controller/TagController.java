@@ -1,5 +1,6 @@
 package paratrip.paratrip.course.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import paratrip.paratrip.course.service.TagService;
  */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Tag  관련 API", description = "gpt 오류가 많아 생성을 눌러야 태그가 만들어지게 임의로 해놨습니다")
 public class TagController {
 
     private final TagService tagService;
