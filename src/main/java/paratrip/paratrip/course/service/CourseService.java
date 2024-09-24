@@ -9,6 +9,7 @@ import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.repository.CourseRepository;
 import paratrip.paratrip.course.repository.TouristSpotRepository;
 import paratrip.paratrip.paragliding.entity.Paragliding;
+import paratrip.paratrip.paragliding.repository.ParaglidingJpaRepository;
 import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.course.util.CourseUtil;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class CourseService {
 
     private final CourseRepository courseRepository;
-    private final ParaglidingRepository paraglidingRepository;
+    private final ParaglidingJpaRepository paraglidingRepository;
     private final TouristSpotRepository touristSpotRepository;
 
     @Transactional

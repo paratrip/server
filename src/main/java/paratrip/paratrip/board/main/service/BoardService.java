@@ -22,7 +22,7 @@ import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
 import paratrip.paratrip.board.main.service.dto.request.BoardRequestDto;
 import paratrip.paratrip.board.main.service.dto.response.BoardResponseDto;
-import paratrip.paratrip.scrap.repository.BoardScrapRepository;
+import paratrip.paratrip.scrap.board.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.mapper.BoardDocumentsMapper;
 import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
 import paratrip.paratrip.comment.repository.CommentRepository;

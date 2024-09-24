@@ -12,7 +12,7 @@ import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
 import paratrip.paratrip.core.utils.LocalDateTimeConverter;
-import paratrip.paratrip.scrap.repository.BoardScrapRepository;
+import paratrip.paratrip.scrap.board.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
 import paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto;
 import paratrip.paratrip.comment.repository.CommentRepository;
