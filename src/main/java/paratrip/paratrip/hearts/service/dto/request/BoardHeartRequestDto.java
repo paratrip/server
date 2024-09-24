@@ -10,8 +10,7 @@ public class BoardHeartRequestDto {
 
 	public record DecreaseBoardHeartsRequestDto(
 		Long memberSeq,
-		Long boardSeq,
-		Long boardHeartSeq
+		Long boardSeq
 	) {
 
 	}

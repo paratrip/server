@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -89,6 +90,20 @@ public class BoardScrapRepositoryImpl implements BoardScrapRepository {
 	@Override
 	public void deleteByBoardEntity(BoardEntity boardEntity) {
 		boardScrapJpaRepository.deleteByBoardEntity(boardEntity);
+	}
+
+	@Override
+	public BoardScrapEntity findByMemberEntityAndBoardEntity(MemberEntity memberEntity, BoardEntity boardEntity) {
+		QBoardScrapEntity boardScrap = QBoardScrapEntity.boardScrapEntity;
+
+		return Optional.ofNullable(
+			queryFactory
+				.selectFrom(boardScrap)
+				.where(
+					boardScrap.boardEntity.eq(boardEntity)
+						.and(boardScrap.memberEntity.eq(memberEntity))
+				).fetchOne()
+		).orElseThrow(() -> new BadRequestException(ErrorResult.BOARD_HEART_NOT_FOUND_EXCEPTION));
 	}
 
 }

@@ -64,7 +64,7 @@ public class BoardHeartService {
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(decreaseBoardHeartsRequestDto.memberSeq());
 		BoardEntity boardEntity = boardRepository.findByBoardSeq(decreaseBoardHeartsRequestDto.boardSeq());
 		BoardHeartEntity boardHeartEntity
-			= boardHeartRepository.findByBoardHeartSeq(decreaseBoardHeartsRequestDto.boardHeartSeq());
+			= boardHeartRepository.findByMemberEntityAndBoardEntity(memberEntity, boardEntity);
 
 		// Hearts 1 감소 -> 0보다 작으면 0으로
 		BoardEntity newBoardEntity = boardEntity.decreaseHearts();

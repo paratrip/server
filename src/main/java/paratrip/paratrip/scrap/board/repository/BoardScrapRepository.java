@@ -25,4 +25,6 @@ public interface BoardScrapRepository {
 	Page<BoardScrapEntity> findAllByMemberEntity(MemberEntity memberEntity, Pageable pageable);
 
 	void deleteByBoardEntity(BoardEntity boardEntity);
+
+	BoardScrapEntity findByMemberEntityAndBoardEntity(MemberEntity memberEntity, BoardEntity boardEntity);
 }
