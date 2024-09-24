@@ -18,6 +18,7 @@ import paratrip.paratrip.alarm.utils.Type;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
+import paratrip.paratrip.core.utils.LocalDateTimeConverter;
 import paratrip.paratrip.scrap.entity.BoardScrapEntity;
 import paratrip.paratrip.scrap.mapper.BoardScrapMapper;
 import paratrip.paratrip.scrap.repository.BoardScrapRepository;
@@ -37,6 +38,8 @@ public class BoardScrapService {
 
 	private final BoardScrapMapper boardScrapMapper;
 	private final AlarmMapper alarmMapper;
+
+	private final LocalDateTimeConverter converter;
 
 	@Transactional
 	public AddBoardScrapResponseDto saveBoardScrap(AddBoardScrapRequestDto addBoardScrapRequestDto) {
@@ -107,7 +110,7 @@ public class BoardScrapService {
 				boardScrapEntity.getBoardEntity().getTitle(),
 				boardScrapEntity.getBoardEntity().getLocation(),
 				boardScrapEntity.getBoardEntity().getContent(),
-				boardScrapEntity.getBoardEntity().getUpdatedAt(),
+				converter.convertToKoreanTime(boardScrapEntity.getBoardEntity().getUpdatedAt()),
 				imageURLs
 			);
 
