@@ -20,4 +20,6 @@ public interface BoardScrapJpaRepository extends JpaRepository<BoardScrapEntity,
 	Optional<BoardScrapEntity> findByMemberEntityAndBoardEntity(MemberEntity memberEntity, BoardEntity boardEntity);
 
 	Boolean existsByBoardEntityAndMemberEntity(BoardEntity boardEntity, MemberEntity memberEntity);
+
+	void deleteByBoardEntity(BoardEntity boardEntity);
 }

@@ -19,4 +19,6 @@ public interface CommentJpaRepository extends JpaRepository<CommentEntity, Long>
 	long countByBoardEntity(BoardEntity boardEntity);
 
 	List<CommentEntity> findByBoardEntity(BoardEntity boardEntity);
+
+	void deleteByBoardEntity(BoardEntity boardEntity);
 }

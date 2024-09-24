@@ -2,6 +2,7 @@ package paratrip.paratrip.board.main.controller;
 
 import static paratrip.paratrip.board.main.controller.vo.request.BoardRequestVo.*;
 import static paratrip.paratrip.board.main.controller.vo.response.BoardResponseVo.*;
+import static paratrip.paratrip.board.main.service.dto.request.BoardRequestDto.*;
 import static paratrip.paratrip.board.main.service.dto.response.BoardResponseDto.*;
 
 import java.io.IOException;
@@ -12,10 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +34,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.service.BoardService;
+import paratrip.paratrip.board.main.service.dto.request.BoardRequestDto;
 import paratrip.paratrip.board.main.validates.AddBoardValidator;
 import paratrip.paratrip.board.main.validates.GetAllBoardValidator;
 import paratrip.paratrip.board.main.validates.GetBoardValidator;
@@ -319,5 +323,15 @@ public class BoardController {
 		Page<GetAllBoardResponseDto> response = boardService.myBoard(memberSeq, pageable);
 
 		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+	}
+
+	@DeleteMapping()
+	public ResponseEntity<BaseResponse> deleteBoard(
+		@Valid
+		@RequestBody DeleteBoardRequestDto request
+	) {
+		boardService.deleteBoard(request);
+
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 }

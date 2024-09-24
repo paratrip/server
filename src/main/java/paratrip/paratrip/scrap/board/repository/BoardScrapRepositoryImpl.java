@@ -3,6 +3,7 @@ package paratrip.paratrip.scrap.board.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -83,6 +84,11 @@ public class BoardScrapRepositoryImpl implements BoardScrapRepository {
 			.fetchOne();
 
 		return new PageImpl<>(results, pageable, total);
+	}
+
+	@Override
+	public void deleteByBoardEntity(BoardEntity boardEntity) {
+		boardScrapJpaRepository.deleteByBoardEntity(boardEntity);
 	}
 
 }
