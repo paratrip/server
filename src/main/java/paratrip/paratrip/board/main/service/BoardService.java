@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.alarm.repository.AlarmRepository;
+import paratrip.paratrip.comment.domain.CommentDomain;
+import paratrip.paratrip.comment.entity.CommentEntity;
 import paratrip.paratrip.core.utils.LocalDateTimeConverter;
 import paratrip.paratrip.hearts.repoisitory.BoardHeartRepository;
 import paratrip.paratrip.board.main.domain.BoardDomain;
@@ -23,7 +25,6 @@ import paratrip.paratrip.board.main.mapper.BoardImageMapper;
 import paratrip.paratrip.board.main.mapper.BoardMapper;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
-import paratrip.paratrip.board.main.service.dto.request.BoardRequestDto;
 import paratrip.paratrip.board.main.service.dto.response.BoardResponseDto;
 import paratrip.paratrip.scrap.board.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.mapper.BoardDocumentsMapper;
@@ -47,6 +48,7 @@ public class BoardService {
 
 	private final S3Domain s3Domain;
 	private final BoardDomain boardDomain;
+	private final CommentDomain commentDomain;
 
 	private final BoardMapper boardMapper;
 	private final BoardImageMapper boardImageMapper;
@@ -135,28 +137,11 @@ public class BoardService {
 
 			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo memberInfo
-				= new BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo(
-				boardEntity.getCreatorMemberEntity().getMemberSeq(),
-				boardEntity.getCreatorMemberEntity().getUserId(),
-				boardEntity.getCreatorMemberEntity().getProfileImage()
-			);
-
+				= boardDomain.convertToAllBoardMemberInfo(boardEntity);
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo boardInfo
-				= new BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo(
-				boardEntity.getBoardSeq(),
-				boardEntity.getTitle(),
-				boardEntity.getLocation(),
-				boardEntity.getContent(),
-				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
-				imageURLs
-			);
-
+				= boardDomain.convertToAllBoardBoardInfo(boardEntity, imageURLs);
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo countInfo
-				= new BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo(
-				commentCount,
-				boardEntity.getHearts(),
-				scrapCount
-			);
+				= boardDomain.convertToAllBoardCountInfo(boardEntity, commentCount, scrapCount);
 
 			return new BoardResponseDto.GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
 		});
@@ -164,106 +149,81 @@ public class BoardService {
 
 	@Transactional(readOnly = true)
 	public BoardResponseDto.GetBoardResponseDto getBoard(Long boardSeq, Long memberSeq) {
-		/*
-		 1. MemberSeq 유효성 검사
-		 2. BoardSeq 유효성 검사
-		*/
-		if (memberSeq != -1) {
-			MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
-			BoardEntity boardEntity = boardRepository.findByBoardSeq(boardSeq);
-			List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
+		if (boardDomain.checkLoginStatus(memberSeq))
+			return getBoardDetailsLoginMember(memberSeq, boardSeq);
+		else
+			return getBoardDetailsNotLoginMember(memberSeq, boardSeq);
+	}
 
-			// Board Info 생성
-			BoardResponseDto.GetBoardResponseDto.BoardInfo boardInfo
-				= new BoardResponseDto.GetBoardResponseDto.BoardInfo(
-				boardEntity.getBoardSeq(),
-				boardEntity.getTitle(),
-				boardEntity.getContent(),
-				boardEntity.getLocation(),
-				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
-				imageURLs
-			);
+	@Transactional(readOnly = true)
+	public BoardResponseDto.GetBoardResponseDto getBoardDetailsLoginMember(Long memberSeq, Long boardSeq) {
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
+		BoardEntity boardEntity = boardRepository.findByBoardSeq(boardSeq);
+		List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
-			// Board Creator Info 생성
-			BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo
-				= new BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo(
-				boardEntity.getCreatorMemberEntity().getMemberSeq(),
-				boardEntity.getCreatorMemberEntity().getUserId(),
-				boardEntity.getCreatorMemberEntity().getProfileImage()
-			);
+		// Board Info 생성
+		BoardResponseDto.GetBoardResponseDto.BoardInfo boardInfo
+			= boardDomain.convertToBoardInfo(boardEntity, imageURLs);
 
-			// Comment Info 생성
-			List<BoardResponseDto.GetBoardResponseDto.CommentInfo> commentInfos = commentRepository.findByBoardEntity(
-					boardEntity)
-				.stream()
-				.map(commentEntity -> new BoardResponseDto.GetBoardResponseDto.CommentInfo(
-					commentEntity.getCommentSeq(),
-					commentEntity.getComment(),
-					commentEntity.getUpdatedAt(),
-					commentEntity.getMemberEntity().getMemberSeq(),
-					commentEntity.getMemberEntity().getUserId(),
-					commentEntity.getMemberEntity().getProfileImage()
-				))
-				.collect(Collectors.toList());
+		// Board Creator Info 생성
+		BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo
+			= boardDomain.convertToBoardCreatorInfo(boardEntity);
 
-			// Count Info 생성
-			BoardResponseDto.GetBoardResponseDto.CountInfo countInfo = new BoardResponseDto.GetBoardResponseDto.CountInfo(
-				commentRepository.countByBoardEntity(boardEntity),
-				boardEntity.getHearts(),
-				boardScrapRepository.countByBoardEntity(boardEntity),
-				boardHeartRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity),
-				boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
-			);
+		// TODO COMMENT 조회 API로 따로 분리
+		List<BoardResponseDto.GetBoardResponseDto.CommentInfo> commentInfos = commentRepository.findByBoardEntity(
+				boardEntity)
+			.stream()
+			.map(commentEntity -> new BoardResponseDto.GetBoardResponseDto.CommentInfo(
+				commentEntity.getCommentSeq(),
+				commentEntity.getComment(),
+				commentEntity.getUpdatedAt(),
+				commentEntity.getMemberEntity().getMemberSeq(),
+				commentEntity.getMemberEntity().getUserId(),
+				commentEntity.getMemberEntity().getProfileImage()
+			))
+			.collect(Collectors.toList());
 
-			return new BoardResponseDto.GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
-		} else {
-			BoardEntity boardEntity = boardRepository.findByBoardSeq(boardSeq);
-			List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
+		// Count Info 생성
+		BoardResponseDto.GetBoardResponseDto.CountInfo countInfo = new BoardResponseDto.GetBoardResponseDto.CountInfo(
+			commentRepository.countByBoardEntity(boardEntity),
+			boardEntity.getHearts(),
+			boardScrapRepository.countByBoardEntity(boardEntity),
+			boardHeartRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity),
+			boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
+		);
 
-			// Board Info 생성
-			BoardResponseDto.GetBoardResponseDto.BoardInfo boardInfo = new BoardResponseDto.GetBoardResponseDto.BoardInfo(
-				boardEntity.getBoardSeq(),
-				boardEntity.getTitle(),
-				boardEntity.getContent(),
-				boardEntity.getLocation(),
-				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
-				imageURLs
-			);
+		return new BoardResponseDto.GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
+	}
 
-			// Board Creator Info 생성
-			BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo
-				= new BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo(
-				boardEntity.getCreatorMemberEntity().getMemberSeq(),
-				boardEntity.getCreatorMemberEntity().getUserId(),
-				boardEntity.getCreatorMemberEntity().getProfileImage()
-			);
+	@Transactional(readOnly = true)
+	public BoardResponseDto.GetBoardResponseDto getBoardDetailsNotLoginMember(Long memberSeq, Long boardSeq) {
+		BoardEntity boardEntity = boardRepository.findByBoardSeq(boardSeq);
+		List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
-			// Comment Info 생성
-			List<BoardResponseDto.GetBoardResponseDto.CommentInfo> commentInfos = commentRepository.findByBoardEntity(
-					boardEntity)
-				.stream()
-				.map(commentEntity -> new BoardResponseDto.GetBoardResponseDto.CommentInfo(
-					commentEntity.getCommentSeq(),
-					commentEntity.getComment(),
-					commentEntity.getUpdatedAt(),
-					commentEntity.getMemberEntity().getMemberSeq(),
-					commentEntity.getMemberEntity().getUserId(),
-					commentEntity.getMemberEntity().getProfileImage()
-				))
-				.collect(Collectors.toList());
+		// Board Info 생성
+		BoardResponseDto.GetBoardResponseDto.BoardInfo boardInfo
+			= boardDomain.convertToBoardInfo(boardEntity, imageURLs);
 
-			// Count Info 생성
-			BoardResponseDto.GetBoardResponseDto.CountInfo countInfo
-				= new BoardResponseDto.GetBoardResponseDto.CountInfo(
-				commentRepository.countByBoardEntity(boardEntity),
-				boardEntity.getHearts(),
-				boardScrapRepository.countByBoardEntity(boardEntity),
-				false,
-				false
-			);
+		// Board Creator Info 생성
+		BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo
+			= boardDomain.convertToBoardCreatorInfo(boardEntity);
 
-			return new BoardResponseDto.GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
-		}
+		// Comment Info 생성
+		List<CommentEntity> commentEntities = commentRepository.findByBoardEntity(boardEntity);
+		List<BoardResponseDto.GetBoardResponseDto.CommentInfo> commentInfos
+			= commentDomain.convertToCommentInfos(commentEntities);
+
+		// Count Info 생성
+		BoardResponseDto.GetBoardResponseDto.CountInfo countInfo
+			= new BoardResponseDto.GetBoardResponseDto.CountInfo(
+			commentRepository.countByBoardEntity(boardEntity),
+			boardEntity.getHearts(),
+			boardScrapRepository.countByBoardEntity(boardEntity),
+			false,
+			false
+		);
+
+		return new BoardResponseDto.GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
 	}
 
 	@Transactional(readOnly = true)
@@ -375,5 +335,6 @@ public class BoardService {
 		boardScrapRepository.deleteByBoardEntity(boardEntity);
 		alarmRepository.deleteByBoardEntity(boardEntity);
 		commentRepository.deleteByBoardEntity(boardEntity);
+		boardRepository.deleteBoardEntity(boardEntity);
 	}
 }
