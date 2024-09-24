@@ -55,9 +55,7 @@ public class BoardService {
 	private final BoardDocumentsMapper boardDocumentsMapper;
 
 	@Transactional
-	public BoardResponseDto.AddBoardResponseDto saveBoard(
-		AddBoardRequestDto addBoardRequestDto
-	) throws IOException {
+	public BoardResponseDto.AddBoardResponseDto saveBoard(AddBoardRequestDto addBoardRequestDto) throws IOException {
 		/*
 		 1. MemberSeq 유효성 검사
 		*/
@@ -133,11 +131,15 @@ public class BoardService {
 			long commentCount = commentRepository.countByBoardEntity(boardEntity);
 			List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
-			// BoardEntity에서 필요한 정보를 추출하여 Dto로 매핑
+			// MemberInfo 생성
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo memberInfo
 				= boardDomain.convertToAllBoardMemberInfo(boardEntity);
+
+			// BoardInfo 생성
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo boardInfo
 				= boardDomain.convertToAllBoardBoardInfo(boardEntity, imageURLs);
+
+			// CountInfo 생성
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo countInfo
 				= boardDomain.convertToAllBoardCountInfo(boardEntity, commentCount, scrapCount);
 
@@ -235,10 +237,10 @@ public class BoardService {
 				BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo memberInfo
 					= boardDomain.convertToAllBoardMemberInfo(boardEntity);
 
+				// Count Info 생성
 				BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo countInfo
 					= boardDomain.convertToAllBoardCountInfo(boardEntity, commentCount, scrapCount);
 
-				// 최종 DTO 생성
 				return new BoardResponseDto.GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
 			})
 			.collect(Collectors.toList());
@@ -266,6 +268,7 @@ public class BoardService {
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo memberInfo
 				= boardDomain.convertToAllBoardMemberInfo(boardEntity);
 
+			// Count Info 생성
 			BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo countInfo
 				= boardDomain.convertToAllBoardCountInfo(boardEntity, commentCount, scrapCount);
 
@@ -284,11 +287,14 @@ public class BoardService {
 			= boardRepository.findByCreatorMemberEntityAndBoardSeq(memberEntity, request.boardSeq());
 
 		/*
+		 [ 고아객체 삭제 ]
 		 1. Board Image 삭제
 		 2. Board Heart 삭제
 		 3. Board Scrap 삭제
 		 4. Alarm 삭제
 		 5. Comment 삭제
+
+		 -> Board 삭제
 		*/
 		boardImageRepository.deleteByBoardEntity(boardEntity);
 		boardHeartRepository.deleteByBoardEntity(boardEntity);

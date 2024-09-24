@@ -5,11 +5,16 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.service.dto.response.BoardResponseDto;
 import paratrip.paratrip.comment.entity.CommentEntity;
+import paratrip.paratrip.core.utils.LocalDateTimeConverter;
 
 @Component
+@RequiredArgsConstructor
 public class CommentDomain {
+	private final LocalDateTimeConverter converter;
+
 	public List<BoardResponseDto.GetBoardResponseDto.CommentInfo> convertToCommentInfos(
 		List<CommentEntity> commentEntities
 	) {
@@ -18,7 +23,7 @@ public class CommentDomain {
 			.map(commentEntity -> new BoardResponseDto.GetBoardResponseDto.CommentInfo(
 				commentEntity.getCommentSeq(),
 				commentEntity.getComment(),
-				commentEntity.getUpdatedAt(),
+				converter.convertToKoreanTime(commentEntity.getUpdatedAt()),
 				commentEntity.getMemberEntity().getMemberSeq(),
 				commentEntity.getMemberEntity().getUserId(),
 				commentEntity.getMemberEntity().getProfileImage()

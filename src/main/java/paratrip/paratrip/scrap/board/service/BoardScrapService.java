@@ -42,7 +42,7 @@ public class BoardScrapService {
 	private final LocalDateTimeConverter converter;
 
 	@Transactional
-	public AddBoardScrapResponseDto saveBoardScrap(AddBoardScrapRequestDto addBoardScrapRequestDto) {
+	public void saveBoardScrap(AddBoardScrapRequestDto addBoardScrapRequestDto) {
 		/*
 		 1. Member 유효성 검사
 		 2. Board 유효성 검사
@@ -60,8 +60,6 @@ public class BoardScrapService {
 			boardScrapMapper.toBoardScrapEntity(memberEntity, boardEntity)
 		);
 		alarmRepository.saveAlarmEntity(alarmMapper.toAlarmEntity(boardEntity, memberEntity, Type.SCRAP));
-
-		return new AddBoardScrapResponseDto(boardScrapEntity.getBoardScrapSeq());
 	}
 
 	@Transactional
@@ -72,11 +70,9 @@ public class BoardScrapService {
 		 3. 작성자 유효성 검사
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(deleteBoardScrapRequestDto.memberSeq());
-		boardScrapRepository.findByBoardScrapSeq(deleteBoardScrapRequestDto.boardScrapSeq());
-		BoardScrapEntity boardScrapEntity = boardScrapRepository.findByMemberEntityAndBoardScrapSeq(
-			memberEntity,
-			deleteBoardScrapRequestDto.boardScrapSeq()
-		);
+		BoardEntity boardEntity = boardRepository.findByBoardSeq(deleteBoardScrapRequestDto.boardSeq());
+		BoardScrapEntity boardScrapEntity
+			= boardScrapRepository.findByMemberEntityAndBoardEntity(memberEntity, boardEntity);
 
 		// 삭제
 		boardScrapRepository.deleteBoardScrapEntity(boardScrapEntity);

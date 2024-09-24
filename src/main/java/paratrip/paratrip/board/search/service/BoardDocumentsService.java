@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import paratrip.paratrip.board.main.domain.BoardDomain;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
+import paratrip.paratrip.board.main.service.dto.response.BoardResponseDto;
 import paratrip.paratrip.core.utils.LocalDateTimeConverter;
 import paratrip.paratrip.scrap.board.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
@@ -27,10 +29,10 @@ public class BoardDocumentsService {
 	private final CommentRepository commentRepository;
 	private final BoardScrapRepository boardScrapRepository;
 
-	private final LocalDateTimeConverter converter;
+	private final BoardDomain boardDomain;
 
 	@Transactional(readOnly = true)
-	public List<BoardDocumentsResponseDto.GetBoardDocumentsResponseDto> getBoardDocuments(
+	public List<BoardResponseDto.GetAllBoardResponseDto> getBoardDocuments(
 		String title,
 		Pageable pageable
 	) {
@@ -40,37 +42,22 @@ public class BoardDocumentsService {
 				// Board Info 생성
 				BoardEntity boardEntity = boardRepository.findByBoardSeq(boardDocuments.getBoardSeq());
 				List<String> boardImageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
-				BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardInfo boardInfo
-					= new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardInfo(
-					boardEntity.getBoardSeq(),
-					boardEntity.getTitle(),
-					boardEntity.getContent(),
-					boardEntity.getLocation(),
-					converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
-					boardImageURLs
-				);
+
+				// Board Info 생성
+				BoardResponseDto.GetAllBoardResponseDto.AllBoardBoardInfo boardInfo
+					= boardDomain.convertToAllBoardBoardInfo(boardEntity, boardImageURLs);
 
 				// Board Creator Info 생성
-				MemberEntity boardCreatorMemberEntity = boardEntity.getCreatorMemberEntity();
-				BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardCreatorInfo boardCreatorInfo
-					= new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.BoardCreatorInfo(
-					boardCreatorMemberEntity.getMemberSeq(),
-					boardCreatorMemberEntity.getUserId(),
-					boardCreatorMemberEntity.getProfileImage()
-				);
+				BoardResponseDto.GetAllBoardResponseDto.AllBoardMemberInfo boardCreatorInfo
+					= boardDomain.convertToAllBoardMemberInfo(boardEntity);
 
 				// Count Info 생성
 				long commentCount = commentRepository.countByBoardEntity(boardEntity);
 				long scrapCount = boardScrapRepository.countByBoardEntity(boardEntity);
-				long hearts = boardEntity.getHearts();
-				BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.CountInfo countInfo
-					= new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto.CountInfo(
-					commentCount,
-					hearts,
-					scrapCount
-				);
+				BoardResponseDto.GetAllBoardResponseDto.AllBoardCountInfo countInfo
+					= boardDomain.convertToAllBoardCountInfo(boardEntity, commentCount, scrapCount);
 
-				return new BoardDocumentsResponseDto.GetBoardDocumentsResponseDto(
+				return new BoardResponseDto.GetAllBoardResponseDto(
 					boardCreatorInfo,
 					boardInfo,
 					countInfo

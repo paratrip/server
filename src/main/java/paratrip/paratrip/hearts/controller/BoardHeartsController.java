@@ -36,82 +36,20 @@ public class BoardHeartsController {
 
 	@PostMapping(value = "increase", name = "커뮤니티 게시물 좋아요 증가")
 	@Operation(summary = "커뮤니티 게시물 좋아요 증가 API", description = "커뮤니티 게시물 좋아요 증가")
-	@ApiResponses(value = {
-		@ApiResponse(
-			responseCode = "200",
-			description = "요청에 성공하였습니다.",
-			useReturnTypeSchema = true),
-		@ApiResponse(
-			responseCode = "S500",
-			description = "500 SERVER_ERROR (나도 몰라 ..)",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "B001",
-			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "BSB005",
-			description = "400 BOARD_SEQ_BAD_REQUEST_EXCEPTION / Board Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-	})
-	public ResponseEntity<BaseResponse<BoardHeartResponseDto.AddBoardHeartResponseDto>> increaseBoardHearts(
+	public ResponseEntity<BaseResponse> increaseBoardHearts(
 		@Valid
 		@RequestBody IncreaseBoardHeartsRequest request
 	) {
 		// 유효성 검사
 		addBoardHeartsValidator.validate(request);
 
-		// VO -> DTO
-		BoardHeartResponseDto.AddBoardHeartResponseDto response
-			= boardHeartService.increaseBoardHearts(request.toIncreaseBoardHeartsRequestDto());
+		boardHeartService.increaseBoardHearts(request.toIncreaseBoardHeartsRequestDto());
 
-		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 
 	@PostMapping(value = "decrease", name = "커뮤니티 게시물 좋아요 감소")
 	@Operation(summary = "커뮤니티 게시물 좋아요 감소 API", description = "커뮤니티 게시물 좋아요 감소")
-	@ApiResponses(value = {
-		@ApiResponse(
-			responseCode = "200",
-			description = "요청에 성공하였습니다.",
-			useReturnTypeSchema = true),
-		@ApiResponse(
-			responseCode = "S500",
-			description = "500 SERVER_ERROR (나도 몰라 ..)",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "B001",
-			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "BSB005",
-			description = "400 BOARD_SEQ_BAD_REQUEST_EXCEPTION / Board Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-	})
 	public ResponseEntity<BaseResponse> decreaseBoardHearts(
 		@Valid
 		@RequestBody DecreaseBoardHeartsRequest request

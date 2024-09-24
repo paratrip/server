@@ -46,43 +46,7 @@ public class BoardScrapController {
 
 	@PostMapping(name = "게시물 스크랩 생성")
 	@Operation(summary = "게시물 스크랩 생성 API", description = "게시물 스크랩 생성")
-	@ApiResponses(value = {
-		@ApiResponse(
-			responseCode = "200",
-			description = "요청에 성공하였습니다.",
-			useReturnTypeSchema = true),
-		@ApiResponse(
-			responseCode = "S500",
-			description = "500 SERVER_ERROR (나도 몰라 ..)",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "B001",
-			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "BSB005",
-			description = "400 BOARD_SEQ_BAD_REQUEST_EXCEPTION / Board Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "SBDC004",
-			description = "409 SCRAP_BOARD_DUPLICATION_CONFLICT_EXCEPTION / 이미 Scrap 했을 때 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-	})
-	public ResponseEntity<BaseResponse<AddBoardScrapResponse>> saveBoardScrap(
+	public ResponseEntity<BaseResponse> saveBoardScrap(
 		@Valid
 		@RequestBody AddBoardScrapRequest request
 	) {
@@ -90,53 +54,12 @@ public class BoardScrapController {
 		addBoardScrapValidator.validate(request);
 
 		// VO -> DTO
-		AddBoardScrapResponseDto addBoardScrapResponseDto
-			= boardScrapService.saveBoardScrap(request.toAddBoardScrapRequestDto());
+		boardScrapService.saveBoardScrap(request.toAddBoardScrapRequestDto());
 
-		// DTO -> VO
-		AddBoardScrapResponse response = addBoardScrapResponseDto.toAddBoardScrapResponse();
-
-		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 
 	@DeleteMapping(name = "게시물 스크랩 삭제")
-	@Operation(summary = "게시물 스크랩 삭제 API", description = "게시물 스크랩 삭제")
-	@ApiResponses(value = {
-		@ApiResponse(
-			responseCode = "200",
-			description = "요청에 성공하였습니다.",
-			useReturnTypeSchema = true),
-		@ApiResponse(
-			responseCode = "S500",
-			description = "500 SERVER_ERROR (나도 몰라 ..)",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "B001",
-			description = "400 Invalid DTO Parameter errors / 요청 값 형식 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "MSB003",
-			description = "400 MEMBER_SEQ_BAD_REQUEST_EXCEPTION / Member Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "BSSB008",
-			description = "400 BOARD_SCRAP_SEQ_BAD_REQUEST_EXCEPTION / Board Scrap Seq 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-		@ApiResponse(
-			responseCode = "BSNF004",
-			description = "404 BOARD_SCRAP_NOT_FOUND_EXCEPTION / Member 가 설정한 스크랩 게시물이 없을 시 요류",
-			content = @Content(
-				schema = @Schema(
-					implementation = GlobalExceptionHandler.ErrorResponse.class))),
-	})
 	public ResponseEntity<BaseResponse> deleteBoardHeart(
 		@Valid
 		@RequestBody DeleteBoardScrapRequest request

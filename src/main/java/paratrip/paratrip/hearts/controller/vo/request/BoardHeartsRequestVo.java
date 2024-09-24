@@ -17,14 +17,12 @@ public class BoardHeartsRequestVo {
 
 	public record DecreaseBoardHeartsRequest(
 		Long memberSeq,
-		Long boardSeq,
-		Long boardHeartSeq
+		Long boardSeq
 	) {
 		public DecreaseBoardHeartsRequestDto toDecreaseBoardHeartsRequestDto() {
 			return new DecreaseBoardHeartsRequestDto(
 				this.memberSeq,
-				this.boardSeq,
-				this.boardHeartSeq
+				this.boardSeq
 			);
 		}
 	}
