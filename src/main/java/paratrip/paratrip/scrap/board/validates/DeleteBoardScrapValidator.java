@@ -11,7 +11,7 @@ import paratrip.paratrip.core.exception.ErrorResult;
 public class DeleteBoardScrapValidator {
 	public void validate(DeleteBoardScrapRequest request) {
 		validateMemberSeq(request.memberSeq());
-		validateBoardScarpSeq(request.boardScrapSeq());
+		validateBoardScarpSeq(request.boardSeq());
 	}
 
 	private void validateMemberSeq(Long memberSeq) {
