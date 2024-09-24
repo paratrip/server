@@ -21,7 +21,6 @@
 //    private final TouristSpotRepository touristSpotRepository;
 //
 //    private static final String GPT_API_URL = "https://api.openai.com/v1/chat/completions";
-//    private static final String API_KEY = "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";
 //
 //    private static final List<String> COMMON_TAGS = List.of("관광", "가족", "문화", "역사", "자연", "커플", "휴양", "체험", "친구", "힐링");
 //    private static final Set<String> allTags = new HashSet<>();
