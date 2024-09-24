@@ -23,31 +23,42 @@ public class TouristSpotService {
     private final TouristSpotRepository touristSpotRepository;
     private final WebClient.Builder webClientBuilder;
 
-    String decodedServiceKey = "GqNKkxUkL86uGd2y/xTIoabmqZwi0BQqyPUWRaafwi3pfYSDud9IvxKnBNI1gpFafvC05XZ0H4sCwGEyH2//YA==";
+    private String decodedServiceKey = "3AQkZRvnhwABEvxV5HY0Rt1+bZLPvRuK4k2Bozbr8mMR7SxNhae4qQb48uPFSkdBOAFBpsrftnIUX27TQFNFvw==";
 
-//    @PostConstruct
-//    public void init() throws InterruptedException {
-//        // 8개의 지역 코드와 시군구 코드를 설정
-//        String[][] regionSignguPairs = {
-//                {"51", "51760"}, // 평창
-//                {"44", "44180"}, // 보령
-//                {"43", "43800"}, // 단양
-//                {"46", "46720"}, // 곡성
-//                {"51", "51750"}, // 영월
-//                {"52", "52130"}, // 군산
-//                {"48", "48890"}, // 합천
-//                {"46", "46130"}  // 여수
-//        };
-//
-//        // 각 지역과 시군구에 대해 데이터를 가져와 저장
-//        for (String[] pair : regionSignguPairs) {
-//            String regionCode = pair[0];
-//            String signguCode = pair[1];
-//            fetchAndSaveTouristData(regionCode, signguCode);
-//            Thread.sleep(10);
-//
-//        }
-//    }
+    // 플래그 변수: 이미 데이터가 로드된 경우 true
+    private boolean isDataLoaded = false;
+
+    @PostConstruct
+    public void init() throws InterruptedException {
+        // 데이터가 이미 로드되었는지 확인
+        if (isDataLoaded) {
+            System.out.println("데이터가 이미 로드되었습니다. 초기화 스킵.");
+            return;
+        }
+
+        // 8개의 지역 코드와 시군구 코드를 설정
+        String[][] regionSignguPairs = {
+                {"51", "51760"}, // 평창
+                {"44", "44180"}, // 보령
+                {"43", "43800"}, // 단양
+                {"46", "46720"}, // 곡성
+                {"51", "51750"}, // 영월
+                {"52", "52130"}, // 군산
+                {"48", "48890"}, // 합천
+                {"46", "46130"}  // 여수
+        };
+
+        // 각 지역과 시군구에 대해 데이터를 가져와 저장
+        for (String[] pair : regionSignguPairs) {
+            String regionCode = pair[0];
+            String signguCode = pair[1];
+            fetchAndSaveTouristData(regionCode, signguCode);
+            Thread.sleep(1000); // 요청 사이의 지연시간 추가
+        }
+
+        // 데이터를 로드했으므로 플래그 값을 true로 변경
+        isDataLoaded = true;
+    }
 
     public void fetchAndSaveTouristData(String regionCode, String signguCode) {
         try {

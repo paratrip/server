@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import paratrip.paratrip.paragliding.entity.Paragliding;
 
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -42,6 +44,12 @@ public class TourCourse {
     private String category2;
 
     // 관광지 세부 주소 추가
-    private String spotAddress1;  // 관광지 1의 세부 주소
-    private String spotAddress2;  // 관광지 2의 세부 주소
+    private String spotAddress1;
+    private String spotAddress2;
+
+    // 태그 추가
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "course_tags", joinColumns = @JoinColumn(name = "course_id"))
+    @Column(name = "tag")
+    private List<String> tags;  // 관광지 및 패러글라이딩의 태그
 }

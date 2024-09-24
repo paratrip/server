@@ -1,13 +1,12 @@
 package paratrip.paratrip.course.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -20,13 +19,16 @@ public class TouristSpot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // private String touristSpotName; // <tAtsNm>
-    private String basicAddress;    // <rlteBsicAdres>
-    private String category;        // <rlteCtgryMclsNm>
-    private String regionCode;      // 해당 지역 코드
-    private String rlteTatsNm;      // rlteTatsNm
-
+    private String basicAddress;
+    private String category;
+    private String regionCode;
+    private String rlteTatsNm;
     private String rlteCtgrySclsNm;
-    private String imageUrl;         // 이미지 URL 추가
+    private String imageUrl;
 
+    // 태그 추가
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "tourist_spot_tags", joinColumns = @JoinColumn(name = "tourist_spot_id"))
+    @Column(name = "tag")
+    private List<String> tags;  // 관광지의 태그
 }

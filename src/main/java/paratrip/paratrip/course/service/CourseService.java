@@ -12,6 +12,7 @@ import paratrip.paratrip.paragliding.entity.Paragliding;
 import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.course.util.CourseUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,6 @@ public class CourseService {
         List<TouristSpot> touristSpots = touristSpotRepository.findAll();
 
         for (Paragliding paragliding : paraglidingList) {
-            // 패러글라이딩의 실제 주소를 가져옴 (Enum이 아닌)
             String paraglidingAddress = CourseUtil.convertParaglidingAddress(paragliding.getAddress());
 
             // 시/군 단위로 관광지 찾기
@@ -55,28 +55,33 @@ public class CourseService {
     }
 
     private void generateCourseForParagliding(Paragliding paragliding, List<TouristSpot> matchingSpots) {
-        // 관광지 조합을 생성
         List<List<TouristSpot>> combinations = CourseUtil.generateCombinations(matchingSpots, 2);
 
         for (List<TouristSpot> combo : combinations) {
             TouristSpot spot1 = combo.get(0);
             TouristSpot spot2 = combo.get(1);
 
-            // TouristSpot 데이터가 null이 아닌지 확인
             if (spot1 != null && spot2 != null && isValidTouristSpot(spot1) && isValidTouristSpot(spot2)) {
-                // 관광지의 세부 주소도 함께 저장
+                // 관광지 태그들을 합쳐서 코스에 저장
+                List<String> combinedTags = new ArrayList<>(spot1.getTags());
+                combinedTags.addAll(spot2.getTags());
+
+                // 중복 제거 및 최대 12개 제한
+                combinedTags = combinedTags.stream().distinct().limit(12).collect(Collectors.toList());
+
                 TourCourse course = TourCourse.builder()
                         .paragliding(paragliding)
                         .touristSpot1(spot1)
                         .touristSpot2(spot2)
-                        .region(paragliding.getAddress()) // 패러글라이딩의 실제 주소
+                        .region(paragliding.getAddress())
                         .imageUrlParagliding(paragliding.getImageUrl())
                         .imageUrl1(spot1.getImageUrl())
                         .imageUrl2(spot2.getImageUrl())
                         .category1(spot1.getCategory())
                         .category2(spot2.getCategory())
-                        .spotAddress1(spot1.getBasicAddress()) // 관광지 1의 주소
-                        .spotAddress2(spot2.getBasicAddress()) // 관광지 2의 주소
+                        .spotAddress1(spot1.getBasicAddress())
+                        .spotAddress2(spot2.getBasicAddress())
+                        .tags(combinedTags)  // 태그 추가
                         .build();
                 courseRepository.save(course);
             } else {
@@ -85,7 +90,6 @@ public class CourseService {
         }
     }
 
-    // TouristSpot 필수 데이터가 유효한지 확인
     private boolean isValidTouristSpot(TouristSpot spot) {
         return spot.getBasicAddress() != null && !spot.getBasicAddress().isEmpty()
                 && spot.getCategory() != null && !spot.getCategory().isEmpty()
@@ -105,8 +109,9 @@ public class CourseService {
                         course.getImageUrl2(),
                         course.getCategory1(),
                         course.getCategory2(),
-                        course.getSpotAddress1(), // 관광지 1의 세부 주소
-                        course.getSpotAddress2()  // 관광지 2의 세부 주소
+                        course.getSpotAddress1(),
+                        course.getSpotAddress2(),
+                        course.getTags()  // 태그 추가
                 ))
                 .collect(Collectors.toList());
     }

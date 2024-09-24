@@ -1,5 +1,7 @@
 package paratrip.paratrip.course.dto;
 
+import java.util.List;
+
 public record CourseDto(
         String paraglidingName,
         String touristSpotName1,
@@ -10,6 +12,7 @@ public record CourseDto(
         String imageUrl2,
         String category1,
         String category2,
-        String spotAddress1,  // 관광지 1의 세부 주소
-        String spotAddress2   // 관광지 2의 세부 주소
+        String spotAddress1,
+        String spotAddress2,
+        List<String> tags  // 태그 리스트 추가
 ) {}
