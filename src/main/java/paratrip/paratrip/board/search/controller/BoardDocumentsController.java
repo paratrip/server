@@ -21,7 +21,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import paratrip.paratrip.board.main.validates.GetAllBoardValidator;
 import paratrip.paratrip.board.search.service.BoardDocumentsService;
 import paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto;
 import paratrip.paratrip.core.base.BaseResponse;

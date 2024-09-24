@@ -152,7 +152,7 @@ public class BoardService {
 		if (boardDomain.checkLoginStatus(memberSeq))
 			return getBoardDetailsLoginMember(memberSeq, boardSeq);
 		else
-			return getBoardDetailsNotLoginMember(memberSeq, boardSeq);
+			return getBoardDetailsNotLoginMember(boardSeq);
 	}
 
 	@Transactional(readOnly = true)
@@ -182,19 +182,14 @@ public class BoardService {
 		long scrapCnt = boardScrapRepository.countByBoardEntity(boardEntity);
 		boolean heart = boardHeartRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity);
 		boolean scrap = boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity);
-		BoardResponseDto.GetBoardResponseDto.CountInfo countInfo = boardDomain.convertToCountInfo(
-			boardEntity,
-			commentCnt,
-			scrapCnt,
-			heart,
-			scrap
-		);
+		BoardResponseDto.GetBoardResponseDto.CountInfo countInfo
+			= boardDomain.convertToCountInfo(boardEntity, commentCnt, scrapCnt, heart, scrap);
 
 		return new BoardResponseDto.GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
 	}
 
 	@Transactional(readOnly = true)
-	public BoardResponseDto.GetBoardResponseDto getBoardDetailsNotLoginMember(Long memberSeq, Long boardSeq) {
+	public BoardResponseDto.GetBoardResponseDto getBoardDetailsNotLoginMember(Long boardSeq) {
 		BoardEntity boardEntity = boardRepository.findByBoardSeq(boardSeq);
 		List<String> imageURLs = boardImageRepository.extractImageURLsByBoardEntity(boardEntity);
 
@@ -215,14 +210,10 @@ public class BoardService {
 			= commentDomain.convertToCommentInfos(commentEntities);
 
 		// Count Info 생성
+		long commentCnt = commentRepository.countByBoardEntity(boardEntity);
+		long scrapCnt = boardScrapRepository.countByBoardEntity(boardEntity);
 		BoardResponseDto.GetBoardResponseDto.CountInfo countInfo
-			= new BoardResponseDto.GetBoardResponseDto.CountInfo(
-			commentRepository.countByBoardEntity(boardEntity),
-			boardEntity.getHearts(),
-			boardScrapRepository.countByBoardEntity(boardEntity),
-			false,
-			false
-		);
+			= boardDomain.convertToCountInfo(boardEntity, commentCnt, scrapCnt, false, false);
 
 		return new BoardResponseDto.GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
 	}
