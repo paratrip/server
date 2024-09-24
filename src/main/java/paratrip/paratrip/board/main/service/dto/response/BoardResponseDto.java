@@ -88,7 +88,7 @@ public class BoardResponseDto {
 		public record CommentInfo(
 			Long commentSeq,
 			String comment,
-			LocalDateTime updatedAt,
+			ZonedDateTime updatedAt,
 			Long memberSeq,
 			String userId,
 			String profileImage
