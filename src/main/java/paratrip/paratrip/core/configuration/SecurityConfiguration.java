@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.filter.JwtTokenFilter;
@@ -38,18 +39,18 @@ public class SecurityConfiguration {
 			.requestMatchers(PathRequest.toH2Console());
 	}
 
-	// ⭐️ CORS 설정
-	CorsConfigurationSource corsConfigurationSource() {
-		return request -> {
-			CorsConfiguration config = new CorsConfiguration();
-			config.setAllowedHeaders(Collections.singletonList("*"));
-			config.setAllowedMethods(Collections.singletonList("*"));
-			config.setAllowedOriginPatterns(Collections.singletonList("*")); // ⭐️ 허용할 origin
-			// config.setAllowedOriginPatterns(Collections.singletonList("https://paratrip.netlify.app")); // ⭐️ 허용할 origin
-			// config.setAllowCredentials(true);
-			return config;
-		};
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Arrays.asList("https://euics.co.kr", "https://paratrip.netlify.app"));
+		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config); // 모든 경로에 대해 CORS 적용
+		return source;
 	}
+
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
