@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LocalDateTimeConverter {
 	public ZonedDateTime convertToKoreanTime(LocalDateTime localDateTime) {
-		return localDateTime.atZone(ZoneId.of("Asia/Seoul"));
+		LocalDateTime adjustedDateTime = localDateTime.plusHours(9);
+		return adjustedDateTime.atZone(ZoneId.of("Asia/Seoul"));
 	}
 }
