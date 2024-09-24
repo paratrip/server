@@ -25,4 +25,11 @@ public class BoardRequestDto {
 	) {
 
 	}
+
+	public record DeleteBoardRequestDto(
+		Long memberSeq,
+		Long boardSeq
+	) {
+
+	}
 }

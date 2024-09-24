@@ -10,4 +10,6 @@ import paratrip.paratrip.member.entity.MemberEntity;
 @Repository
 public interface BoardHeartJpaRepository extends JpaRepository<BoardHeartEntity, Long> {
 	Boolean existsByBoardEntityAndMemberEntity(BoardEntity boardEntity, MemberEntity memberEntity);
+
+	void deleteByBoardEntity(BoardEntity boardEntity);
 }

@@ -37,4 +37,9 @@ public class BoardImageRepositoryImpl implements BoardImageRepository {
 			.map(BoardImageEntity::getImageURL)
 			.collect(Collectors.toList());
 	}
+
+	@Override
+	public void deleteByBoardEntity(BoardEntity boardEntity) {
+		boardImageJpaRepository.deleteByBoardEntity(boardEntity);
+	}
 }

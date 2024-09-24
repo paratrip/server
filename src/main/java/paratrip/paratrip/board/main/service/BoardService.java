@@ -1,5 +1,7 @@
 package paratrip.paratrip.board.main.service;
 
+import static paratrip.paratrip.board.main.service.dto.request.BoardRequestDto.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import paratrip.paratrip.alarm.repository.AlarmRepository;
 import paratrip.paratrip.core.utils.LocalDateTimeConverter;
 import paratrip.paratrip.hearts.repoisitory.BoardHeartRepository;
 import paratrip.paratrip.board.main.domain.BoardDomain;
@@ -40,6 +43,7 @@ public class BoardService {
 	private final BoardScrapRepository boardScrapRepository;
 	private final CommentRepository commentRepository;
 	private final BoardHeartRepository boardHeartRepository;
+	private final AlarmRepository alarmRepository;
 
 	private final S3Domain s3Domain;
 	private final BoardDomain boardDomain;
@@ -52,7 +56,7 @@ public class BoardService {
 
 	@Transactional
 	public BoardResponseDto.AddBoardResponseDto saveBoard(
-		BoardRequestDto.AddBoardRequestDto addBoardRequestDto
+		AddBoardRequestDto addBoardRequestDto
 	) throws IOException {
 		/*
 		 1. MemberSeq 유효성 검사
@@ -87,7 +91,7 @@ public class BoardService {
 	}
 
 	@Transactional
-	public void modifyBoard(BoardRequestDto.ModifyBoardRequestDto modifyBoardRequestDto) throws IOException {
+	public void modifyBoard(ModifyBoardRequestDto modifyBoardRequestDto) throws IOException {
 		/*
 		 1. MemberSeq 유효성 검사
 		 2. BoardSeq 유효성 검사
@@ -347,5 +351,29 @@ public class BoardService {
 
 			return new BoardResponseDto.GetAllBoardResponseDto(memberInfo, boardInfo, countInfo);
 		});
+	}
+
+	@Transactional
+	public void deleteBoard(DeleteBoardRequestDto request) {
+		/*
+		 1. Member 유효성 검사
+		 2. 작성자 검사
+		*/
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(request.memberSeq());
+		BoardEntity boardEntity
+			= boardRepository.findByCreatorMemberEntityAndBoardSeq(memberEntity, request.boardSeq());
+
+		/*
+		 1. Board Image 삭제
+		 2. Board Heart 삭제
+		 3. Board Scrap 삭제
+		 4. Alarm 삭제
+		 5. Comment 삭제
+		*/
+		boardImageRepository.deleteByBoardEntity(boardEntity);
+		boardHeartRepository.deleteByBoardEntity(boardEntity);
+		boardScrapRepository.deleteByBoardEntity(boardEntity);
+		alarmRepository.deleteByBoardEntity(boardEntity);
+		commentRepository.deleteByBoardEntity(boardEntity);
 	}
 }

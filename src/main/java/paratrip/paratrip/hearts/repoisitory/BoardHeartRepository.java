@@ -12,4 +12,6 @@ public interface BoardHeartRepository {
 	BoardHeartEntity findByBoardHeartSeq(Long boardHeartSeq);
 
 	boolean existsByBoardEntityAndMemberEntity(BoardEntity boardEntity, MemberEntity memberEntity);
+
+	void deleteByBoardEntity(BoardEntity boardEntity);
 }

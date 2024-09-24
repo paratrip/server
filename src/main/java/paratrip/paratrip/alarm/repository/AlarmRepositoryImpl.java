@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.alarm.entity.AlarmEntity;
 import paratrip.paratrip.alarm.entity.QAlarmEntity;
+import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.member.entity.MemberEntity;
 
 @Component
@@ -32,5 +33,10 @@ public class AlarmRepositoryImpl implements AlarmRepository {
 				qAlarmEntity.memberEntity.eq(memberEntity)
 			)
 			.fetch();
+	}
+
+	@Override
+	public void deleteByBoardEntity(BoardEntity boardEntity) {
+		alarmJpaRepository.deleteByBoardEntity(boardEntity);
 	}
 }

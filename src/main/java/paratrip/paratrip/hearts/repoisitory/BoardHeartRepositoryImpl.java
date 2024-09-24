@@ -34,4 +34,9 @@ public class BoardHeartRepositoryImpl implements BoardHeartRepository {
 	public boolean existsByBoardEntityAndMemberEntity(BoardEntity boardEntity, MemberEntity memberEntity) {
 		return boardHeartJpaRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity);
 	}
+
+	@Override
+	public void deleteByBoardEntity(BoardEntity boardEntity) {
+		boardHeartJpaRepository.deleteByBoardEntity(boardEntity);
+	}
 }

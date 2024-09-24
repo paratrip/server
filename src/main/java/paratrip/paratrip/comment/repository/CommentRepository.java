@@ -18,4 +18,6 @@ public interface CommentRepository {
 	void deleteCommentEntity(CommentEntity commentEntity);
 
 	List<CommentEntity> findByBoardEntity(BoardEntity boardEntity);
+
+	void deleteByBoardEntity(BoardEntity boardEntity);
 }
