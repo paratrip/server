@@ -40,14 +40,25 @@ public class ParaglidingScrapRepositoryImpl implements ParaglidingScrapRepositor
 	}
 
 	@Override
-	public List<Paragliding> findAllByMemberEntity(MemberEntity memberEntity) {
+	public ParaglidingScrapEntity findByMemberEntity(MemberEntity memberEntity) {
 		QParaglidingScrapEntity qParaglidingScrapEntity = QParaglidingScrapEntity.paraglidingScrapEntity;
-		QParagliding qParagliding = QParagliding.paragliding;
+
+		return Optional.ofNullable(
+			queryFactory
+				.selectFrom(qParaglidingScrapEntity)
+				.where(
+					qParaglidingScrapEntity.memberEntity.eq(memberEntity)
+				).fetchOne()
+		).orElseThrow(() -> new BadRequestException(ErrorResult.PARAGLIDING_SCRAP_NOT_FOUND_EXCEPTION));
+	}
+
+	@Override
+	public List<ParaglidingScrapEntity> findAllByMemberEntity(MemberEntity memberEntity) {
+		QParaglidingScrapEntity qParaglidingScrapEntity = QParaglidingScrapEntity.paraglidingScrapEntity;
 
 		return queryFactory.
-			select(qParagliding)
+			select(qParaglidingScrapEntity)
 			.from(qParaglidingScrapEntity)
-			.join(qParaglidingScrapEntity.paraglidingEntity, qParagliding)
 			.where(
 				qParaglidingScrapEntity.memberEntity.eq(memberEntity)
 			).fetch();

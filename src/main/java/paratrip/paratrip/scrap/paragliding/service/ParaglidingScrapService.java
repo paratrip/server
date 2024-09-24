@@ -48,10 +48,13 @@ public class ParaglidingScrapService {
 	@Transactional
 	public void deleteParaglidingScrap(DeleteParaglidingScrapRequestDto request) {
 		/*
-		 1. Paragliding Scrap 유효성 검사
+		 1. Member 유효성 검사
+		 2. Paragliding Scrap 유효성 검사
+		 3. 작성자 여부 확인
 		*/
-		ParaglidingScrapEntity paraglidingScrapEntity
-			= paraglidingScrapRepository.findByParaglidingScrapSeq(request.paraglidingScrapSeq());
+		MemberEntity memberEntity = memberRepository.findByMemberSeq(request.memberSeq());
+		paraglidingScrapRepository.findByParaglidingScrapSeq(request.paraglidingScrapSeq());
+		ParaglidingScrapEntity paraglidingScrapEntity = paraglidingScrapRepository.findByMemberEntity(memberEntity);
 
 		paraglidingScrapRepository.deleteParaglidingScrapEntity(paraglidingScrapEntity);
 	}
@@ -62,17 +65,21 @@ public class ParaglidingScrapService {
 		 1. Member 유효성 검사
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
-		List<Paragliding> paraglidingEntities = paraglidingScrapRepository.findAllByMemberEntity(memberEntity);
+		List<ParaglidingScrapEntity> paraglidingScrapEntities
+			= paraglidingScrapRepository.findAllByMemberEntity(memberEntity);
 
-		return paraglidingEntities.stream()
-			.map(paragliding -> new GetParaglidingScrapResponseDto(
-				paragliding.getParaglidingSeq(),
-				paragliding.getName(),
-				paragliding.getHeart(),
-				paragliding.getCost(),
-				paragliding.getAddress(),
-				paragliding.getImageUrl()
-			))
+		return paraglidingScrapEntities.stream()
+			.map(scrap -> {
+				Paragliding paragliding = scrap.getParaglidingEntity();  // ParaglidingScrapEntity에서 Paragliding 가져오기
+				return new GetParaglidingScrapResponseDto(
+					paragliding.getParaglidingSeq(),
+					paragliding.getName(),
+					paragliding.getHeart(),
+					paragliding.getCost(),
+					paragliding.getAddress(),
+					paragliding.getImageUrl()
+				);
+			})
 			.collect(Collectors.toList());
 	}
 }

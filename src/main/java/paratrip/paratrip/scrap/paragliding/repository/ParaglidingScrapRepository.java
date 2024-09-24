@@ -13,7 +13,9 @@ public interface ParaglidingScrapRepository {
 
 	void deleteParaglidingScrapEntity(ParaglidingScrapEntity paraglidingScrapEntity);
 
-	List<Paragliding> findAllByMemberEntity(MemberEntity memberEntity);
+	ParaglidingScrapEntity findByMemberEntity(MemberEntity memberEntity);
+
+	List<ParaglidingScrapEntity> findAllByMemberEntity(MemberEntity memberEntity);
 
 	void existsMemberEntityParaglidingScrapEntity(
 		MemberEntity memberEntity,
