@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
-import paratrip.paratrip.board.hearts.repoisitory.BoardHeartRepository;
+import paratrip.paratrip.core.utils.LocalDateTimeConverter;
+import paratrip.paratrip.hearts.repoisitory.BoardHeartRepository;
 import paratrip.paratrip.board.main.domain.BoardDomain;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.entity.BoardImageEntity;
@@ -21,7 +22,7 @@ import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
 import paratrip.paratrip.board.main.service.dto.request.BoardRequestDto;
 import paratrip.paratrip.board.main.service.dto.response.BoardResponseDto;
-import paratrip.paratrip.board.scrap.repository.BoardScrapRepository;
+import paratrip.paratrip.scrap.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.mapper.BoardDocumentsMapper;
 import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
 import paratrip.paratrip.comment.repository.CommentRepository;
@@ -46,6 +47,8 @@ public class BoardService {
 	private final BoardMapper boardMapper;
 	private final BoardImageMapper boardImageMapper;
 	private final BoardDocumentsMapper boardDocumentsMapper;
+
+	private final LocalDateTimeConverter converter;
 
 	@Transactional
 	public BoardResponseDto.AddBoardResponseDto saveBoard(
@@ -140,7 +143,7 @@ public class BoardService {
 				boardEntity.getTitle(),
 				boardEntity.getLocation(),
 				boardEntity.getContent(),
-				boardEntity.getUpdatedAt(),
+				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
 				imageURLs
 			);
 
@@ -173,7 +176,7 @@ public class BoardService {
 				boardEntity.getTitle(),
 				boardEntity.getContent(),
 				boardEntity.getLocation(),
-				boardEntity.getUpdatedAt(),
+				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
 				imageURLs
 			);
 
@@ -219,7 +222,7 @@ public class BoardService {
 				boardEntity.getTitle(),
 				boardEntity.getContent(),
 				boardEntity.getLocation(),
-				boardEntity.getUpdatedAt(),
+				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
 				imageURLs
 			);
 
@@ -278,7 +281,7 @@ public class BoardService {
 					boardEntity.getTitle(),
 					boardEntity.getLocation(),
 					boardEntity.getContent(),
-					boardEntity.getUpdatedAt(),
+					converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
 					imageURLs
 				);
 
@@ -331,7 +334,7 @@ public class BoardService {
 				boardEntity.getTitle(),
 				boardEntity.getLocation(),
 				boardEntity.getContent(),
-				boardEntity.getUpdatedAt(),
+				converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
 				imageURLs
 			);
 

@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
-import paratrip.paratrip.board.scrap.repository.BoardScrapRepository;
+import paratrip.paratrip.core.utils.LocalDateTimeConverter;
+import paratrip.paratrip.scrap.repository.BoardScrapRepository;
 import paratrip.paratrip.board.search.repository.BoardDocumentsRepository;
 import paratrip.paratrip.board.search.service.dto.response.BoardDocumentsResponseDto;
 import paratrip.paratrip.comment.repository.CommentRepository;
@@ -26,9 +27,13 @@ public class BoardDocumentsService {
 	private final CommentRepository commentRepository;
 	private final BoardScrapRepository boardScrapRepository;
 
+	private final LocalDateTimeConverter converter;
+
 	@Transactional(readOnly = true)
-	public List<BoardDocumentsResponseDto.GetBoardDocumentsResponseDto> getBoardDocuments(String title,
-		Pageable pageable) {
+	public List<BoardDocumentsResponseDto.GetBoardDocumentsResponseDto> getBoardDocuments(
+		String title,
+		Pageable pageable
+	) {
 		return boardDocumentsRepository.findByTitleContains(title, pageable)
 			.stream()
 			.map(boardDocuments -> {
@@ -41,7 +46,7 @@ public class BoardDocumentsService {
 					boardEntity.getTitle(),
 					boardEntity.getContent(),
 					boardEntity.getLocation(),
-					boardEntity.getUpdatedAt(),
+					converter.convertToKoreanTime(boardEntity.getUpdatedAt()),
 					boardImageURLs
 				);
 
