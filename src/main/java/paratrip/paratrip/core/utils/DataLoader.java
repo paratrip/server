@@ -17,17 +17,30 @@ public class DataLoader {
 
 	@Bean
 	ApplicationRunner init(MemberRepository memberRepository) {
-		MemberEntity memberEntity = MemberEntity.builder()
-			.email("mj9457@naver.com")
-			.encodedPassword(encoder.encode("qwer1234")) // 실제로는 암호화된 비밀번호를 사용
-			.phoneNumber("010-8639-9457")
-			.userId("mj9457")
-			.birth("19971128")
-			.gender(Gender.MALE)
-			.profileImage(null) // 이미지가 없는 경우 null 처리
-			.build();
 		return args -> {
-			memberRepository.saveMemberEntity(memberEntity);
+			MemberEntity memberEntity1 = MemberEntity.builder()
+				.email("mj9457@naver.com")
+				.encodedPassword(encoder.encode("qwer1234")) // 실제로는 암호화된 비밀번호를 사용
+				.phoneNumber("010-8639-9457")
+				.userId("mj9457")
+				.birth("19971128")
+				.gender(Gender.MALE)
+				.profileImage(null) // 이미지가 없는 경우 null 처리
+				.build();
+
+			MemberEntity memberEntity2 = MemberEntity.builder()
+				.email("admin1234@naver.com")
+				.encodedPassword(encoder.encode("admin1234")) // 실제로는 암호화된 비밀번호를 사용
+				.phoneNumber("010-1234-5678")
+				.userId("admin1234")
+				.birth("000123")
+				.gender(Gender.MALE)
+				.profileImage(null) // 이미지가 없는 경우 null 처리
+				.build();
+
+			// 두 개의 엔티티를 저장
+			memberRepository.saveMemberEntity(memberEntity1);
+			memberRepository.saveMemberEntity(memberEntity2);
 		};
 	}
 }
