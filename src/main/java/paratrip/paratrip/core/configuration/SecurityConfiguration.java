@@ -39,16 +39,16 @@ public class SecurityConfiguration {
 			.requestMatchers(PathRequest.toH2Console());
 	}
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("https://euics.co.kr", "https://paratrip.netlify.app"));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+	// ⭐️ CORS 설정
+	CorsConfigurationSource corsConfigurationSource() {
+		return request -> {
+			CorsConfiguration config = new CorsConfiguration();
+			config.setAllowedHeaders(Collections.singletonList("*"));
+			config.setAllowedMethods(Collections.singletonList("*"));
+			config.setAllowedOriginPatterns(Collections.singletonList("*")); // ⭐️ 허용할 origin
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config); // 모든 경로에 대해 CORS 적용
-		return source;
+			return config;
+		};
 	}
 
 
