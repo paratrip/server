@@ -1,4 +1,4 @@
-package paratrip.paratrip.scrap.repository;
+package paratrip.paratrip.scrap.board.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,8 +11,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.entity.BoardEntity;
-import paratrip.paratrip.scrap.entity.BoardScrapEntity;
-import paratrip.paratrip.scrap.entity.QBoardScrapEntity;
+import paratrip.paratrip.scrap.board.entity.BoardScrapEntity;
+import paratrip.paratrip.scrap.board.entity.QBoardScrapEntity;
 import paratrip.paratrip.core.exception.BadRequestException;
 import paratrip.paratrip.core.exception.ConflictException;
 import paratrip.paratrip.core.exception.ErrorResult;

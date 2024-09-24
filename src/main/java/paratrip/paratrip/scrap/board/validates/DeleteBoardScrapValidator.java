@@ -1,6 +1,6 @@
-package paratrip.paratrip.scrap.validates;
+package paratrip.paratrip.scrap.board.validates;
 
-import static paratrip.paratrip.scrap.controller.vo.request.BoardScrapRequestVo.*;
+import static paratrip.paratrip.scrap.board.controller.vo.request.BoardScrapRequestVo.*;
 
 import org.springframework.stereotype.Component;
 
@@ -8,10 +8,10 @@ import paratrip.paratrip.core.exception.BadRequestException;
 import paratrip.paratrip.core.exception.ErrorResult;
 
 @Component
-public class AddBoardScrapValidator {
-	public void validate(AddBoardScrapRequest request) {
+public class DeleteBoardScrapValidator {
+	public void validate(DeleteBoardScrapRequest request) {
 		validateMemberSeq(request.memberSeq());
-		validateBoardSeq(request.boardSeq());
+		validateBoardScarpSeq(request.boardScrapSeq());
 	}
 
 	private void validateMemberSeq(Long memberSeq) {
@@ -20,8 +20,8 @@ public class AddBoardScrapValidator {
 		}
 	}
 
-	private void validateBoardSeq(Long boardSeq) {
-		if (boardSeq == null) {
+	private void validateBoardScarpSeq(Long boardScarpSeq) {
+		if (boardScarpSeq == null) {
 			throw new BadRequestException(ErrorResult.DTO_BAD_REQUEST_EXCEPTION);
 		}
 	}

@@ -1,6 +1,6 @@
-package paratrip.paratrip.scrap.service.dto.response;
+package paratrip.paratrip.scrap.board.service.dto.response;
 
-import static paratrip.paratrip.scrap.controller.vo.response.BoardScrapResponseVo.*;
+import static paratrip.paratrip.scrap.board.controller.vo.response.BoardScrapResponseVo.*;
 
 public class BoardScrapResponseDto {
 	public record AddBoardScrapResponseDto(

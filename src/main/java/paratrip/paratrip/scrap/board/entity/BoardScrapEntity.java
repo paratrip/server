@@ -1,4 +1,4 @@
-package paratrip.paratrip.scrap.entity;
+package paratrip.paratrip.scrap.board.entity;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;

@@ -1,8 +1,8 @@
-package paratrip.paratrip.scrap.controller;
+package paratrip.paratrip.scrap.board.controller;
 
-import static paratrip.paratrip.scrap.controller.vo.request.BoardScrapRequestVo.*;
-import static paratrip.paratrip.scrap.controller.vo.response.BoardScrapResponseVo.*;
-import static paratrip.paratrip.scrap.service.dto.response.BoardScrapResponseDto.*;
+import static paratrip.paratrip.scrap.board.controller.vo.request.BoardScrapRequestVo.*;
+import static paratrip.paratrip.scrap.board.controller.vo.response.BoardScrapResponseVo.*;
+import static paratrip.paratrip.scrap.board.service.dto.response.BoardScrapResponseDto.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +28,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.board.main.service.dto.response.BoardResponseDto;
-import paratrip.paratrip.scrap.service.BoardScrapService;
-import paratrip.paratrip.scrap.validates.AddBoardScrapValidator;
-import paratrip.paratrip.scrap.validates.DeleteBoardScrapValidator;
+import paratrip.paratrip.scrap.board.service.BoardScrapService;
+import paratrip.paratrip.scrap.board.validates.AddBoardScrapValidator;
+import paratrip.paratrip.scrap.board.validates.DeleteBoardScrapValidator;
 import paratrip.paratrip.core.base.BaseResponse;
 import paratrip.paratrip.core.exception.GlobalExceptionHandler;
 

@@ -1,4 +1,4 @@
-package paratrip.paratrip.scrap.service.dto.request;
+package paratrip.paratrip.scrap.board.service.dto.request;
 
 public class BoardScarpRequestDto {
 	public record AddBoardScrapRequestDto(

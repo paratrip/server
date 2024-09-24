@@ -1,8 +1,8 @@
-package paratrip.paratrip.scrap.service;
+package paratrip.paratrip.scrap.board.service;
 
 import static paratrip.paratrip.board.main.service.dto.response.BoardResponseDto.*;
-import static paratrip.paratrip.scrap.service.dto.request.BoardScarpRequestDto.*;
-import static paratrip.paratrip.scrap.service.dto.response.BoardScrapResponseDto.*;
+import static paratrip.paratrip.scrap.board.service.dto.request.BoardScarpRequestDto.*;
+import static paratrip.paratrip.scrap.board.service.dto.response.BoardScrapResponseDto.*;
 
 import java.util.List;
 
@@ -19,9 +19,9 @@ import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.board.main.repository.BoardImageRepository;
 import paratrip.paratrip.board.main.repository.BoardRepository;
 import paratrip.paratrip.core.utils.LocalDateTimeConverter;
-import paratrip.paratrip.scrap.entity.BoardScrapEntity;
-import paratrip.paratrip.scrap.mapper.BoardScrapMapper;
-import paratrip.paratrip.scrap.repository.BoardScrapRepository;
+import paratrip.paratrip.scrap.board.entity.BoardScrapEntity;
+import paratrip.paratrip.scrap.board.mapper.BoardScrapMapper;
+import paratrip.paratrip.scrap.board.repository.BoardScrapRepository;
 import paratrip.paratrip.comment.repository.CommentRepository;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.repository.MemberRepository;

@@ -1,6 +1,6 @@
-package paratrip.paratrip.scrap.controller.vo.request;
+package paratrip.paratrip.scrap.board.controller.vo.request;
 
-import static paratrip.paratrip.scrap.service.dto.request.BoardScarpRequestDto.*;
+import static paratrip.paratrip.scrap.board.service.dto.request.BoardScarpRequestDto.*;
 
 public class BoardScrapRequestVo {
 	public record AddBoardScrapRequest(

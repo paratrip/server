@@ -1,10 +1,10 @@
-package paratrip.paratrip.scrap.repository;
+package paratrip.paratrip.scrap.board.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import paratrip.paratrip.board.main.entity.BoardEntity;
-import paratrip.paratrip.scrap.entity.BoardScrapEntity;
+import paratrip.paratrip.scrap.board.entity.BoardScrapEntity;
 import paratrip.paratrip.member.entity.MemberEntity;
 
 public interface BoardScrapRepository {

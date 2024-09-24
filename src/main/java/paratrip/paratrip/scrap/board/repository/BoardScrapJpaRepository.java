@@ -1,4 +1,4 @@
-package paratrip.paratrip.scrap.repository;
+package paratrip.paratrip.scrap.board.repository;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import paratrip.paratrip.board.main.entity.BoardEntity;
-import paratrip.paratrip.scrap.entity.BoardScrapEntity;
+import paratrip.paratrip.scrap.board.entity.BoardScrapEntity;
 import paratrip.paratrip.member.entity.MemberEntity;
 
 @Repository
