@@ -169,27 +169,25 @@ public class BoardService {
 		BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo
 			= boardDomain.convertToBoardCreatorInfo(boardEntity);
 
-		// TODO COMMENT 조회 API로 따로 분리
-		List<BoardResponseDto.GetBoardResponseDto.CommentInfo> commentInfos = commentRepository.findByBoardEntity(
-				boardEntity)
-			.stream()
-			.map(commentEntity -> new BoardResponseDto.GetBoardResponseDto.CommentInfo(
-				commentEntity.getCommentSeq(),
-				commentEntity.getComment(),
-				commentEntity.getUpdatedAt(),
-				commentEntity.getMemberEntity().getMemberSeq(),
-				commentEntity.getMemberEntity().getUserId(),
-				commentEntity.getMemberEntity().getProfileImage()
-			))
-			.collect(Collectors.toList());
+		/*
+		 Comment Info 생성
+		 TODO COMMENT 조회 API로 따로 분리
+		*/
+		List<CommentEntity> commentEntities = commentRepository.findByBoardEntity(boardEntity);
+		List<BoardResponseDto.GetBoardResponseDto.CommentInfo> commentInfos
+			= commentDomain.convertToCommentInfos(commentEntities);
 
 		// Count Info 생성
-		BoardResponseDto.GetBoardResponseDto.CountInfo countInfo = new BoardResponseDto.GetBoardResponseDto.CountInfo(
-			commentRepository.countByBoardEntity(boardEntity),
-			boardEntity.getHearts(),
-			boardScrapRepository.countByBoardEntity(boardEntity),
-			boardHeartRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity),
-			boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity)
+		long commentCnt = commentRepository.countByBoardEntity(boardEntity);
+		long scrapCnt = boardScrapRepository.countByBoardEntity(boardEntity);
+		boolean heart = boardHeartRepository.existsByBoardEntityAndMemberEntity(boardEntity, memberEntity);
+		boolean scrap = boardScrapRepository.existsByBoardEntityAndMemberEntity(memberEntity, boardEntity);
+		BoardResponseDto.GetBoardResponseDto.CountInfo countInfo = boardDomain.convertToCountInfo(
+			boardEntity,
+			commentCnt,
+			scrapCnt,
+			heart,
+			scrap
 		);
 
 		return new BoardResponseDto.GetBoardResponseDto(boardCreatorInfo, boardInfo, countInfo, commentInfos);
@@ -208,7 +206,10 @@ public class BoardService {
 		BoardResponseDto.GetBoardResponseDto.BoardCreatorInfo boardCreatorInfo
 			= boardDomain.convertToBoardCreatorInfo(boardEntity);
 
-		// Comment Info 생성
+		/*
+		 Comment Info 생성
+		 TODO COMMENT 조회 API로 따로 분리
+		*/
 		List<CommentEntity> commentEntities = commentRepository.findByBoardEntity(boardEntity);
 		List<BoardResponseDto.GetBoardResponseDto.CommentInfo> commentInfos
 			= commentDomain.convertToCommentInfos(commentEntities);
