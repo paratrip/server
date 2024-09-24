@@ -53,6 +53,9 @@ public class MemberEntity {
 	@Column(name = "profile_image", nullable = true)
 	private String profileImage;
 
+	@Column(name = "kakao", nullable = false, columnDefinition = "boolean default false")
+	private Boolean kakao;
+
 	public MemberEntity updatePassword(String encodedPassword) {
 		this.encodedPassword = encodedPassword;
 		return this;
@@ -80,6 +83,11 @@ public class MemberEntity {
 
 	public MemberEntity updateKakaoProfileImage(String profileImage) {
 		this.profileImage = profileImage;
+		return this;
+	}
+
+	public MemberEntity updateKakao() {
+		this.kakao = true;
 		return this;
 	}
 }

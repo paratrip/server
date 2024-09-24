@@ -1,6 +1,7 @@
 package paratrip.paratrip.scrap.paragliding.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -8,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.exception.BadRequestException;
+import paratrip.paratrip.core.exception.ConflictException;
 import paratrip.paratrip.core.exception.ErrorResult;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.paragliding.entity.Paragliding;
@@ -38,15 +40,46 @@ public class ParaglidingScrapRepositoryImpl implements ParaglidingScrapRepositor
 	}
 
 	@Override
-	public List<Paragliding> findAllByMemberEntity(MemberEntity memberEntity) {
+	public ParaglidingScrapEntity findByMemberEntity(MemberEntity memberEntity) {
 		QParaglidingScrapEntity qParaglidingScrapEntity = QParaglidingScrapEntity.paraglidingScrapEntity;
-		QParagliding qParagliding = QParagliding.paragliding;
+
+		return Optional.ofNullable(
+			queryFactory
+				.selectFrom(qParaglidingScrapEntity)
+				.where(
+					qParaglidingScrapEntity.memberEntity.eq(memberEntity)
+				).fetchOne()
+		).orElseThrow(() -> new BadRequestException(ErrorResult.PARAGLIDING_SCRAP_NOT_FOUND_EXCEPTION));
+	}
+
+	@Override
+	public List<ParaglidingScrapEntity> findAllByMemberEntity(MemberEntity memberEntity) {
+		QParaglidingScrapEntity qParaglidingScrapEntity = QParaglidingScrapEntity.paraglidingScrapEntity;
 
 		return queryFactory.
-			select(qParagliding)
+			select(qParaglidingScrapEntity)
 			.from(qParaglidingScrapEntity)
 			.where(
 				qParaglidingScrapEntity.memberEntity.eq(memberEntity)
 			).fetch();
+	}
+
+	@Override
+	public void existsMemberEntityParaglidingScrapEntity(
+		MemberEntity memberEntity,
+		Paragliding paraglidingEntity
+	) {
+		QParaglidingScrapEntity qParaglidingScrapEntity = QParaglidingScrapEntity.paraglidingScrapEntity;
+
+		Optional.ofNullable(
+			queryFactory
+				.selectFrom(qParaglidingScrapEntity)
+				.where(
+					qParaglidingScrapEntity.memberEntity.eq(memberEntity)
+						.and(qParaglidingScrapEntity.paraglidingEntity.eq(paraglidingEntity))
+				).fetchOne()
+		).ifPresent(scrap -> {
+			throw new ConflictException(ErrorResult.SCRAP_PARAGLIDING_DUPLICATION_CONFLICT_EXCEPTION);
+		});
 	}
 }
