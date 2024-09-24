@@ -3,11 +3,12 @@ package paratrip.paratrip.course.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.entity.TourCourse;
+import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.repository.CourseRepository;
 import paratrip.paratrip.course.repository.TouristSpotRepository;
 import paratrip.paratrip.paragliding.entity.Paragliding;
+import paratrip.paratrip.paragliding.entity.Region;
 import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.course.util.CourseUtil;
 
@@ -31,6 +32,7 @@ public class CourseService {
 
         for (Paragliding paragliding : paraglidingList) {
             String paraglidingAddress = CourseUtil.convertParaglidingAddress(paragliding.getAddress());
+            Region paraglidingRegion = paragliding.getRegion(); // Region 정보 가져오기
 
             // 시/군 단위로 관광지 찾기
             List<TouristSpot> matchingSpots = touristSpots.stream()
@@ -46,12 +48,12 @@ public class CourseService {
 
             // 매칭된 관광지가 2개 이상일 때만 코스 생성
             if (matchingSpots.size() >= 2) {
-                generateCourseForParagliding(paragliding, matchingSpots);
+                generateCourseForParagliding(paragliding, matchingSpots, paraglidingRegion);
             }
         }
     }
 
-    private void generateCourseForParagliding(Paragliding paragliding, List<TouristSpot> matchingSpots) {
+    private void generateCourseForParagliding(Paragliding paragliding, List<TouristSpot> matchingSpots, Region region) {
         List<List<TouristSpot>> combinations = CourseUtil.generateCombinations(matchingSpots, 2);
 
         for (List<TouristSpot> combo : combinations) {
@@ -67,7 +69,7 @@ public class CourseService {
                         .paragliding(paragliding)
                         .touristSpot1(spot1)
                         .touristSpot2(spot2)
-                        .region(paragliding.getAddress())
+                        .region(region)  // 지역 정보 추가
                         .imageUrlParagliding(paragliding.getImageUrl())
                         .imageUrl1(spot1.getImageUrl())
                         .imageUrl2(spot2.getImageUrl())
@@ -86,5 +88,17 @@ public class CourseService {
         return spot.getBasicAddress() != null && !spot.getBasicAddress().isEmpty()
                 && spot.getCategory() != null && !spot.getCategory().isEmpty()
                 && spot.getImageUrl() != null && !spot.getImageUrl().isEmpty();
+    }
+
+    // 모든 코스 조회
+    @Transactional(readOnly = true)
+    public List<TourCourse> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    // 특정 지역에 대한 코스 조회
+    @Transactional(readOnly = true)
+    public List<TourCourse> getCoursesByRegion(Region region) {
+        return courseRepository.findByRegion(region);
     }
 }
