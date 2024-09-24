@@ -1,6 +1,5 @@
 package paratrip.paratrip.paragliding.service;
 
-import com.amazonaws.services.s3.model.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import paratrip.paratrip.paragliding.dto.request.ParaglidingRequestDto;
@@ -8,6 +7,7 @@ import paratrip.paratrip.paragliding.dto.response.DetailResponseDto;
 import paratrip.paratrip.paragliding.dto.response.ParaglidingResponseDto;
 import paratrip.paratrip.paragliding.dto.response.RegionResponseDto;
 import paratrip.paratrip.paragliding.entity.Paragliding;
+import paratrip.paratrip.paragliding.entity.Region;
 import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.paragliding.util.ParaglidingUtils;
 
@@ -36,13 +36,21 @@ public class ParaglidingService {
     private ParaglidingUtils paraglidingUtils;
 
     public List<ParaglidingResponseDto> getParaglidingList(ParaglidingRequestDto request) {
+        List<Region> regions = request.regions();
         List<Paragliding> paraglidingList;
-        if (request.region() != null) {
-            paraglidingList = paraglidingRepository.findByRegion(request.region());
+
+        if (regions != null && !regions.isEmpty()) {
+            // 여러 개의 지역을 조건으로 조회 (여기서 findByRegionIn은 여러 지역을 조회하는 메서드여야 함)
+            paraglidingList = paraglidingRepository.findByRegionIn(regions);
         } else {
+            // 지역 선택이 없으면 모든 패러글라이딩 정보를 조회
             paraglidingList = paraglidingRepository.findAll();
         }
+
+        // 좋아요(heart) 수로 내림차순 정렬
         paraglidingList.sort((p1, p2) -> Integer.compare(p2.getHeart(), p1.getHeart()));
+
+        // DTO로 변환 후 반환
         return paraglidingUtils.toResponseDtoList(paraglidingList);
     }
 
