@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import paratrip.paratrip.paragliding.dto.request.LikeRequestDto;
 import paratrip.paratrip.paragliding.dto.request.ParaglidingRequestDto;
 import paratrip.paratrip.paragliding.dto.response.DetailResponseDto;
 import paratrip.paratrip.paragliding.dto.response.ParaglidingResponseDto;
@@ -83,5 +84,37 @@ public class ParaglidingController {
             @RequestHeader("Authorization") String token) {
         DetailResponseDto details = paraglidingService.getParaglidingDetails(id);
         return ResponseEntity.ok(details);
+    }
+
+    @Operation(summary = "지역별 패러글라이딩 조회", description = "선택한 지역에 해당하는 패러글라이딩 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 지역별 패러글라이딩 리스트를 조회했습니다.",
+                    content = @Content(schema = @Schema(implementation = ParaglidingResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
+                    content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    @GetMapping("/list/region/{regionCode}")
+    public ResponseEntity<List<ParaglidingResponseDto>> getParaglidingByRegion(
+            @Parameter(description = "조회할 지역의 코드", example = "DY") @PathVariable String regionCode) {
+        List<ParaglidingResponseDto> paraglidingList = paraglidingService.getParaglidingByRegion(regionCode);
+        return ResponseEntity.ok(paraglidingList);
+    }
+
+    @Operation(summary = "패러글라이딩 좋아요", description = "사용자가 패러글라이딩 장소에 좋아요를 추가합니다.")
+    @PostMapping("/like")
+    public ResponseEntity<String> likeParagliding(@RequestBody LikeRequestDto request) {
+        paraglidingService.addLike(request);
+        return ResponseEntity.ok("좋아요 성공");
+    }
+
+    @Operation(summary = "좋아요 순으로 패러글라이딩 리스트 조회", description = "좋아요(heart) 순으로 패러글라이딩 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 좋아요 순으로 패러글라이딩 리스트를 조회했습니다.",
+                    content = @Content(schema = @Schema(implementation = ParaglidingResponseDto.class)))
+    })
+    @GetMapping("/list/sorted-by-likes")
+    public ResponseEntity<List<ParaglidingResponseDto>> getParaglidingListSortedByLikes() {
+        List<ParaglidingResponseDto> sortedParaglidingList = paraglidingService.getParaglidingListSortedByLikes();
+        return ResponseEntity.ok(sortedParaglidingList);
     }
 }

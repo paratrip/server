@@ -6,7 +6,9 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import paratrip.paratrip.core.base.BaseEntity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * packageName    : paratrip.paratrip.paraglidiing.entity
@@ -91,5 +93,10 @@ public class Paragliding extends BaseEntity {
     @Column(name="image_url")
     private String imageUrl;
 
+    @ElementCollection
+    private Set<Long> likedUsers = new HashSet<>();
 
+    public void setHeart(int heart) {
+        this.heart = heart;
+    }
 }
