@@ -17,6 +17,6 @@ import java.util.List;
  * -----------------------------------------------------------
  * 2024-09-09        tlswl       최초 생성
  */
-public interface ParaglidingRepository extends JpaRepository<Paragliding, Long> {
-    List<Paragliding> findByRegionIn(List<Region> regions);
+public interface ParaglidingRepository {
+	Paragliding findByParaglidingSeq(Long paraglidingSeq);
 }

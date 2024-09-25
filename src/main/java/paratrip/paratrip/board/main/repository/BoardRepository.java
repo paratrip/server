@@ -18,4 +18,6 @@ public interface BoardRepository {
 	Page<BoardEntity> findByPopularity(Pageable pageable);
 
 	Page<BoardEntity> findAllMyBoardEntity(MemberEntity memberEntity, Pageable pageable);
+
+	void deleteBoardEntity(BoardEntity boardEntity);
 }

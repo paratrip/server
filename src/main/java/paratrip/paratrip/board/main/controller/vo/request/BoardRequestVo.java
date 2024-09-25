@@ -6,11 +6,13 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.constraints.NotNull;
+
 public class BoardRequestVo {
 	public record AddBoardRequest(
-		Long memberSeq,
-		String title,
-		String content,
+		@NotNull Long memberSeq,
+		@NotNull String title,
+		@NotNull String content,
 		String location,
 		List<MultipartFile> images
 	) {
@@ -26,10 +28,10 @@ public class BoardRequestVo {
 	}
 
 	public record ModifyBoardRequest(
-		Long memberSeq,
-		Long boardSeq,
-		String title,
-		String content,
+		@NotNull Long memberSeq,
+		@NotNull Long boardSeq,
+		@NotNull String title,
+		@NotNull String content,
 		String location,
 		List<MultipartFile> images
 	) {

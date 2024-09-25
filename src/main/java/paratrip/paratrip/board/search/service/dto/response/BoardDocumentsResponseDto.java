@@ -1,6 +1,7 @@
 package paratrip.paratrip.board.search.service.dto.response;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class BoardDocumentsResponseDto {
@@ -22,7 +23,7 @@ public class BoardDocumentsResponseDto {
 			String title,
 			String content,
 			String location,
-			LocalDateTime updatedAt,
+			ZonedDateTime updatedAt,
 			List<String> imageURLs
 		) {
 

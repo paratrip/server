@@ -86,4 +86,9 @@ public class BoardRepositoryImpl implements BoardRepository {
 
 		return new PageImpl<>(result, pageable, total);
 	}
+
+	@Override
+	public void deleteBoardEntity(BoardEntity boardEntity) {
+		boardJpaRepository.delete(boardEntity);
+	}
 }

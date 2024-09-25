@@ -7,7 +7,6 @@ import org.mapstruct.ReportingPolicy;
 
 import paratrip.paratrip.alarm.entity.AlarmEntity;
 import paratrip.paratrip.alarm.utils.Type;
-import paratrip.paratrip.board.hearts.entity.BoardHeartEntity;
 import paratrip.paratrip.board.main.entity.BoardEntity;
 import paratrip.paratrip.member.entity.MemberEntity;
 

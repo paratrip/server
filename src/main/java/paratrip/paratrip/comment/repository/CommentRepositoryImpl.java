@@ -30,7 +30,9 @@ public class CommentRepositoryImpl implements CommentRepository {
 	@Override
 	public CommentEntity findByCommentSeqAndMemberEntity(Long commentSeq, MemberEntity memberEntity) {
 		return commentJpaRepository.findByCommentSeqAndMemberEntity(commentSeq, memberEntity)
-			.orElseThrow(() -> new BadRequestException(ErrorResult.COMMENT_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION));
+			.orElseThrow(
+				() -> new BadRequestException(ErrorResult.COMMENT_NOT_CREATED_BY_MEMBER_BAD_REQUEST_EXCEPTION)
+			);
 	}
 
 	@Override
@@ -46,5 +48,10 @@ public class CommentRepositoryImpl implements CommentRepository {
 	@Override
 	public List<CommentEntity> findByBoardEntity(BoardEntity boardEntity) {
 		return commentJpaRepository.findByBoardEntity(boardEntity);
+	}
+
+	@Override
+	public void deleteByBoardEntity(BoardEntity boardEntity) {
+		commentJpaRepository.deleteByBoardEntity(boardEntity);
 	}
 }

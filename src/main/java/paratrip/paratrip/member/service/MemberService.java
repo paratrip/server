@@ -221,7 +221,8 @@ public class MemberService {
 			memberEntity.getUserId(),
 			memberEntity.getBirth(),
 			memberEntity.getGender(),
-			memberEntity.getProfileImage()
+			memberEntity.getProfileImage(),
+			memberEntity.getKakao()
 		);
 	}
 }

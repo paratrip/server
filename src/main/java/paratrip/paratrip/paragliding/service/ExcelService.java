@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import paratrip.paratrip.paragliding.entity.Paragliding;
 import paratrip.paratrip.paragliding.entity.Region;
+import paratrip.paratrip.paragliding.repository.ParaglidingJpaRepository;
 import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.paragliding.util.ExcelUtils;
 
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class ExcelService {
     @Autowired
-    private ParaglidingRepository paraglidingRepository;
+    private ParaglidingJpaRepository paraglidingRepository;
 
     @PostConstruct
     public void init() {
