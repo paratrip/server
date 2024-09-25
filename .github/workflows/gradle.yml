@@ -32,6 +32,37 @@ jobs:
           ./gradlew clean build -Duser.timezone=Asia/Seoul
         shell: bash
 
+  setting:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update and Install Packages
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            apt-transport-https \
+            ca-certificates \
+            curl \
+            gnupg-agent \
+            software-properties-common
+
+      - name: Add Docker GPG Key and Repository
+        run: |
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo add-apt-repository --yes \
+            "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+            $(lsb_release -cs) \
+            stable"
+
+      - name: Install Docker
+        run: |
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+      - name: Install Git and Update
+        run: |
+          sudo apt install -y git
+          sudo apt update
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -39,7 +70,7 @@ jobs:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_TOKEN}}
 
-      - name: build and release to DockerHub
+      - name: Build and Release to DockerHub
         env:
           NAME: ${{secrets.DOCKER_USERNAME}}
           REPO: paratrip
@@ -49,7 +80,7 @@ jobs:
           docker push $NAME/$REPO:latest
 
   deploy:
-    needs: build
+    needs: setting
     name: Deploy
     runs-on: [ self-hosted ]
     steps:
