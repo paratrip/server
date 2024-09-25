@@ -47,21 +47,26 @@ public class CourseUtil {
         return "";
     }
 
+    // 모든 경우의 수 조합을 생성할 때 최대 10개까지만 생성하도록 수정
     public static <T> List<List<T>> generateCombinations(List<T> list, int r) {
-        // 모든 경우의 수 조합을 생성하는 로직
+        // 최대 10개의 경우의 수 조합을 생성하도록 제한
         List<List<T>> result = new ArrayList<>();
-        combine(new Object[r], list.toArray(), r, 0, 0, result);
+        combine(new Object[r], list.toArray(), r, 0, 0, result, 10); // 최대 10개의 조합만
         return result;
     }
 
-    private static <T> void combine(Object[] temp, Object[] data, int r, int index, int start, List<List<T>> result) {
+    private static <T> void combine(Object[] temp, Object[] data, int r, int index, int start, List<List<T>> result, int limit) {
         if (index == r) {
             result.add(List.of((T[]) temp.clone()));
+            // 제한된 개수(10개)에 도달하면 더 이상 조합을 생성하지 않음
+            if (result.size() >= limit) {
+                return;
+            }
             return;
         }
-        for (int i = start; i < data.length; i++) {
+        for (int i = start; i < data.length && result.size() < limit; i++) {
             temp[index] = data[i];
-            combine(temp, data, r, index + 1, i + 1, result);
+            combine(temp, data, r, index + 1, i + 1, result, limit);
         }
     }
 }

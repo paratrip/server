@@ -22,4 +22,5 @@ import java.util.List;
 @Repository
 public interface ParaglidingJpaRepository extends JpaRepository<Paragliding, Long> {
     List<Paragliding> findByRegion(Region region);
+    List<Paragliding> findByRegionIn(List<Region> regions);
 }
