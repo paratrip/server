@@ -29,9 +29,13 @@ public class TouristSpotService {
     // 애플리케이션 시작 시 자동으로 데이터를 처리하고 코스 생성
     @PostConstruct
     public void init() throws InterruptedException {
-        // 데이터를 가져와서 저장한 후 코스를 생성
-        fetchAndSaveTouristSpots();
-        courseService.generateCourses();  // 데이터 저장 후 코스 생성
+        // DB에 데이터가 있는지 확인
+        if (touristSpotRepository.count() == 0) {  // TouristSpot 테이블이 비어있을 때만 실행
+            fetchAndSaveTouristSpots();
+            courseService.generateCourses();  // 데이터 저장 후 코스 생성
+        } else {
+            System.out.println("Tourist spots already exist in the database. Skipping data fetch.");
+        }
     }
 
     // 관광지 데이터를 여러 지역에서 불러오고 저장하는 메서드
