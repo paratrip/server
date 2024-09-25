@@ -3,6 +3,7 @@ package paratrip.paratrip.board.main.service.dto.response;
 import static paratrip.paratrip.board.main.controller.vo.response.BoardResponseVo.*;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class BoardResponseDto {
@@ -34,7 +35,7 @@ public class BoardResponseDto {
 			String title,
 			String location,
 			String content,
-			LocalDateTime updatedAt,
+			ZonedDateTime updatedAt,
 			List<String> imageURLs
 		) {
 
@@ -68,7 +69,7 @@ public class BoardResponseDto {
 			String title,
 			String content,
 			String location,
-			LocalDateTime updatedAt,
+			ZonedDateTime updatedAt,
 			List<String> imageURLs
 		) {
 
@@ -87,7 +88,7 @@ public class BoardResponseDto {
 		public record CommentInfo(
 			Long commentSeq,
 			String comment,
-			LocalDateTime updatedAt,
+			ZonedDateTime updatedAt,
 			Long memberSeq,
 			String userId,
 			String profileImage

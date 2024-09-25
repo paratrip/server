@@ -13,4 +13,6 @@ public interface BoardImageRepository {
 	void deleteAll(List<BoardImageEntity> boardImageEntities);
 
 	List<String> extractImageURLsByBoardEntity(BoardEntity boardEntity);
+
+	void deleteByBoardEntity(BoardEntity boardEntity);
 }

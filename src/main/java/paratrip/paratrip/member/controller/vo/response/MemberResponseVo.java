@@ -32,7 +32,8 @@ public class MemberResponseVo {
 		String userId,
 		String birth,
 		Gender gender,
-		String profileImage
+		String profileImage,
+		Boolean kakao
 	) {
 
 	}

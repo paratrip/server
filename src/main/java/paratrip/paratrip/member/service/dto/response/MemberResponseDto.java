@@ -37,7 +37,8 @@ public class MemberResponseDto {
 		String birth,
 
 		Gender gender,
-		String profileImage
+		String profileImage,
+		Boolean kakao
 	) {
 		public GetMemberInfoResponse toGetMemberInfoResponse() {
 			return new GetMemberInfoResponse(
@@ -47,7 +48,8 @@ public class MemberResponseDto {
 				this.userId,
 				this.birth,
 				this.gender,
-				profileImage
+				profileImage,
+				this.kakao
 			);
 		}
 	}

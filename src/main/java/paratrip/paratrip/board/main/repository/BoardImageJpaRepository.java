@@ -11,4 +11,6 @@ import paratrip.paratrip.board.main.entity.BoardImageEntity;
 @Repository
 public interface BoardImageJpaRepository extends JpaRepository<BoardImageEntity, Long> {
 	List<BoardImageEntity> findAllByBoardEntity(BoardEntity boardEntity);
+
+	void deleteByBoardEntity(BoardEntity boardEntity);
 }

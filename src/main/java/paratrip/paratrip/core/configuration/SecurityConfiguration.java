@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.filter.JwtTokenFilter;
@@ -45,11 +46,11 @@ public class SecurityConfiguration {
 			config.setAllowedHeaders(Collections.singletonList("*"));
 			config.setAllowedMethods(Collections.singletonList("*"));
 			config.setAllowedOriginPatterns(Collections.singletonList("*")); // ⭐️ 허용할 origin
-			// config.setAllowedOriginPatterns(Collections.singletonList("https://paratrip.netlify.app")); // ⭐️ 허용할 origin
-			// config.setAllowCredentials(true);
+
 			return config;
 		};
 	}
+
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

@@ -36,6 +36,9 @@ public class KakaoService {
 		// 이미지 수정
 		String profileImage = kakaoDomain.getProfileImage(rootNode);
 		MemberEntity updateMemberEntity = memberEntity.updateKakaoProfileImage(profileImage);
+
+		// 카카오 연동
+		updateMemberEntity.updateKakao();
 		memberRepository.saveMemberEntity(updateMemberEntity);
 
 		// Token 발급
