@@ -8,6 +8,7 @@ import paratrip.paratrip.paragliding.dto.response.ParaglidingResponseDto;
 import paratrip.paratrip.paragliding.dto.response.RegionResponseDto;
 import paratrip.paratrip.paragliding.entity.Paragliding;
 import paratrip.paratrip.paragliding.entity.Region;
+import paratrip.paratrip.paragliding.repository.ParaglidingJpaRepository;
 import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.paragliding.util.ParaglidingUtils;
 
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 public class ParaglidingService {
 
     @Autowired
-    private ParaglidingRepository paraglidingRepository;
+    private ParaglidingJpaRepository paraglidingRepository;
 
     @Autowired
     private ParaglidingUtils paraglidingUtils;
