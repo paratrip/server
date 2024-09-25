@@ -9,12 +9,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
+import paratrip.paratrip.course.dto.TouristSpotResponseDto;
+import paratrip.paratrip.course.entity.RegionCode;
 import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.repository.TouristSpotRepository;
 
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -154,5 +159,40 @@ public class TouristSpotService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // 관광지 리스트 조회
+    // 관광지 리스트 조회
+    public List<TouristSpotResponseDto> getRecommendedTouristSpots() {
+        List<TouristSpot> touristSpots = touristSpotRepository.findAll();
+
+        // TouristSpot 엔티티를 record로 변환하여 반환
+        return touristSpots.stream()
+                .map(spot -> new TouristSpotResponseDto(
+                        spot.getCategory(),
+                        spot.getRegionCode(),
+                        getRegionNameFromCode(spot.getRegionCode()), // 지역 이름 변환
+                        spot.getRlteTatsNm(),
+                        spot.getBasicAddress(),
+                        spot.getImageUrl(),
+                        spot.getTags()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // 지역 코드를 지역 이름으로 변환하는 메서드
+    private String getRegionNameFromCode(String regionCode) {
+        Optional<RegionCode> region = findByCode(regionCode);
+        return region.map(Enum::name).orElse("Unknown Region");  // 지역 코드를 지역 이름으로 변환
+    }
+
+    // 지역 코드로부터 RegionCode 열거형을 찾는 메서드
+    private Optional<RegionCode> findByCode(String code) {
+        for (RegionCode region : RegionCode.values()) {
+            if (region.getCode().equals(code)) {
+                return Optional.of(region);
+            }
+        }
+        return Optional.empty();  // 코드가 없을 경우
     }
 }
