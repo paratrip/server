@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.service.TagService;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * packageName    : paratrip.paratrip.course.controller
@@ -32,5 +36,24 @@ public class TagController {
     public ResponseEntity<String> generateTagsForAllSpots() {
         tagService.generateAndSaveTagsForAllSpots();
         return ResponseEntity.ok("Tags generated and saved for all tourist spots.");
+    }
+
+    @GetMapping("/api/tags")
+    public ResponseEntity<List<TouristSpot>> getAllTags() {
+        List<TouristSpot> touristSpotsWithTags = tagService.getAllTouristSpotsWithTags();
+        return ResponseEntity.ok(touristSpotsWithTags);
+    }
+
+    // 특정 관광지의 태그를 tourist_spot_id로 조회하는 API
+    @GetMapping("/api/tags/{touristSpotId}")
+    public ResponseEntity<TouristSpot> getTagsForTouristSpot(@PathVariable("touristSpotId") Long touristSpotId) {
+        Optional<TouristSpot> touristSpotWithTags = tagService.getTagsForTouristSpotById(touristSpotId);
+
+        // 관광지가 존재하지 않으면 404 응답
+        if (touristSpotWithTags.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(touristSpotWithTags.get());
     }
 }
