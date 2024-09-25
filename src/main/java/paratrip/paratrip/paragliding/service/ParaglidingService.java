@@ -2,6 +2,7 @@ package paratrip.paratrip.paragliding.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import paratrip.paratrip.paragliding.dto.request.LikeRequestDto;
 import paratrip.paratrip.paragliding.dto.request.ParaglidingRequestDto;
 import paratrip.paratrip.paragliding.dto.response.DetailResponseDto;
 import paratrip.paratrip.paragliding.dto.response.ParaglidingResponseDto;
@@ -71,5 +72,41 @@ public class ParaglidingService {
                 .orElseThrow(() -> new RuntimeException("정보가 없습니다"));
 
         return paraglidingUtils.convertToDetailResponseDto(paragliding);
+    }
+
+    // 지역별 패러글라이딩 조회 메서드 추가
+    public List<ParaglidingResponseDto> getParaglidingByRegion(String regionCode) {
+        // 지역 코드에 해당하는 패러글라이딩 정보 조회
+        List<Paragliding> paraglidingList = paraglidingRepository.findByRegion(Region.valueOf(regionCode));
+
+        // 좋아요(heart) 수로 내림차순 정렬
+        paraglidingList.sort((p1, p2) -> Integer.compare(p2.getHeart(), p1.getHeart()));
+
+        // DTO로 변환 후 반환
+        return paraglidingUtils.toResponseDtoList(paraglidingList);
+    }
+
+    // 좋아요 순으로 정렬된 패러글라이딩 리스트 조회
+    public List<ParaglidingResponseDto> getParaglidingListSortedByLikes() {
+        List<Paragliding> paraglidingList = paraglidingRepository.findAll();
+        paraglidingList.sort((p1, p2) -> Integer.compare(p2.getHeart(), p1.getHeart()));
+        return paraglidingUtils.toResponseDtoList(paraglidingList);
+    }
+
+    // 좋아요 추가 메서드
+    public void addLike(LikeRequestDto request) {
+        Long paraglidingId = request.paraglidingId();
+        Long userId = request.userId();
+
+        Paragliding paragliding = paraglidingRepository.findById(paraglidingId)
+                .orElseThrow(() -> new RuntimeException("Paragliding spot not found"));
+
+        if (paragliding.getLikedUsers().contains(userId)) {
+            throw new RuntimeException("User already liked this spot");
+        }
+
+        paragliding.setHeart(paragliding.getHeart() + 1);
+        paragliding.getLikedUsers().add(userId);
+        paraglidingRepository.save(paragliding);
     }
 }

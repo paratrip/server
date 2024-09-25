@@ -1,76 +1,46 @@
-//package paratrip.paratrip.course.controller;
-//
-//import io.swagger.v3.oas.annotations.Operation;
-//import io.swagger.v3.oas.annotations.responses.ApiResponse;
-//import io.swagger.v3.oas.annotations.responses.ApiResponses;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//import paratrip.paratrip.course.dto.CourseDto;
-//import paratrip.paratrip.course.entity.TourCourse;
-//import paratrip.paratrip.course.service.CourseService;
-//import paratrip.paratrip.course.util.CourseMapper;
-//import paratrip.paratrip.paragliding.entity.Region;
-//
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//@RestController
-//@RequiredArgsConstructor
-//public class CourseController {
-//
-//    private final CourseService courseService;
-//
-////    @Operation(summary = "코스 생성", description = "새로운 코스를 생성")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "200", description = "코스 생성 완료"),
-////            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
-////    })
-////    @PostMapping("/generate-courses")
-////    public String generateCourses() {
-////        courseService.generateCourses();
-////        return "코스가 성공적으로 생성되었습니다.";
-////    }
-//
-//    // 모든 코스 조회 API
-////    @Operation(summary = "모든 코스 조회", description = "모든 패러글라이딩 코스 정보를 조회합니다.")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "200", description = "코스 조회 성공"),
-////            @ApiResponse(responseCode = "500", description = "서버 오류")
-////    })
-////    @GetMapping("/courses")
-////    public ResponseEntity<List<CourseDto>> getAllCourses() {
-////        List<TourCourse> courses = courseService.getAllCourses();
-////        List<CourseDto> courseDtos = courses.stream()
-////                .map(CourseMapper::toCourseDto)
-////                .collect(Collectors.toList());
-////
-////        return ResponseEntity.ok(courseDtos);
-////    }
-////
-////    // 특정 지역의 코스 조회 API
-////    @Operation(summary = "특정 지역 코스 조회", description = "지역 코드를 통해 해당 지역의 패러글라이딩 코스를 조회합니다.")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "200", description = "코스 조회 성공"),
-////            @ApiResponse(responseCode = "404", description = "코스를 찾을 수 없음"),
-////            @ApiResponse(responseCode = "500", description = "서버 오류")
-////    })
-////    @GetMapping("/courses/region/{region}")
-////    public ResponseEntity<List<CourseDto>> getCoursesByRegion(@PathVariable Region region) {
-////        List<TourCourse> courses = courseService.getCoursesByRegion(region);
-////        if (courses.isEmpty()) {
-////            return ResponseEntity.notFound().build();
-////        }
-////
-////        List<CourseDto> courseDtos = courses.stream()
-////                .map(CourseMapper::toCourseDto)
-////                .collect(Collectors.toList());
-////
-////        return ResponseEntity.ok(courseDtos);
-////    }
-//
-//
-//}
+package paratrip.paratrip.course.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import paratrip.paratrip.course.dto.CourseResponseDto;
+import paratrip.paratrip.course.service.CourseService;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@Tag(name = "관광코스 태그 조회 API", description = "지역 및 태그 기반 관광 코스 조회 API")
+public class CourseController {
+
+    private final CourseService courseService;
+
+    @Operation(summary = "관광 코스 조회", description = "선택한 지역 또는 태그에 기반하여 필터링된 관광 코스를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 관광 코스 목록을 조회했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CourseResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "서버 오류가 발생했습니다.",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/api/courses")
+    public ResponseEntity<List<CourseResponseDto>> getCourses(
+            @Parameter(description = "필터링할 지역 코드 (예: PC, BR 등)", example = "PC")
+            @RequestParam(required = false) String region,
+
+            @Parameter(description = "필터링할 태그 목록 (쉼표로 구분된 태그들)", example = "자연,역사")
+            @RequestParam(required = false) List<String> tags) {
+
+        List<CourseResponseDto> courses = courseService.getCoursesWithFilters(region, tags);
+        return ResponseEntity.ok(courses);
+    }
+}

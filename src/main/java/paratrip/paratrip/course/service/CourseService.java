@@ -3,6 +3,7 @@ package paratrip.paratrip.course.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import paratrip.paratrip.course.dto.CourseResponseDto;
 import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.entity.TourCourse;
 import paratrip.paratrip.course.repository.CourseRepository;
@@ -87,5 +88,37 @@ public class CourseService {
         return spot.getBasicAddress() != null && !spot.getBasicAddress().isEmpty()
                 && spot.getCategory() != null && !spot.getCategory().isEmpty()
                 && spot.getImageUrl() != null && !spot.getImageUrl().isEmpty();
+    }
+
+    public List<CourseResponseDto> getCoursesWithFilters(String region, List<String> tags) {
+        List<TourCourse> courses;
+
+        // 필터링 조건에 따라 데이터 조회
+        if ((region == null || region.isEmpty()) && (tags == null || tags.isEmpty())) {
+            // 필터가 없으면 모든 코스 조회
+            courses = courseRepository.findAll();
+        } else if (region != null && !region.isEmpty()) {
+            // 지역으로 필터링
+            courses = courseRepository.findByRegionContaining(region);
+        } else {
+            // 태그로 필터링
+            courses = courseRepository.findByTagsIn(tags);
+        }
+
+        // CourseResponseDto로 변환
+        return courses.stream()
+                .map(course -> new CourseResponseDto(
+                        course.getId(),
+                        course.getParagliding().getName(),
+                        course.getTouristSpot1().getRlteTatsNm(),
+                        course.getTouristSpot2().getRlteTatsNm(),
+                        course.getParagliding().getRegion().name(),
+                        course.getTouristSpot1().getTags(),
+                        course.getTouristSpot2().getTags(),
+                        course.getImageUrlParagliding(),
+                        course.getImageUrl1(),
+                        course.getImageUrl2()
+                ))
+                .collect(Collectors.toList());
     }
 }
