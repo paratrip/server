@@ -53,8 +53,9 @@ public class ParaglidingScrapService {
 		 3. 작성자 여부 확인
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(request.memberSeq());
-		paraglidingScrapRepository.findByParaglidingScrapSeq(request.paraglidingScrapSeq());
-		ParaglidingScrapEntity paraglidingScrapEntity = paraglidingScrapRepository.findByMemberEntity(memberEntity);
+		Paragliding paragliding = paraglidingRepository.findByParaglidingSeq(request.paraglidingSeq());
+		ParaglidingScrapEntity paraglidingScrapEntity
+			= paraglidingScrapRepository.findByMemberEntityAndParagliding(memberEntity, paragliding);
 
 		paraglidingScrapRepository.deleteParaglidingScrapEntity(paraglidingScrapEntity);
 	}

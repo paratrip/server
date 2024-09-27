@@ -28,12 +28,12 @@ public class ParaglidingScrapController {
 	private final ParaglidingScrapService paraglidingScrapService;
 
 	@PostMapping()
-	public ResponseEntity<BaseResponse<SaveParaglidingScrapResponseDto>> saveParaglidingScrap(
+	public ResponseEntity<BaseResponse> saveParaglidingScrap(
 		@RequestBody SaveParaglidingScrapRequestDto request
 	) {
 		SaveParaglidingScrapResponseDto response = paraglidingScrapService.saveParaglidingScrap(request);
 
-		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), response));
+		return ResponseEntity.ok().body(BaseResponse.ofSuccess(HttpStatus.OK.value(), "SUCCESS"));
 	}
 
 	@DeleteMapping
