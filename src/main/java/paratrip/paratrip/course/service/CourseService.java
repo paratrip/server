@@ -14,6 +14,7 @@ import paratrip.paratrip.course.util.CourseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,6 +111,33 @@ public class CourseService {
                     course.getRlteTatsNm2()                              // 관광지 2의 rlteTatsNm
             );
         }).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public CourseResponseDto getCourseDetail(Long courseId) {
+        // courseId로 TourCourse 엔티티를 조회하고 없으면 예외 발생
+        Optional<TourCourse> courseOptional = courseRepository.findById(courseId);
+
+        if (courseOptional.isEmpty()) {
+            throw new IllegalArgumentException("해당 ID의 코스를 찾을 수 없습니다: " + courseId);
+        }
+
+        // 조회된 코스를 DTO로 변환하여 반환
+        TourCourse course = courseOptional.get();
+        return new CourseResponseDto(
+                course.getId(),
+                course.getParagliding().getName(),            // 패러글라이딩 이름
+                course.getTouristSpot1().getRlteTatsNm(),      // 관광지 1 이름
+                course.getTouristSpot2().getRlteTatsNm(),      // 관광지 2 이름
+                course.getRegion(),                // 패러글라이딩 지역
+                course.getTouristSpot1().getTag(),             // 관광지 1 태그
+                course.getTouristSpot2().getTag(),             // 관광지 2 태그
+                course.getImageUrlParagliding(),               // 패러글라이딩 이미지 URL
+                course.getImageUrl1(),                         // 관광지 1 이미지 URL
+                course.getImageUrl2(),                         // 관광지 2 이미지 URL
+                course.getRlteTatsNm1(),                       // 관광지 1의 rlteTatsNm
+                course.getRlteTatsNm2()                        // 관광지 2의 rlteTatsNm
+        );
     }
 
 }
