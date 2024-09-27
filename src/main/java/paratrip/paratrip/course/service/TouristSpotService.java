@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import paratrip.paratrip.course.dto.TouristSpotResponseDto;
-import paratrip.paratrip.course.entity.RegionCode;
 import paratrip.paratrip.course.entity.TouristSpot;
 import paratrip.paratrip.course.repository.TouristSpotRepository;
 
@@ -27,23 +27,21 @@ public class TouristSpotService {
 
     private final TouristSpotRepository touristSpotRepository;
     private final WebClient.Builder webClientBuilder;
-    private final CourseService courseService;  // CourseService 의존성 주입
 
-    private String decodedServiceKey = "0PDIwA52myrKA7RqVYA5cWJjNY58QPdUDUbL+YIfRKljfui3fmtvA5TBoTkUAybLnTgcI3I6SZVEgHdNPGljuw==";
+    private String decodedServiceKey = "MlY68M1MmMMegGoGX5sZVrtEuniuCGrjlz93nJdrGeCc+j1rRAISWcEOW7+Nf8uvYkG+OhNkvsUfi4yo3+bO3g==";
 
-    // 애플리케이션 시작 시 자동으로 데이터를 처리하고 코스 생성
+    // 애플리케이션 시작 시 관광지 데이터를 자동으로 불러와 저장
     @PostConstruct
     public void init() throws InterruptedException {
-        // DB에 데이터가 있는지 확인
-        if (touristSpotRepository.count() == 0) {  // TouristSpot 테이블이 비어있을 때만 실행
+        // TouristSpot 테이블이 비어 있을 때만 데이터를 불러옴
+        if (touristSpotRepository.count() == 0) {
             fetchAndSaveTouristSpots();
-            courseService.generateCourses();  // 데이터 저장 후 코스 생성
         } else {
-            System.out.println("Tourist spots already exist in the database. Skipping data fetch.");
+            System.out.println("관광지 데이터가 이미 DB에 존재합니다. 데이터 가져오기 작업을 건너뜁니다.");
         }
     }
 
-    // 관광지 데이터를 여러 지역에서 불러오고 저장하는 메서드
+    // 모든 지역에 대한 관광지 데이터를 불러오고 저장
     public void fetchAndSaveTouristSpots() throws InterruptedException {
         String[][] regionSignguPairs = {
                 {"51", "51760"}, // 평창
@@ -65,18 +63,16 @@ public class TouristSpotService {
         }
     }
 
-    // 특정 지역에 대한 관광지 데이터를 API로 가져와 저장하는 메서드
+    // 특정 지역과 시군구에 대한 관광지 데이터를 API로 가져와 저장
     public void fetchAndSaveTouristData(String regionCode, String signguCode) {
         try {
-            // URI 빌더의 인코딩 설정
             DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
             factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
             WebClient webClient = webClientBuilder.uriBuilderFactory(factory).build();
 
-            // API URL 생성
             URI url = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
                     .queryParam("serviceKey", URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8))
-                    .queryParam("numOfRows", 50)
+                    .queryParam("numOfRows", 30)
                     .queryParam("pageNo", 1)
                     .queryParam("MobileOS", "ETC")
                     .queryParam("MobileApp", "myapp")
@@ -87,24 +83,27 @@ public class TouristSpotService {
                     .build(true)
                     .toUri();
 
-            // API 호출 및 응답 받기
             String response = webClient.get().uri(url).retrieve().bodyToMono(String.class).block();
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response);
             JsonNode itemsNode = rootNode.path("response").path("body").path("items").path("item");
 
-            // 데이터를 저장하기 위한 로직
             if (itemsNode.isArray()) {
                 for (JsonNode itemNode : itemsNode) {
                     String basicAddress = itemNode.path("rlteBsicAdres").asText();
-                    String middleCategory = itemNode.path("rlteCtgryMclsNm").asText();
+                    String middleCategory = itemNode.path("rlteCtgryMclsNm").asText(); // 카테고리 확인
                     String tAtsNm = itemNode.path("rlteTatsNm").asText();
 
-                    // 이미지 검색 API 호출하여 이미지 URL 가져오기
+                    // 카테고리가 '음식'일 경우 제외
+                    if (middleCategory.equalsIgnoreCase("음식")) {
+                        continue;
+                    }
+
+                    // 이미지 검색 API를 통해 이미지 URL 가져오기
                     String imageUrl = fetchImageUrl(tAtsNm);
 
-                    // 이미지 URL이 있으면 TouristSpot 저장
-                    if (imageUrl != null) {
+                    // 이미지가 존재할 경우에만 TouristSpot 데이터 저장
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
                         TouristSpot touristSpot = TouristSpot.builder()
                                 .basicAddress(basicAddress)
                                 .category(middleCategory)
@@ -127,7 +126,7 @@ public class TouristSpotService {
         }
     }
 
-    // 이미지 검색 API를 호출하는 메서드
+    // 특정 키워드에 대해 이미지 검색 API 호출
     public String fetchImageUrl(String keyword) {
         try {
             WebClient webClient = webClientBuilder.build();
@@ -143,13 +142,11 @@ public class TouristSpotService {
                     .build(true)
                     .toUri();
 
-            // 이미지 검색 API 호출
             String response = webClient.get().uri(url).retrieve().bodyToMono(String.class).block();
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response);
             JsonNode itemsNode = rootNode.path("response").path("body").path("items").path("item");
 
-            // 이미지 URL 추출
             if (itemsNode.isArray() && itemsNode.size() > 0) {
                 return itemsNode.get(0).path("galWebImageUrl").asText();
             } else {
@@ -161,38 +158,59 @@ public class TouristSpotService {
         }
     }
 
-    // 관광지 리스트 조회
-    // 관광지 리스트 조회
+    public void mapImagesToTouristSpots() {
+        List<TouristSpot> spots = touristSpotRepository.findAll();
+        for (TouristSpot spot : spots) {
+            String imageUrl = fetchImageUrl(spot.getRlteTatsNm());
+            if (imageUrl != null) {
+                spot.setImageUrl(imageUrl);
+                touristSpotRepository.save(spot);
+            }
+        }
+        System.out.println("모든 관광지에 이미지가 매핑되었습니다.");
+    }
+
     public List<TouristSpotResponseDto> getRecommendedTouristSpots() {
         List<TouristSpot> touristSpots = touristSpotRepository.findAll();
 
-        // TouristSpot 엔티티를 record로 변환하여 반환
+        // TouristSpot 엔티티를 TouristSpotResponseDto로 변환하여 반환
         return touristSpots.stream()
                 .map(spot -> new TouristSpotResponseDto(
                         spot.getCategory(),
                         spot.getRegionCode(),
-                        getRegionNameFromCode(spot.getRegionCode()), // 지역 이름 변환
+                        spot.getRegionCode(),  // 예시: 실제 지역명을 사용하거나, 필요한 필드 사용
                         spot.getRlteTatsNm(),
                         spot.getBasicAddress(),
                         spot.getImageUrl(),
-                        spot.getTags()
+                        spot.getTag()
                 ))
                 .collect(Collectors.toList());
     }
 
-    // 지역 코드를 지역 이름으로 변환하는 메서드
-    private String getRegionNameFromCode(String regionCode) {
-        Optional<RegionCode> region = findByCode(regionCode);
-        return region.map(Enum::name).orElse("Unknown Region");  // 지역 코드를 지역 이름으로 변환
+    /**
+     * 이미지가 없는 관광지를 삭제하는 메서드.
+     */
+    @Transactional
+    public void deleteSpotsWithoutImages() {
+        List<TouristSpot> spotsWithoutImages = touristSpotRepository.findAll()
+                .stream()
+                .filter(spot -> spot.getImageUrl() == null || spot.getImageUrl().isEmpty())  // 이미지가 없는 관광지 필터링
+                .collect(Collectors.toList());
+
+        if (!spotsWithoutImages.isEmpty()) {
+            touristSpotRepository.deleteAll(spotsWithoutImages);  // 이미지가 없는 관광지 삭제
+            System.out.println(spotsWithoutImages.size() + "개의 이미지가 없는 관광지가 삭제되었습니다.");
+        } else {
+            System.out.println("삭제할 이미지가 없는 관광지가 없습니다.");
+        }
     }
 
-    // 지역 코드로부터 RegionCode 열거형을 찾는 메서드
-    private Optional<RegionCode> findByCode(String code) {
-        for (RegionCode region : RegionCode.values()) {
-            if (region.getCode().equals(code)) {
-                return Optional.of(region);
-            }
-        }
-        return Optional.empty();  // 코드가 없을 경우
+    /**
+     * 관광지에 이미지 매핑 후 이미지가 없는 관광지 삭제.
+     */
+    @Transactional
+    public void mapImagesAndCleanUp() {
+        mapImagesToTouristSpots();  // 1. 이미지 매핑 작업 수행
+        deleteSpotsWithoutImages();  // 2. 이미지가 없는 관광지 삭제
     }
 }

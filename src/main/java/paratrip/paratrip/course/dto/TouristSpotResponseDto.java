@@ -10,5 +10,5 @@ public record TouristSpotResponseDto(
         String rlteTatsNm,         // 관광지 이름
         String basicAddress,       // 기본 주소
         String imageUrl,           // 이미지 URL
-        List<String> tags          // 태그 리스트
+        String tags          // 태그 리스트
 ) {}

@@ -10,11 +10,11 @@ import paratrip.paratrip.course.repository.CourseRepository;
 import paratrip.paratrip.course.repository.TouristSpotRepository;
 import paratrip.paratrip.paragliding.entity.Paragliding;
 import paratrip.paratrip.paragliding.repository.ParaglidingJpaRepository;
-import paratrip.paratrip.paragliding.repository.ParaglidingRepository;
 import paratrip.paratrip.course.util.CourseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,28 +25,25 @@ public class CourseService {
     private final ParaglidingJpaRepository paraglidingRepository;
     private final TouristSpotRepository touristSpotRepository;
 
+    // 관광지와 패러글라이딩 장소를 매칭하여 코스 생성
     @Transactional
     public void generateCourses() {
-        // 패러글라이딩 장소와 관광지 정보 조회
         List<Paragliding> paraglidingList = paraglidingRepository.findAll();
         List<TouristSpot> touristSpots = touristSpotRepository.findAll();
 
         for (Paragliding paragliding : paraglidingList) {
             String paraglidingAddress = CourseUtil.convertParaglidingAddress(paragliding.getAddress());
 
-            // 시/군 단위로 관광지 찾기
             List<TouristSpot> matchingSpots = touristSpots.stream()
                     .filter(spot -> CourseUtil.compareByCityOrDistrict(spot.getBasicAddress(), paraglidingAddress))
                     .collect(Collectors.toList());
 
-            // 시/군 단위에서 매칭되지 않을 경우, 도 단위로 비교
             if (matchingSpots.isEmpty()) {
                 matchingSpots = touristSpots.stream()
                         .filter(spot -> CourseUtil.compareByProvince(spot.getBasicAddress(), paraglidingAddress))
                         .collect(Collectors.toList());
             }
 
-            // 매칭된 관광지가 2개 이상일 때만 코스 생성
             if (matchingSpots.size() >= 2) {
                 generateCourseForParagliding(paragliding, matchingSpots);
             }
@@ -61,28 +58,31 @@ public class CourseService {
             TouristSpot spot2 = combo.get(1);
 
             if (spot1 != null && spot2 != null && isValidTouristSpot(spot1) && isValidTouristSpot(spot2)) {
-                List<String> combinedTags = new ArrayList<>(spot1.getTags());
-                combinedTags.addAll(spot2.getTags());
-                combinedTags = combinedTags.stream().distinct().limit(12).collect(Collectors.toList());
+                String combinedTags = String.join(", ", spot1.getTag(), spot2.getTag());
 
+                // 코스 생성 및 저장
                 TourCourse course = TourCourse.builder()
                         .paragliding(paragliding)
                         .touristSpot1(spot1)
                         .touristSpot2(spot2)
-                        .region(paragliding.getAddress())
-                        .imageUrlParagliding(paragliding.getImageUrl())
-                        .imageUrl1(spot1.getImageUrl())
-                        .imageUrl2(spot2.getImageUrl())
-                        .category1(spot1.getCategory())
-                        .category2(spot2.getCategory())
-                        .spotAddress1(spot1.getBasicAddress())
-                        .spotAddress2(spot2.getBasicAddress())
-                        .tags(combinedTags)
+                        .paraglidingRegion(paragliding.getRegion())              // 패러글라이딩의 region 값 매핑
+                        .imageUrlParagliding(paragliding.getImageUrl())          // 패러글라이딩 이미지 URL
+                        .imageUrl1(spot1.getImageUrl())                          // 관광지 1 이미지 URL
+                        .imageUrl2(spot2.getImageUrl())                          // 관광지 2 이미지 URL
+                        .category1(spot1.getCategory())                          // 관광지 1 카테고리
+                        .category2(spot2.getCategory())                          // 관광지 2 카테고리
+                        .spotAddress1(spot1.getBasicAddress())                   // 관광지 1 주소
+                        .spotAddress2(spot2.getBasicAddress())                   // 관광지 2 주소
+                        .tags(combinedTags)                                      // 병합된 태그 리스트
+                        .rlteTatsNm1(spot1.getRlteTatsNm())                      // 관광지 1의 rlteTatsNm 값
+                        .rlteTatsNm2(spot2.getRlteTatsNm())                      // 관광지 2의 rlteTatsNm 값
                         .build();
+
                 courseRepository.save(course);
             }
         }
     }
+
 
     private boolean isValidTouristSpot(TouristSpot spot) {
         return spot.getBasicAddress() != null && !spot.getBasicAddress().isEmpty()
@@ -90,35 +90,54 @@ public class CourseService {
                 && spot.getImageUrl() != null && !spot.getImageUrl().isEmpty();
     }
 
-    public List<CourseResponseDto> getCoursesWithFilters(String region, List<String> tags) {
-        List<TourCourse> courses;
+    // 코스 리스트 조회 메서드 추가
+    @Transactional(readOnly = true)
+    public List<CourseResponseDto> getAllCourses() {
+        List<TourCourse> courses = courseRepository.findAll();
+        return courses.stream().map(course -> {
+            // 각 TourCourse 엔티티를 CourseResponseDto로 변환
+            return new CourseResponseDto(
+                    course.getId(),
+                    course.getParagliding().getName(),                  // 패러글라이딩 이름
+                    course.getTouristSpot1().getRlteTatsNm(),            // 관광지 1 이름
+                    course.getTouristSpot2().getRlteTatsNm(),
+                    course.getRegion(),// 관광지 2 이름
+                    course.getTouristSpot1().getTag(),                   // 관광지 1 태그
+                    course.getTouristSpot2().getTag(),                   // 관광지 2 태그
+                    course.getImageUrlParagliding(),                     // 패러글라이딩 이미지 URL
+                    course.getImageUrl1(),                               // 관광지 1 이미지 URL
+                    course.getImageUrl2(),                               // 관광지 2 이미지 URL
+                    course.getRlteTatsNm1(),                             // 관광지 1의 rlteTatsNm
+                    course.getRlteTatsNm2()                              // 관광지 2의 rlteTatsNm
+            );
+        }).collect(Collectors.toList());
+    }
 
-        // 필터링 조건에 따라 데이터 조회
-        if ((region == null || region.isEmpty()) && (tags == null || tags.isEmpty())) {
-            // 필터가 없으면 모든 코스 조회
-            courses = courseRepository.findAll();
-        } else if (region != null && !region.isEmpty()) {
-            // 지역으로 필터링
-            courses = courseRepository.findByRegionContaining(region);
-        } else {
-            // 태그로 필터링
-            courses = courseRepository.findByTagsIn(tags);
+    @Transactional(readOnly = true)
+    public CourseResponseDto getCourseDetail(Long courseId) {
+        // courseId로 TourCourse 엔티티를 조회하고 없으면 예외 발생
+        Optional<TourCourse> courseOptional = courseRepository.findById(courseId);
+
+        if (courseOptional.isEmpty()) {
+            throw new IllegalArgumentException("해당 ID의 코스를 찾을 수 없습니다: " + courseId);
         }
 
-        // CourseResponseDto로 변환
-        return courses.stream()
-                .map(course -> new CourseResponseDto(
-                        course.getId(),
-                        course.getParagliding().getName(),
-                        course.getTouristSpot1().getRlteTatsNm(),
-                        course.getTouristSpot2().getRlteTatsNm(),
-                        course.getParagliding().getRegion().name(),
-                        course.getTouristSpot1().getTags(),
-                        course.getTouristSpot2().getTags(),
-                        course.getImageUrlParagliding(),
-                        course.getImageUrl1(),
-                        course.getImageUrl2()
-                ))
-                .collect(Collectors.toList());
+        // 조회된 코스를 DTO로 변환하여 반환
+        TourCourse course = courseOptional.get();
+        return new CourseResponseDto(
+                course.getId(),
+                course.getParagliding().getName(),            // 패러글라이딩 이름
+                course.getTouristSpot1().getRlteTatsNm(),      // 관광지 1 이름
+                course.getTouristSpot2().getRlteTatsNm(),      // 관광지 2 이름
+                course.getRegion(),                // 패러글라이딩 지역
+                course.getTouristSpot1().getTag(),             // 관광지 1 태그
+                course.getTouristSpot2().getTag(),             // 관광지 2 태그
+                course.getImageUrlParagliding(),               // 패러글라이딩 이미지 URL
+                course.getImageUrl1(),                         // 관광지 1 이미지 URL
+                course.getImageUrl2(),                         // 관광지 2 이미지 URL
+                course.getRlteTatsNm1(),                       // 관광지 1의 rlteTatsNm
+                course.getRlteTatsNm2()                        // 관광지 2의 rlteTatsNm
+        );
     }
+
 }

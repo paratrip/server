@@ -1,46 +1,69 @@
 package paratrip.paratrip.course.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import paratrip.paratrip.course.dto.CourseResponseDto;
 import paratrip.paratrip.course.service.CourseService;
+import paratrip.paratrip.course.service.TouristSpotService;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/courses")
 @RequiredArgsConstructor
-@Tag(name = "관광코스 태그 조회 API", description = "지역 및 태그 기반 관광 코스 조회 API")
+@Tag(name = "관광코스 관련 API")
 public class CourseController {
 
     private final CourseService courseService;
+    private final TouristSpotService touristSpotService;
 
-    @Operation(summary = "관광 코스 조회", description = "선택한 지역 또는 태그에 기반하여 필터링된 관광 코스를 조회합니다.")
+    // 코스 생성 API
+    @PostMapping("/generate")
+    public ResponseEntity<String> generateCourses() {
+        courseService.generateCourses();  // 코스 생성
+        return ResponseEntity.ok("코스가 성공적으로 생성되었습니다.");
+    }
+
+    // 모든 관광 코스 조회
+    @Operation(
+            summary = "전체 코스 조회",
+            description = "모든 관광 코스 리스트를 조회하고 각 코스에 대한 세부 정보를 반환합니다."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적으로 관광 코스 목록을 조회했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CourseResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
-                    content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "서버 오류가 발생했습니다.",
-                    content = @Content(mediaType = "application/json"))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "성공적으로 모든 코스를 조회했습니다.",
+                    content = @Content(schema = @Schema(implementation = CourseResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "조회할 코스를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = String.class))
+            )
     })
-    @GetMapping("/api/courses")
-    public ResponseEntity<List<CourseResponseDto>> getCourses(
-            @Parameter(description = "필터링할 지역 코드 (예: PC, BR 등)", example = "PC")
-            @RequestParam(required = false) String region,
+    @GetMapping("/list")
+    public ResponseEntity<List<CourseResponseDto>> getAllCourses() {
+        List<CourseResponseDto> courseList = courseService.getAllCourses();
+        return ResponseEntity.ok(courseList);
+    }
 
-            @Parameter(description = "필터링할 태그 목록 (쉼표로 구분된 태그들)", example = "자연,역사")
-            @RequestParam(required = false) List<String> tags) {
-
-        List<CourseResponseDto> courses = courseService.getCoursesWithFilters(region, tags);
-        return ResponseEntity.ok(courses);
+    @Operation(summary = "코스 상세 조회", description = "courseId로 특정 코스의 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 코스 상세 정보를 조회했습니다."),
+            @ApiResponse(responseCode = "404", description = "해당 courseId에 해당하는 코스를 찾을 수 없습니다.")
+    })
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseResponseDto> getCourseDetail(
+            @PathVariable("courseId") Long courseId) {
+        CourseResponseDto courseDetail = courseService.getCourseDetail(courseId);
+        return ResponseEntity.ok(courseDetail);
     }
 }
