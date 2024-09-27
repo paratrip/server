@@ -26,9 +26,6 @@ public class TouristSpot {
     private String rlteCtgrySclsNm;
     private String imageUrl;
 
-    // 태그 추가
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "tourist_spot_tags", joinColumns = @JoinColumn(name = "tourist_spot_id"))
-    @Column(name = "tag")
-    private List<String> tags;  // 관광지의 태그
+    private String tag;  // 태그를 하나만 저장하기 위한 필드 추가
+
 }
