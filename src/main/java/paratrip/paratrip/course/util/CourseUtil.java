@@ -51,7 +51,7 @@ public class CourseUtil {
     public static <T> List<List<T>> generateCombinations(List<T> list, int r) {
         // 최대 10개의 경우의 수 조합을 생성하도록 제한
         List<List<T>> result = new ArrayList<>();
-        combine(new Object[r], list.toArray(), r, 0, 0, result, 10); // 최대 10개의 조합만
+        combine(new Object[r], list.toArray(), r, 0, 0, result, 5); // 최대 10개의 조합만
         return result;
     }
 
