@@ -76,7 +76,7 @@ public class ParaglidingScrapService {
 					paragliding.getName(),
 					paragliding.getHeart(),
 					paragliding.getCost(),
-					paragliding.getAddress(),
+					paragliding.getRegion(),
 					paragliding.getImageUrl()
 				);
 			})
