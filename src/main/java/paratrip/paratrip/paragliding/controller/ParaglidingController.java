@@ -22,7 +22,7 @@ import paratrip.paratrip.paragliding.service.ParaglidingService;
 
 import java.util.List;
 
-@Tag(name = "Paragliding API", description = "패러글라이딩 서비스 관련 API")
+@Tag(name = "패러글라이딩 API", description = "패러글라이딩 서비스 관련 API")
 @RestController
 @RequestMapping("/api/paragliding")
 public class ParaglidingController {
@@ -86,16 +86,19 @@ public class ParaglidingController {
         return ResponseEntity.ok(details);
     }
 
-    @Operation(summary = "지역별 패러글라이딩 조회", description = "선택한 지역에 해당하는 패러글라이딩 리스트를 조회합니다.")
+    @Operation(summary = "지역별 패러글라이딩 조회", description = "선택한 지역에 해당하는 패러글라이딩 리스트를 조회합니다. 지역 코드를 입력하지 않으면 전체 리스트를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 지역별 패러글라이딩 리스트를 조회했습니다.",
                     content = @Content(schema = @Schema(implementation = ParaglidingResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
                     content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @GetMapping("/list/region/{regionCode}")
+    @GetMapping("/list/region")
     public ResponseEntity<List<ParaglidingResponseDto>> getParaglidingByRegion(
-            @Parameter(description = "조회할 지역의 코드", example = "DY") @PathVariable String regionCode) {
+            @Parameter(description = "조회할 지역의 코드. 입력하지 않으면 전체 조회", example = "DY")
+            @RequestParam(value = "regionCode", required = false) String regionCode) {
+
+        // 지역 코드가 없을 경우 전체 조회
         List<ParaglidingResponseDto> paraglidingList = paraglidingService.getParaglidingByRegion(regionCode);
         return ResponseEntity.ok(paraglidingList);
     }

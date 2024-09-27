@@ -74,10 +74,17 @@ public class ParaglidingService {
         return paraglidingUtils.convertToDetailResponseDto(paragliding);
     }
 
-    // 지역별 패러글라이딩 조회 메서드 추가
+    // 지역별 패러글라이딩 조회 메서드 수정
     public List<ParaglidingResponseDto> getParaglidingByRegion(String regionCode) {
-        // 지역 코드에 해당하는 패러글라이딩 정보 조회
-        List<Paragliding> paraglidingList = paraglidingRepository.findByRegion(Region.valueOf(regionCode));
+        List<Paragliding> paraglidingList;
+
+        if (regionCode == null || regionCode.trim().isEmpty()) {
+            // 지역 코드가 주어지지 않았을 때, 전체 패러글라이딩 조회
+            paraglidingList = paraglidingRepository.findAll();
+        } else {
+            // 지역 코드에 해당하는 패러글라이딩 정보 조회
+            paraglidingList = paraglidingRepository.findByRegion(Region.valueOf(regionCode));
+        }
 
         // 좋아요(heart) 수로 내림차순 정렬
         paraglidingList.sort((p1, p2) -> Integer.compare(p2.getHeart(), p1.getHeart()));
