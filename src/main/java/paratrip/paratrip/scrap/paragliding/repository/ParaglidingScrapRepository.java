@@ -21,4 +21,6 @@ public interface ParaglidingScrapRepository {
 		MemberEntity memberEntity,
 		Paragliding paraglidingScrapEntity
 	);
+
+	ParaglidingScrapEntity findByMemberEntityAndParagliding(MemberEntity memberEntity, Paragliding paragliding);
 }

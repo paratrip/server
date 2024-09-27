@@ -10,7 +10,7 @@ public class ParaglidingScrapRequestDto {
 
 	public record DeleteParaglidingScrapRequestDto(
 		Long memberSeq,
-		Long paraglidingScrapSeq
+		Long paraglidingSeq
 	) {
 
 	}

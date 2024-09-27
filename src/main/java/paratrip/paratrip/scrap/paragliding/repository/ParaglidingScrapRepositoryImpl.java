@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import paratrip.paratrip.core.exception.BadRequestException;
 import paratrip.paratrip.core.exception.ConflictException;
 import paratrip.paratrip.core.exception.ErrorResult;
+import paratrip.paratrip.core.exception.NotFoundRequestException;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.paragliding.entity.Paragliding;
 import paratrip.paratrip.paragliding.entity.QParagliding;
@@ -81,5 +82,19 @@ public class ParaglidingScrapRepositoryImpl implements ParaglidingScrapRepositor
 		).ifPresent(scrap -> {
 			throw new ConflictException(ErrorResult.SCRAP_PARAGLIDING_DUPLICATION_CONFLICT_EXCEPTION);
 		});
+	}
+
+	@Override
+	public ParaglidingScrapEntity findByMemberEntityAndParagliding(MemberEntity memberEntity, Paragliding paragliding) {
+		QParaglidingScrapEntity qParaglidingScrapEntity = QParaglidingScrapEntity.paraglidingScrapEntity;
+
+		return Optional.ofNullable(
+			queryFactory
+				.selectFrom(qParaglidingScrapEntity)
+				.where(
+					qParaglidingScrapEntity.memberEntity.eq(memberEntity)
+						.and(qParaglidingScrapEntity.paraglidingEntity.eq(paragliding))
+				).fetchOne()
+		).orElseThrow(() -> new NotFoundRequestException(ErrorResult.PARAGLIDING_SCRAP_NOT_FOUND_EXCEPTION));
 	}
 }
