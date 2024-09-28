@@ -1,6 +1,7 @@
 package paratrip.paratrip.course.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import paratrip.paratrip.course.dto.CourseResponseDto;
 import paratrip.paratrip.course.service.CourseService;
 import paratrip.paratrip.course.service.TouristSpotService;
+import paratrip.paratrip.paragliding.entity.Region;
 
 import java.util.List;
 
@@ -23,7 +25,6 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
-    private final TouristSpotService touristSpotService;
 
     // 코스 생성 API
     @PostMapping("/generate")
@@ -32,15 +33,14 @@ public class CourseController {
         return ResponseEntity.ok("코스가 성공적으로 생성되었습니다.");
     }
 
-    // 모든 관광 코스 조회
     @Operation(
-            summary = "전체 코스 조회",
-            description = "모든 관광 코스 리스트를 조회하고 각 코스에 대한 세부 정보를 반환합니다."
+            summary = "코스 조회 (필터링 포함)",
+            description = "모든 관광 코스 리스트를 조회하고, 선택한 지역과 태그로 필터링된 코스 리스트를 조회할 수 있습니다. 지역 및 태그를 여러 개 선택할 수 있습니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "성공적으로 모든 코스를 조회했습니다.",
+                    description = "성공적으로 코스를 조회했습니다.",
                     content = @Content(schema = @Schema(implementation = CourseResponseDto.class))
             ),
             @ApiResponse(
@@ -50,8 +50,12 @@ public class CourseController {
             )
     })
     @GetMapping("/list")
-    public ResponseEntity<List<CourseResponseDto>> getAllCourses() {
-        List<CourseResponseDto> courseList = courseService.getAllCourses();
+    public ResponseEntity<List<CourseResponseDto>> getAllCourses(
+            @Parameter(description = "조회할 지역의 이름 또는 코드 (여러 개 선택 가능)") @RequestParam(required = false) List<Region> region,
+            @Parameter(description = "조회할 태그 이름 (여러 개 선택 가능)") @RequestParam(required = false) List<String> tag
+    ) {
+        // 여러 필터링 조건을 서비스에 전달하여 필터링된 코스를 조회
+        List<CourseResponseDto> courseList = courseService.getAllCourses(region, tag);
         return ResponseEntity.ok(courseList);
     }
 
