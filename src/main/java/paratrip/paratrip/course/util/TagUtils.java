@@ -18,7 +18,7 @@ public class TagUtils {
     private final WebClient.Builder webClientBuilder;
 
     private static final String GPT_API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_KEY = "sk-sQcxLY6tIkfKyYWOUucfGD_jREDabqgxaW5V2w-Q6ZT3BlbkFJrzpbxlJmrlFpfal_HuTLtFWFI0aGd2jt2SvG6vxrEA";
+    private static final String API_KEY = "sk-d8oS68Brm2CDz7-3DAhjPGJzTR9WkQFhKjWD8R_KLDT3BlbkFJ0TLQ8rKFuG4Z09-nXH8QgiaEB3zOJuQmZAzL04xJcA";
 
     // 미리 정의된 12개의 태그
     private static final String[] COMMON_TAGS = {
