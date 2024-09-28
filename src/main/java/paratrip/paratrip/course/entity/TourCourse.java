@@ -34,8 +34,6 @@ public class TourCourse {
     @JoinColumn(name = "tourist_spot2_id")
     private TouristSpot touristSpot2;
 
-    private String region;  // 패러글라이딩의 지역 (주소 형태)
-
     // 이미지 URL 추가
     private String imageUrlParagliding;
     private String imageUrl1;
@@ -56,7 +54,11 @@ public class TourCourse {
     private String rlteTatsNm1;  // touristSpot1의 rlteTatsNm 값
     private String rlteTatsNm2;  // touristSpot2의 rlteTatsNm 값
 
-    // Paragliding의 region 값 추가
-    private Region paraglidingRegion;  // 패러글라이딩의 region 값
+    @Column(name = "region")
+    @Enumerated(EnumType.STRING)  // enum 타입으로 저장
+    private Region region;
 
+    // 코스 이름 필드 추가
+    @Column(length = 500,columnDefinition = "LONGTEXT")  // 기존 VARCHAR(255)에서 VARCHAR(500)으로 확장
+    private String name;  // 코스 이름 필드 추가
 }
