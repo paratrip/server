@@ -28,7 +28,7 @@ public class TouristSpotService {
     private final TouristSpotRepository touristSpotRepository;
     private final WebClient.Builder webClientBuilder;
 
-    private String decodedServiceKey = "MlY68M1MmMMegGoGX5sZVrtEuniuCGrjlz93nJdrGeCc+j1rRAISWcEOW7+Nf8uvYkG+OhNkvsUfi4yo3+bO3g==";
+    private String decodedServiceKey = "NDLtSM572Ch47DMMGJM2Y+uJw0fLRP9A72MpqqlRqinBhr7pdMMS5y3vyXc83NpOUF9FD5sSFs3HLnTIZ1B0KQ==";
 
     // 애플리케이션 시작 시 관광지 데이터를 자동으로 불러와 저장
     @PostConstruct
@@ -72,7 +72,7 @@ public class TouristSpotService {
 
             URI url = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B551011/TarRlteTarService/areaBasedList")
                     .queryParam("serviceKey", URLEncoder.encode(decodedServiceKey, StandardCharsets.UTF_8))
-                    .queryParam("numOfRows", 30)
+                    .queryParam("numOfRows", 40)
                     .queryParam("pageNo", 1)
                     .queryParam("MobileOS", "ETC")
                     .queryParam("MobileApp", "myapp")
