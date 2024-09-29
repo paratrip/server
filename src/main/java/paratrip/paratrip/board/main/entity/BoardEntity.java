@@ -38,13 +38,13 @@ public class BoardEntity extends BaseEntity {
 	private String title;
 
 	@Lob
-	@Column(name = "content", nullable = false)
+	@Column(name = "content", nullable = false, columnDefinition = "TEXT")
 	private String content;
 
 	@Column(name = "location", nullable = true)
 	private String location;
 
-	@Column(name = "hearts", nullable = false)
+	@Column(name = "hearts", nullable = false, columnDefinition = "BIGINT default 0")
 	private Long hearts;
 
 	@ManyToOne(fetch = FetchType.LAZY)
