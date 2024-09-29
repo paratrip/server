@@ -11,6 +11,7 @@ import paratrip.paratrip.board.main.repository.BoardRepository;
 import paratrip.paratrip.member.entity.MemberEntity;
 import paratrip.paratrip.member.repository.MemberRepository;
 import paratrip.paratrip.member.util.Gender;
+import paratrip.paratrip.paragliding.entity.Region;
 
 @Component
 @RequiredArgsConstructor
@@ -52,8 +53,8 @@ public class DataLoader {
 				"태백산 자락에서의 패러글라이딩 도전기"
 			};
 
-			String[] locations = {
-				"경기도 용인", "충청남도 보령", "제주도 서귀포", "경기도 가평", "강원도 태백"
+			Region[] locations = {
+				Region.YI, Region.BR, Region.YS, Region.PC, Region.DY
 			};
 
 			String contentTemplate = """
@@ -64,13 +65,13 @@ public class DataLoader {
 
 			for (int i = 1; i <= 30; i++) {
 				String title = titles[i % titles.length];
-				String location = locations[i % locations.length];
+				Region location = locations[i % locations.length];
 				String content = String.format(contentTemplate, location);
 
 				BoardEntity boardEntity = BoardEntity.builder()
 					.title(title)
 					.content(content)
-					.location(location)
+					.location(location.name())
 					.creatorMemberEntity(savedMemberEntity)
 					.hearts(0L)
 					.build();
