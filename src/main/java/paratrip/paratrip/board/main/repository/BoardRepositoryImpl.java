@@ -50,7 +50,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 
 		List<BoardEntity> result = queryFactory
 			.selectFrom(board)
-			.orderBy(board.hearts.desc())
+			.orderBy(board.updatedAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
