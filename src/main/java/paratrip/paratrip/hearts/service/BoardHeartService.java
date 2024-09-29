@@ -43,6 +43,7 @@ public class BoardHeartService {
 		// Hearts 1 증가
 		BoardEntity newBoardEntity = boardEntity.increaseHearts();
 		boardRepository.saveBoardEntity(newBoardEntity);
+		MemberEntity ownerMemberEntity = newBoardEntity.getCreatorMemberEntity();
 
 		/*
 		 1. BoardHeartEntity 저장
@@ -50,7 +51,9 @@ public class BoardHeartService {
 		*/
 		BoardHeartEntity boardHeartEntity
 			= boardHeartRepository.saveBoardHeartEntity(boardHeartMapper.toBoardHeartEntity(boardEntity, memberEntity));
-		alarmRepository.saveAlarmEntity(alarmMapper.toAlarmEntity(boardEntity, memberEntity, Type.HEART));
+		alarmRepository.saveAlarmEntity(
+			alarmMapper.toAlarmEntity(boardEntity, memberEntity, ownerMemberEntity, Type.HEART)
+		);
 
 		return new BoardHeartResponseDto.AddBoardHeartResponseDto(boardHeartEntity.getBoardHeartSeq());
 	}
