@@ -38,8 +38,12 @@ public class AlarmEntity extends BaseEntity {
 	private Long alarmSeq;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_seq")
+	@JoinColumn(name = "creator_member_seq")
 	private MemberEntity memberEntity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "owner_member_seq")
+	private MemberEntity ownerEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "board_seq")

@@ -15,6 +15,7 @@ public interface AlarmMapper {
 	@Mapping(target = "alarmSeq", ignore = true)
 	@Mapping(target = "boardEntity", source = "boardEntity")
 	@Mapping(target = "memberEntity", source = "memberEntity")
+	@Mapping(target = "ownerEntity", source = "ownerEntity")
 	@Mapping(target = "type", source = "type")
-	AlarmEntity toAlarmEntity(BoardEntity boardEntity, MemberEntity memberEntity, Type type);
+	AlarmEntity toAlarmEntity(BoardEntity boardEntity, MemberEntity memberEntity, MemberEntity ownerEntity, Type type);
 }

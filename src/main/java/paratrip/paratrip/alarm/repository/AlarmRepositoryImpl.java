@@ -24,13 +24,13 @@ public class AlarmRepositoryImpl implements AlarmRepository {
 	}
 
 	@Override
-	public List<AlarmEntity> findAllByMemberEntity(MemberEntity memberEntity) {
+	public List<AlarmEntity> findAllByOwnerEntity(MemberEntity memberEntity) {
 		QAlarmEntity qAlarmEntity = QAlarmEntity.alarmEntity;
 
 		return queryFactory
 			.selectFrom(qAlarmEntity)
 			.where(
-				qAlarmEntity.memberEntity.eq(memberEntity)
+				qAlarmEntity.ownerEntity.eq(memberEntity)
 			)
 			.fetch();
 	}

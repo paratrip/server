@@ -37,6 +37,7 @@ public class CommentService {
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(addCommentRequestDto.memberSeq());
 		BoardEntity boardEntity = boardRepository.findByBoardSeq(addCommentRequestDto.boardSeq());
+		MemberEntity ownerEntity = boardEntity.getCreatorMemberEntity();
 
 		/*
 		 1. CommentEntity 저장
@@ -45,7 +46,9 @@ public class CommentService {
 		CommentEntity commentEntity = commentRepository.saveCommentEntity(
 			commentMapper.toCommentEntity(boardEntity, memberEntity, addCommentRequestDto.comment())
 		);
-		alarmRepository.saveAlarmEntity(alarmMapper.toAlarmEntity(boardEntity, memberEntity, Type.COMMENT));
+		alarmRepository.saveAlarmEntity(
+			alarmMapper.toAlarmEntity(boardEntity, memberEntity, ownerEntity, Type.COMMENT)
+		);
 
 		return new AddCommentResponseDto(commentEntity.getCommentSeq());
 	}

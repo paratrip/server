@@ -9,7 +9,7 @@ import paratrip.paratrip.member.entity.MemberEntity;
 public interface AlarmRepository {
 	AlarmEntity saveAlarmEntity(AlarmEntity alarmEntity);
 
-	List<AlarmEntity> findAllByMemberEntity(MemberEntity memberEntity);
+	List<AlarmEntity> findAllByOwnerEntity(MemberEntity memberEntity);
 
 	void deleteByBoardEntity(BoardEntity boardEntity);
 }

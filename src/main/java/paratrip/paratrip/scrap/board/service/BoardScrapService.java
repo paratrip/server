@@ -51,15 +51,16 @@ public class BoardScrapService {
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(addBoardScrapRequestDto.memberSeq());
 		BoardEntity boardEntity = boardRepository.findByBoardSeq(addBoardScrapRequestDto.boardSeq());
 		boardScrapRepository.duplicateBoardScrap(memberEntity, boardEntity);
+		MemberEntity ownerMemberEntity = boardEntity.getCreatorMemberEntity();
 
 		/*
 		 1. BoardScarpEntity 저장
 		 2. AlarmEntity 저장
 		*/
-		BoardScrapEntity boardScrapEntity = boardScrapRepository.saveBoardScrapEntity(
-			boardScrapMapper.toBoardScrapEntity(memberEntity, boardEntity)
+		boardScrapRepository.saveBoardScrapEntity(boardScrapMapper.toBoardScrapEntity(memberEntity, boardEntity));
+		alarmRepository.saveAlarmEntity(
+			alarmMapper.toAlarmEntity(boardEntity, memberEntity, ownerMemberEntity, Type.SCRAP)
 		);
-		alarmRepository.saveAlarmEntity(alarmMapper.toAlarmEntity(boardEntity, memberEntity, Type.SCRAP));
 	}
 
 	@Transactional

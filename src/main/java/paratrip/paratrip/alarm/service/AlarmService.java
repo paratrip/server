@@ -26,7 +26,7 @@ public class AlarmService {
 		*/
 		MemberEntity memberEntity = memberRepository.findByMemberSeq(memberSeq);
 
-		List<AlarmEntity> alarmEntities = alarmRepository.findAllByMemberEntity(memberEntity);
+		List<AlarmEntity> alarmEntities = alarmRepository.findAllByOwnerEntity(memberEntity);
 
 		return alarmEntities.stream()
 			.map(alarmEntity -> new AlarmResponseDto.GetAlarmResponseDto(
