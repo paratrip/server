@@ -3,6 +3,8 @@ package paratrip.paratrip.course.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -20,7 +22,9 @@ public class CourseNameUtil {
     private final WebClient.Builder webClientBuilder;
 
     private static final String GPT_API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_KEY = "sk-d8oS68Brm2CDz7-3DAhjPGJzTR9WkQFhKjWD8R_KLDT3BlbkFJ0TLQ8rKFuG4Z09-nXH8QgiaEB3zOJuQmZAzL04xJcA";
+
+    @Value("${GPT.KEY}")
+    private String API_KEY;
 
     /**
      * GPT-4 API를 사용하여 코스 이름 생성
